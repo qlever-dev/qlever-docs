@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
+site_name: QLever Documentation
+#nav:
+#  - Home: index.md
+#  - About: about.md
+site_url: http://127.0.0.1:8000
+repo_url: https://github.com/ad-freiburg/qlever
+edit_uri: edit/master/docs
+site_description: Documentation for the SPARQL graph store engine QLever.
+site_author: AD Freiburg
+copyright: >
+  Copyright &copy; 2025 AD Freiburg
+theme:
+  name: material
+  language: en
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+  # https://squidfunk.github.io/mkdocs-material/setup/setting-up-navigation/
+  # https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-search/
+  features:
+    - navigation.tracking
+    # Tabs
+    - navigation.tabs
+    - navigation.tabs.sticky
+    # Sections
+    - navigation.sections
+    - navigation.expand
+    #- navigation.indexes
+    - toc.follow
+    #- toc.integrate
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - navigation.footer
+    - content.action.edit
+    - content.code.annotate
+    - content.code.copy
+
+  palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default 
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+
+plugins:
+  - privacy
+  # Note on Cookies and Github: https://github.com/squidfunk/mkdocs-material/discussions/4666
+  - search
+  - social
+#  - git-revision-date-localized:
+#      enable_creation_date: true
+#      type: timeago
+# https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-contributors
+# or https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-authors
+# https://squidfunk.github.io/mkdocs-material/reference/
+
+extra:
+  social:
+    - icon: material/github
+      link: https://github.com/ad-freiburg
+    - icon: material/web
+      link: https://ad.informatik.uni-freiburg.de
+
+markdown_extensions:
+    - pymdownx.highlight:
+        anchor_linenums: true
+    - pymdownx.superfences
