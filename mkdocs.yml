@@ -63,9 +63,10 @@ plugins:
   # Note on Cookies and Github: https://github.com/squidfunk/mkdocs-material/discussions/4666
   - search
   - social
-#  - git-revision-date-localized:
-#      enable_creation_date: true
-#      type: timeago
+  - git-revision-date-localized:
+      enable_creation_date: true
+      type: timeago
+
 # https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-contributors
 # or https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-authors
 # https://squidfunk.github.io/mkdocs-material/reference/
