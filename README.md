@@ -1,3 +1,7 @@
+__Deployed docs__: https://qup42.github.io/qlever-docs-mkdocs/
+
+---
+
 Categories of solutions:
 1. general purpose static site generators with a suitable theme ([Jekyll](https://jekyllrb.com/), [Hugo](https://gohugo.io/)/[Doks](https://getdoks.org/)/[Hextra](https://imfing.github.io/hextra/)/[Hugoblox Documentation Template](https://hugoblox.com/templates/details/docs/)/[Docsy](https://www.docsy.dev/)/[Lotus Docs](https://lotusdocs.dev/)/[More](https://gethugothemes.com/hugo-documentation-themes))
 2. documentation tools built on JS frameworks ([Docusaurus](https://docusaurus.io/docs)/[React](https://react.dev/), [VitePress](https://vitepress.dev/)/[Vue](https://vuejs.org/), [Docz (discontinued)](https://github.com/pedronauck/docz/)/[Gatsby](https://www.gatsbyjs.com/))
