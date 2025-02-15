@@ -1,5 +1,45 @@
 # QLever
 
+<div class="grid cards" markdown>
+
+-   :material-clock-fast: __Set up in 5 minutes__
+
+    ---
+
+    Start a QLever instance with a simple dataset in minutes
+
+    [:octicons-arrow-right-24: Geting started](./qlever-control.md)
+
+-   :material-database: __Pre-configured datasets__
+
+    ---
+
+    Get running quickly with one of our pre-configured datasets
+
+    [:octicons-arrow-right-24: Datasets](./qlever-control/datasets.md)
+
+-   :material-book: __Qleverfile Reference__
+
+    ---
+
+    Customize the QLever server exactly to your liking
+
+    [:octicons-arrow-right-24: Reference](./qlever-control/qleverfile.md)
+
+-   :material-scale-balance: __Open Source, Apache 2.0__
+
+    ---
+
+    QLever and the accompanying tools are licensed under Apache 2.0 and available on [GitHub](https://github.com/ad-freiburg/qlever)
+
+    [:octicons-arrow-right-24: License](https://github.com/ad-freiburg/qlever/blob/master/LICENSE)
+
+</div>
+
+---
+
+__Original README.md__
+
 [![Docker build](https://github.com/ad-freiburg/QLever/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/ad-freiburg/QLever/actions/workflows/docker-publish.yml)
 [![Native build](https://github.com/ad-freiburg/qlever/actions/workflows/native-build.yml/badge.svg)](https://github.com/ad-freiburg/qlever/actions/workflows/native-build.yml)
 [![Format check](https://github.com/ad-freiburg/qlever/actions/workflows/format-check.yml/badge.svg)](https://github.com/ad-freiburg/qlever/actions/workflows/format-check.yml)

@@ -74,6 +74,8 @@ extra:
   social:
     - icon: material/github
       link: https://github.com/ad-freiburg
+    - icon: material/language-python
+      link: https://pypi.org/project/qlever
     - icon: material/web
       link: https://ad.informatik.uni-freiburg.de
 
@@ -84,6 +86,7 @@ markdown_extensions:
         anchor_linenums: true
     - pymdownx.superfences
     - attr_list
+    - md_in_html
     - pymdownx.emoji:
         emoji_index: !!python/name:material.extensions.emoji.twemoji
         emoji_generator: !!python/name:material.extensions.emoji.to_svg

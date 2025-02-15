@@ -58,44 +58,62 @@ FORMAT           = ttl
 
 The name of the dataset.
 
-| Required | Qleverfile   | CLI | Default  | Possible Values              |
-|----------|----------|---|----------|------------------------------|
-| :warning:      | `NAME` | `--name` |  | N/A |
+| Required  | Qleverfile | CLI      | Default | Possible Values |
+| --------- | ---------- | -------- | ------- | --------------- |
+| :warning: | `NAME`     | `--name` |         | N/A             |
 
 ### Get data command
 
 The command to get the data.
 
-| Required | Qleverfile   | CLI | Default  | Possible Values              |
-|----------|----------|---|----------|------------------------------|
-| :warning:      | `GET_DATA_CMD` | `--get-data-cmd` |  | N/A |
+| Required  | Qleverfile     | CLI              | Default | Possible Values |
+| --------- | -------------- | ---------------- | ------- | --------------- |
+| :warning: | `GET_DATA_CMD` | `--get-data-cmd` |         | N/A             |
 
 ### Description
 
 A concise description of the dataset.
 
-| Required | Qleverfile   | CLI | Default  | Possible Values              |
-|----------|----------|---|----------|------------------------------|
-| :warning:      | `DESCRIPTION` | `--description` |  | N/A |
+| Required  | Qleverfile    | CLI             | Default | Possible Values |
+| --------- | ------------- | --------------- | ------- | --------------- |
+| :warning: | `DESCRIPTION` | `--description` |         | N/A             |
 
 ### Text Description
 
 A concise description of the additional text data if any.
 
-| Required | Qleverfile   | CLI | Default  | Possible Values              |
-|----------|----------|---|----------|------------------------------|
-|          | `TEXT_DESCRIPTION` | `--text-description` |  | N/A |
+| Required | Qleverfile         | CLI                  | Default | Possible Values |
+| -------- | ------------------ | -------------------- | ------- | --------------- |
+|          | `TEXT_DESCRIPTION` | `--text-description` |         | N/A             |
 
 ### Format
 
 The format of the data.
 
-| Required | Qleverfile   | CLI | Default  | Possible Values              |
-|----------|----------|---|----------|------------------------------|
-|          | `FORMAT` | `--format` | `ttl` | `ttl`, `nt`, `nq` |
+| Required | Qleverfile | CLI        | Default | Possible Values   |
+| -------- | ---------- | ---------- | ------- | ----------------- |
+|          | `FORMAT`   | `--format` | `ttl`   | `ttl`, `nt`, `nq` |
 
-## `[index]`
-## `[server]`
+## Index
+
+### Index binary
+
+The binary for building the index (this requires that you have compiled QLever on your machine).
+
+| Required | Qleverfile     | CLI              | Default            | Possible Values |
+| -------- | -------------- | ---------------- | ------------------ | --------------- |
+|          | `INDEX_BINARY` | `--index-binary` | `IndexBuilderMain` | N/A             |
+
+## Server
+
+### Server binary
+
+The binary for starting the server (this requires that you have compiled QLever on your machine).
+
+| Required | Qleverfile      | CLI               | Default      | Possible Values |
+| -------- | --------------- | ----------------- | ------------ | --------------- |
+|          | `SERVER_BINARY` | `--server-binary` | `ServerMain` | N/A             |
+
 ## Runtime
 The `[runtime]` section configures how and if the commands are run in a container.
 
@@ -111,38 +129,38 @@ SERVER_CONTAINER =
 
 Whether to run commands natively or in a container, and if in a container, which system to use.
 
-| Required | Qleverfile   | CLI | Default  | Possible Values              |
-|----------|----------|---|----------|------------------------------|
-|          | `SYSTEM` | `--system` | `docker` | `docker`, `podman`, `native` |
+| Required | Qleverfile | CLI        | Default  | Possible Values              |
+| -------- | ---------- | ---------- | -------- | ---------------------------- |
+|          | `SYSTEM`   | `--system` | `docker` | `docker`, `podman`, `native` |
 
 #### Possible Values
 - `docker` Run in [docker](https://www.docker.com/)
 - `podman` Run in [podman](https://podman.io/)
-- `native` Run natively (qlever must be installed and in the path), see also [Server Binary](#server-binary) and [Index Binary](#index-binary)
+- `native` Run natively (qlever must be installed and in the path), see also [Server Binary](#server-binary) and [Index Binary](#index-binary).
 
 ### Image
 
 The name of the container image when running in a container.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `IMAGE`  | `--image` |  `docker.io/adfreiburg/qlever` | N/A             |
+| Required | Qleverfile | CLI       | Default                       | Possible Values |
+| -------- | ---------- | --------- | ----------------------------- | --------------- |
+|          | `IMAGE`    | `--image` | `docker.io/adfreiburg/qlever` | N/A             |
 
 ### Index Container
 
 The name of the container used by `qlever index`.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `INDEX_CONTAINER` | `--index-container`  |  | N/A             |
+| Required | Qleverfile        | CLI                 | Default | Possible Values |
+| -------- | ----------------- | ------------------- | ------- | --------------- |
+|          | `INDEX_CONTAINER` | `--index-container` |         | N/A             |
 
 ### Server Container
 
 The name of the container used by `qlever start`.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `SERVER_CONTAINER`  | `--server-container` |  | N/A             |
+| Required | Qleverfile         | CLI                  | Default | Possible Values |
+| -------- | ------------------ | -------------------- | ------- | --------------- |
+|          | `SERVER_CONTAINER` | `--server-container` |         | N/A             |
 
 ## UI
 The `[ui]` section configures the qlever-ui started with `qlever ui`.
@@ -160,59 +178,40 @@ UI_CONTAINER =
 
 The port of the Qlever UI when running `qlever ui`.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `UI_PORT`  | `--ui-port` | 8176 | Ports             |
+| Required | Qleverfile | CLI         | Default | Possible Values |
+| -------- | ---------- | ----------- | ------- | --------------- |
+|          | `UI_PORT`  | `--ui-port` | 8176    | Ports           |
 
 ### UI config
 
 The name of the backend configuration for the QLever UI (this determines autocomplete queries and example queries).
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `UI_CONFIG`  | `--ui-config` | `default` | TODO            |
+| Required | Qleverfile  | CLI           | Default   | Possible Values |
+| -------- | ----------- | ------------- | --------- | --------------- |
+|          | `UI_CONFIG` | `--ui-config` | `default` | TODO            |
 
 ### UI System
 
 Which container system to use for `qlever ui`. Unlike for `qlever index` and `qlever start`, `native` is not yet supported here.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `UI_SYSTEM`  | `--ui-system` | `docker` | `docker`, `podman`             |
+| Required | Qleverfile  | CLI           | Default  | Possible Values    |
+| -------- | ----------- | ------------- | -------- | ------------------ |
+|          | `UI_SYSTEM` | `--ui-system` | `docker` | `docker`, `podman` |
 
 ### UI Image
 
 The name of the image used for `qlever ui`.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `UI_IMAGE`  | `--ui-image` | `docker.io/adfreiburg/qlever-ui` | N/A            |
+| Required | Qleverfile | CLI          | Default                          | Possible Values |
+| -------- | ---------- | ------------ | -------------------------------- | --------------- |
+|          | `UI_IMAGE` | `--ui-image` | `docker.io/adfreiburg/qlever-ui` | N/A             |
 
 
 ### UI Container
 
 The name of the container used for `qlever ui`.
 
-| Required | Qleverfile   | CLI | Default                       | Possible Values |
-|----------|----------|---|-------------------------------|-----------------|
-|          | `UI_CONTAINER`  | `--ui-container` |  | N/A            |
-
-
----
-
-## Landfill
-
-| Required | Option | Description |
-|---|---|---|
-| :white_check_mark: | `NAME` | The name of the dataset |
-| :white_check_mark: | `GET_DATA_CMD` | Command to download the data |
-| :white_check_mark: | `DESCRIPTION` | A concsie description of the dataset |
-| :white_check_mark: | `FORMAT` | Format of the data (default: `ttl`, allowed: `ttl`, `nt`, `nq`) |
-
-| Required | Option | Default | Description |
-|---|---|---|---|
-| :white_check_mark: | `SYSTEM` | `docker` | Whether to run natively or in a container |
-| :white_check_mark: | `IMAGE` | `docker.io/adfreiburg/qlever` | Container image to use |
-| :white_check_mark: | `INDEX_CONTAINER` | | Name of the container used for indexing (`qlever index`) |
-| :white_check_mark: | `SERVER_CONTAINER` | | Name of the main container (`qlever start`) |
+| Required | Qleverfile     | CLI              | Default | Possible Values |
+| -------- | -------------- | ---------------- | ------- | --------------- |
+|          | `UI_CONTAINER` | `--ui-container` |         | N/A             |
 

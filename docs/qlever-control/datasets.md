@@ -1,8 +1,40 @@
 # Datasets
 
-qlever-control comes with a number of mostly ready to go datasets. Create a Qleverfile for the dataset with `qlever setup-config`. View all available datasets with `qlever setup-config -h`. Only minor adjustements are needed to run the datasets.
+qlever-control comes with a number of mostly ready to go datasets. They can be used to get up and running quickly.
+This page contains a reference of all pre-configured datasets.
+
+To get running with a dataset first create a Qleverfile for that dataset with `qlever setup-config <dataset key>`. Then download the data, build the index and run the server.
+
+=== "pip"
+    ``` bash title="DBLP"
+    qlever setup-config dblp
+    qlever get-data
+    qlever index
+    qlever start
+    # qlever ui
+    ```
+=== "pipx"
+    ``` bash title="DBLP"
+    qlever setup-config dblp
+    qlever get-data
+    qlever index
+    qlever start
+    # qlever ui
+    ```
+=== "uv"
+    ```bash title="DBLP"
+    uv tool run qlever setup-config dblp
+    uv tool run qlever get-data
+    uv tool run qlever index
+    uv tool run qlever start
+    # uv tool run qlever ui
+    ```
 
 ## DBLP
+
+| Key    | Ready to go?       | Example Queries available? |
+| ------ | ------------------ | -------------------------- |
+| `dblp` | :white_check_mark: | :white_check_mark:         |
 
 ## DBLP Plus
 
@@ -16,12 +48,19 @@ qlever-control comes with a number of mostly ready to go datasets. Create a Qlev
 
 ## IMDB
 
+| Key    | Ready to go?       | Example Queries available? |
+| ------ | ------------------ | -------------------------- |
+| `imdb` | :white_check_mark: | :white_check_mark:         |
+
+A dataset containing data from the film and series database IMDB. The `basics` and `ratings` datasets from <https://datasets.imdbws.com/> are available in this dataset.
+
 ## OHM planet
 
 ## Olympics 
 
-!!! success
-    No adjustements required
+| Key        | Ready to go?       | Example Queries available? |
+| ---------- | ------------------ | -------------------------- |
+| `olympics` | :white_check_mark: | :white_check_mark:         |
 
 A demo dataset with historic data on the olympic winter and summer games.
 
@@ -29,11 +68,15 @@ A demo dataset with historic data on the olympic winter and summer games.
 
 ## OSM (country)
 
-!!! warning
-    Minor Qleverfile adjustements required. Adjust `CONTINENT` and `COUNTRY` to your needs. A list can be found at [Geofabrik](https://download.geofabrik.de/).
+| Key           | Ready to go? | Example Queries available? |
+| ------------- | ------------ | -------------------------- |
+| `osm-country` | :warning:    | :white_check_mark:         |
 
 !!! warning
-    Tool osm2rdf required for dataset preparation.
+    Adjust `CONTINENT` and `COUNTRY` to your needs. All available continents and countries can be found at [Geofabrik](https://download.geofabrik.de/).
+
+!!! warning
+    The tool [osm2rdf](https://github.com/ad-freiburg/osm2rdf) is required during the dataset preparation.
 
 The OSM data for some country.
 
@@ -44,15 +87,34 @@ The OSM data for some country.
 
 ## Scientists
 
+| Key          | Ready to go?       | Example Queries available? |
+| ------------ | ------------------ | -------------------------- |
+| `scientists` | :white_check_mark: | :white_check_mark:         |
+
 ## Uniprot
 
 ## VVZ
 
 !!! failure
-    An internal dataset.
+    This dataset is used internally and not publicly available.
+
+| Key   | Ready to go? | Example Queries available? |
+| ----- | ------------ | -------------------------- |
+| `vvz` | :x:          | :white_check_mark:         |
 
 ## Wikidata
 
 ## Wikipathways
 
+| Key            | Ready to go? | Example Queries available? |
+| -------------- | ------------ | -------------------------- |
+| `wikipathways` | :warning:    | :white_check_mark:         |
+
+!!! warning
+    Adjust `RELEASE` to select which data snapshot to use. The available snapshots are listed at <https://data.wikipathways.org/>.
+
 ## YAGO 4
+
+| Key      | Ready to go?       | Example Queries available? |
+| -------- | ------------------ | -------------------------- |
+| `yago-4` | :white_check_mark: | :white_check_mark:         |
