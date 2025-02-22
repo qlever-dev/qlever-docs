@@ -19,15 +19,13 @@ theme:
   # https://squidfunk.github.io/mkdocs-material/setup/setting-up-site-search/
   features:
     - navigation.tracking
-    # Tabs
-    - navigation.tabs
-    - navigation.tabs.sticky
     # Sections
     - navigation.sections
     - navigation.expand
+    # Not compatible with toc.integrate
     #- navigation.indexes
     - toc.follow
-    #- toc.integrate
+    - toc.integrate
     - navigation.top
     - search.suggest
     - search.highlight
@@ -73,6 +71,7 @@ plugins:
 
 extra:
   social:
+    # Note: the icons are the path in site-packages/material/templates/.icons/...
     - icon: material/github
       link: https://github.com/ad-freiburg
     - icon: material/language-python
@@ -81,19 +80,32 @@ extra:
       link: https://ad.informatik.uni-freiburg.de
 
 markdown_extensions:
-    - pymdownx.tabbed:
-        alternate_style: true
-    - pymdownx.highlight:
-        anchor_linenums: true
-    - pymdownx.superfences
-    - attr_list
-    - md_in_html
+    # Captions for many types of blocks
+    - pymdownx.blocks.caption
+    # Emojis with :name:
     - pymdownx.emoji:
         emoji_index: !!python/name:material.extensions.emoji.twemoji
         emoji_generator: !!python/name:material.extensions.emoji.to_svg
-    - footnotes
+    - pymdownx.magiclink:
+        repo_url_shorthand: true
+        user: ad-freiburg
+        repo: qlever
+        normalize_issue_symbols: true
+    # Syntax highlighting
+    - pymdownx.highlight:
+        anchor_linenums: true
+    - pymdownx.superfences
+    # Convert some symbols to unicode (e.g. (c) to ©)
+    - pymdownx.smartsymbols
+    # Tabs in a document
+    - pymdownx.tabbed:
+        alternate_style: true
+    # Collapsible callouts
     - admonition
     - pymdownx.details
+    - attr_list
+    - footnotes
+    - md_in_html
 
 
 nav:
@@ -101,5 +113,6 @@ nav:
   - Getting started:
     - qlever-control: qlever-control.md
   - Reference:
-    - Qleverfile: qlever-control/qleverfile.md
-    - Datasets: qlever-control/datasets.md
+    - qlever-control:
+      - Qleverfile: qlever-control/qleverfile.md
+      - Datasets: qlever-control/datasets.md
