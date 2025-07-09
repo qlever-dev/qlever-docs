@@ -1,4 +1,4 @@
-__Deployed docs__: https://qup42.github.io/qlever-docs-mkdocs/
+__Deployed docs__: https://ad-freiburg.github.io/qlever-docs/
 
 ---
 
