@@ -19,3 +19,4 @@ Some Pros and Cons:
 - good [documentation](https://squidfunk.github.io/mkdocs-material/getting-started/)
 - actively developed with some money behind it
 - hard to extend beyond provided features
+
