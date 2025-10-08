@@ -70,6 +70,8 @@ plugins:
 # https://squidfunk.github.io/mkdocs-material/reference/
 
 extra:
+  version:
+    provider: mike
   social:
     # Note: the icons are the path in site-packages/material/templates/.icons/...
     - icon: material/github
