@@ -1,15 +1,26 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 site_name: QLever Documentation
-#nav:
-#  - Home: index.md
-#  - About: about.md
+
+# Navigation on the left side
+nav:
+  - Home: index.md
+  - Quickstart: quickstart.md
+  - Benchmarks: benchmarks.md
+  - Compliance: compliance.md
+  - FAQ: faq.md
+  # - Getting started:
+  #   - qlever-control: qlever-control.md
+  - Reference:
+    - Qleverfile settings: qleverfile.md
+    # - Datasets: qlever-control/datasets.md
+
 site_url: http://127.0.0.1:8000
 repo_url: https://github.com/ad-freiburg/qlever
 edit_uri: edit/master/docs
-site_description: Documentation for the SPARQL graph store engine QLever.
-site_author: AD Freiburg
+site_description: Documentation for the QLever graph database
+site_author: The QLever authors
 copyright: >
-  Copyright &copy; 2025 AD Freiburg
+  Copyright &copy; 2025 The QLever authors
 theme:
   name: material
   language: en
@@ -70,6 +81,8 @@ plugins:
 # https://squidfunk.github.io/mkdocs-material/reference/
 
 extra:
+  version:
+    provider: mike
   social:
     # Note: the icons are the path in site-packages/material/templates/.icons/...
     - icon: material/github
@@ -106,13 +119,3 @@ markdown_extensions:
     - attr_list
     - footnotes
     - md_in_html
-
-
-nav:
-  - Home: index.md
-  - Getting started:
-    - qlever-control: qlever-control.md
-  - Reference:
-    - qlever-control:
-      - Qleverfile: qlever-control/qleverfile.md
-      - Datasets: qlever-control/datasets.md
