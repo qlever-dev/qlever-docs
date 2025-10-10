@@ -1,0 +1,15 @@
+[project]
+name = "qlever-docs"
+version = "0.1.0"
+description = "Docs for QLever and accompanying tools"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mkdocs",
+    # click==8.3.0 is incompatible, see https://github.com/squidfunk/mkdocs-material/issues/8478
+    "click!=8.3.0",
+    "mkdocs-material",
+    "mkdocs-material[imaging]",
+    "mkdocs-git-revision-date-localized-plugin",
+    "mkdocs-git-committers-plugin-2"
+]

@@ -1,8 +1,0 @@
-mkdocs
-mkdocs-material
-# Social cards
-mkdocs-material[imaging]
-# Created and last updated info
-mkdocs-git-revision-date-localized-plugin
-# Contributors
-mkdocs-git-committers-plugin-2

@@ -1,3 +1,14 @@
+# Qlever Docs
+
+## Developing locally
+
+1. Clone this repo
+2. Setup a virtual environment with `uv venv` or `python3 -m venv .venv` and activate it `. .venv/bin/activate`
+3. Install the dependencies with `uv sync` or `pip install -e .`
+4. Run the development server `mkdocs serve`
+
+---
+
 __Deployed docs__: https://ad-freiburg.github.io/qlever-docs/
 
 ---
