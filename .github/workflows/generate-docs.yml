@@ -19,7 +19,7 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install -r requirements.txt
+      - run: pip install -e .
       - run: mkdocs build
       - uses: actions/upload-pages-artifact@v3
         with:
