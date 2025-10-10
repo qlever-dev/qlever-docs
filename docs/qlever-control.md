@@ -24,7 +24,7 @@
 
 ## Usage
 
-A Qleverfile[^1] is required for using qlever-control. In an empty folder create a sample[^2] Qleverfile. See also the [Qleverfile reference](./qlever-control/qleverfile.md).
+A Qleverfile[^1] is required for using qlever-control. In an empty folder create a sample[^2] Qleverfile. See also the [Qleverfile reference](qleverfile.md).
 
 === "pip"
     ``` bash 
