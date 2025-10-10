@@ -14,8 +14,7 @@ nav:
     - Qleverfile settings: qleverfile.md
     # - Datasets: qlever-control/datasets.md
 
-site_url: http://127.0.0.1:8000
-repo_url: https://github.com/ad-freiburg/qlever
+repo_url: https://github.com/qlever-dev/qlever-docs
 edit_uri: edit/master/docs
 site_description: Documentation for the QLever graph database
 site_author: The QLever authors
