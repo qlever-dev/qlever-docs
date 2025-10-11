@@ -24,10 +24,10 @@ corresponding command-line options, with their respective default values. The
 options specific to a particular command are not listed here, you get them
 via `qlever <command> --help`.
 
-If a variable is missing from the documentation below, please open an issue on
-https://qlever.dev/qlever.docs/issues. In the meantime, you can always resort
-to `qlever <command> --help`. If the variable / option exist, it will be
-listed there.
+If a variable is missing from the documentation below, please [open an
+issue](https://github.com/qlever-dev/qlever-docs/issues). In the meantime, you
+can always resort to `qlever <command> --help`. If the variable / option exists,
+it will be listed there.
 
 ## Section `[data]`
 
@@ -38,7 +38,7 @@ directory is up to you. Default: none.
 
 `GET_DATA_CMD`, `--get-data-cmd`: The command invoked by `qlever get-data` to
 obtain the dataset. This can be anything that works on your system; see the
-many [example Qleverfiles](https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles)
+many [example Qleverfiles](https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles).
 Default: none.
 
 `DESCRIPTION`, `--description`: A concise description of the dataset, set by
@@ -52,8 +52,8 @@ additional text data if any, set by `qlever index`. Default: none.
 
 ## Section `[index]`
 
-`INPUT_FILES`, `--input-files`: A list of input files or patterns, separated by
-spaces (you can use `*` and `?` as wildcards). This is used in two ways. First,
+`INPUT_FILES`, `--input-files`: A space-separated list of input files or patterns
+(you can use `*` and `?` as wildcards). This is used in two ways. First,
 `qlever index` checks whether these files exist, and if not, reports an error.
 Second, it is often useful (but not mandatory) to use this variable in your
 definition of `CAT_INPUT_FILES` or `MULTI_JSON_INPUT`, see the many
@@ -75,9 +75,9 @@ encourage setting it explicitly or using `MULTI_INPUT_JSON` instead.
 `MULTI_INPUT_JSON`, `--multi-input-json`: A comma-separated list of JSON
 objects to define multiple input streams for `qlever index`. Each JSON object
 must specify a `"cmd"` (the command that produces the input stream) and a
-`"format"` (one of `ttl`, `nt`, or `nq`), can can optionally specify a
+`"format"` (one of `ttl`, `nt`, or `nq`), and can optionally specify a
 `"graph"` (the name of the graph to which the triples from this input stream
-are added, use `-` for the default graph), and `"parallel"` (`"true"` if this
+are added, use `-` for the default graph) and `"parallel"` (`"true"` if this
 input stream should be parsed in parallel, which is faster but requires that
 all prefix declarations are at the beginning of the input stream, or `"false"`
 if not). Additionally, each JSON object can specify `"for-each"` (a
@@ -89,15 +89,16 @@ Default: none.
 
 `SETTINGS_JSON`, `--settings-json`: A JSON object (as a string) that can be
 used to pass additional settings for `qlever index`. This exists for historical
-reasons and will be deprecated soon. In the meantime, the only relevant key is
+reasons and will be deprecated soon. In the meantime, the most relevant key is
 `"num-triples-per-batch"`, which controls how many triples are parsed in one
 batch. All data from a batch is kept in memory until it has been fully
 processed, and when parsing input streams in parallel, multiple batches are
-kept in memory at the same time. Thus, choosing a large value for this setting
-can lead to high memory consumption or an out-of-memory crash. On the other
-hand, two files per batch are produced during `qlever index`, which might
-require increasing your `ULIMIT` (see next variable). The default value for
-`"num-triples-per-batch"` is `10000000` (ten million).
+kept in memory at the same time. Thus, choosing a large value for
+`"num-triples-per-batch"` can lead to high memory consumption or an
+out-of-memory crash. On the other hand, two files per batch are produced during
+`qlever index`, which might require increasing your `ULIMIT`, see below.
+The default value for `"num-triples-per-batch"` is `10000000` (ten
+million).
 
 `ULIMIT`, `--ulimit`: The maximum number of open files allowed during `qlever
 index`. If this number is too low, `qlever index` will fail with an error that
@@ -112,14 +113,14 @@ higher. When too low, `qlever index` might fail with an error message (which usu
 makes it clear that you need to increase this value). The strange name of the
 variable / option is an artifact from when QLever used the [STXXL
 library](http://stxxl.org/) for external memory sorting, which it
-no longer does. Defaut: `1G`.
+no longer does. The name will be changed soon. Defaut: `1G`.
 
 `PARSER_BUFFER_SIZE`, `--parser-buffer-size`: The size of the buffer used by
 `qlever index` when parsing an input stream, specified with standard suffixes
 like `k`, `M`, `G`, and `T`. This must be large enough to hold the longest
 predicate-object list in your dataset (everything from a subject until the next
 `.`). Predicate-object lists are usually short, but can be long for `TTL`
-datasets with many long literals, for example [Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles/Qleverfile.osm-planet). Default: `10M`.
+datasets with many long literals, see [Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles/Qleverfile.osm-planet). Default: `10M`.
 
 `VOCABULARY_TYPE`, `--vocabulary-type`: Whether the vocabulary is stored
 compressed or not (trade-off between index size and query speed), whether to
@@ -140,18 +141,18 @@ See
 `TEXT_INDEX`, `--text-index`: Four options: `none` (no text index),
 `from_literals` (create a text index from all literals in the dataset),
 `from_text_records` (create a text index from the givens "words" and "docs"
-file, see the next two variables / options), and
+file, see `TEXT_WORDS_FILE` and `TEXT_DOCS_FILE` below), and
 `from_literals_and_text_records` (create a text index from both literals and
 the given "words" and "docs" file). Default: `none`.
 
 `TEXT_WORDS_FILE`, `--text-words-file`: The name of the file containing the
-word occurrences for the text index, one line per occurrence, in the format
-`word or <IRI> TAB 0 or 1 TAB text record id TAB always 1`. Default:
-`<NAME>.wordsfile.tsv`.
+word occurrences for the text index, one line per occurrence with four
+tab-separated columns each, in the format `word or <IRI> TAB 0 or 1 TAB text record
+id TAB always 1`. Default: `<NAME>.wordsfile.tsv`.
 
 `TEXT_DOCS_FILE`, `--text-docs-file`: The name of the file containing the text
-records for the text index, one line per record, in the format `text record id
-TAB text`. Default: `<NAME>.docsfile.tsv`.
+records for the text index, one line per record with two tab-separated columns
+each, in the format `text record id TAB text`. Default: `<NAME>.docsfile.tsv`.
 
 `INDEX_BINARY`, `--index-binary`: The binary for building the index, when
 using `SYSTEM = native`. The binary must either be in your `PATH` or you must
@@ -195,9 +196,11 @@ option `--persist-updates` is given), all update requests processed after
 `qlever start` are persisted to disk, in a single file `<NAME>.update-triples`.
 When the server is stopped and `qlever start` is run again, the updates are
 replayed and new updates are appended to the same file. This is rudimentary
-for now, and will be replaced by a more sophisticated mechanism soon. See also
-`qlever update-wikidata`, where updates come from an SSE stream, and can be
-replayed any time from an arbitrary point in time. Default: `false`.
+for now, a more sophisticated mechanism is currently being developed. For an
+alternative, see `qlever update-wikidata`, where updates come from an SSE
+stream, and can be replayed any time from an arbitrary point in time, and the
+date until which the dataset is up to date is stored in dedicated triples.
+Default: `false`.
 
 ## Section `[runtime]`
 
@@ -219,20 +222,21 @@ instead of `Docker`). Default: `docker`.
 ## Section `[ui]`
 
 `UI_CONFIG`, `--ui-config`: The name of one of the preconfigurations from
-https://qlever.dev (the parts after the https://qlever.dev/ is the name of the
+https://qlever.dev (the slug after the https://qlever.dev/ is the name of the
 preconfiguration). You cannot choose your own name here yet; this will be fixed
-soon. But once you have picked a preconfiguration, you can modify it after
-running `qlever ui` once, see the instructions printed by `qlever ui`. Default:
-`default`.
+soon. But once you have picked a preconfiguration, you can modify it
+arbitrarily (except for the name) after running `qlever ui` once, see the
+instructions printed by `qlever ui`. Default: `default`.
 
 `UI_PORT`, `--ui-port`: The port of the Qlever UI started with `qlever ui`.
-Default: `8176` (the ASCII codes for `Q` and `L`).
+The URL at which the UI can be accessed is printed by `qlever ui`. Default:
+`8176` (the ASCII codes for `Q` and `L`).
 
-`UI_SYSTEM`, `--ui-system`: Either `docker` or `podman`, which container
-system to use for `qlever ui`. Note that unlike for `qlever index` and
-`qlever start`, there is no `native` option (the only reason for a `native`
-mode is that it is more efficient, but that is not a concern for the UI).
-Default: `docker`.
+`UI_SYSTEM`, `--ui-system`: Which container system to use for `qlever ui`,
+either `docker` or `podman`. Note that unlike for `qlever index` and `qlever
+start`, there is no `native` option (the only reason for a `native` mode there
+is that it is more efficient, but that is not a concern for the UI). Default:
+`docker`.
 
 `UI_IMAGE`, `--ui-image`: The name of the image used for `qlever ui`. Default:
 `docker.io/adfreiburg/qlever-ui`.

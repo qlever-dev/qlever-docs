@@ -15,6 +15,9 @@ comparison with other systems.
 <a href="compliance/" class="button">Compliance:</a> Compliance with the SPARQL
 1.1 standard.
 
+<a href="publications/" class="button">Publications:</a> Publications on the
+various aspects and internals of QLever.
+
 <a href="demos/" class="button">Demos:</a> Links to public SPARQL endpoints
 running QLever.
 

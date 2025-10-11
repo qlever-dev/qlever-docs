@@ -1,6 +1,6 @@
 # Compliance with the SPARQL 1.1 standard
 
-Each commit to https://github/ad-freiburg/qlever triggers an automatic
+Each commit to https://github.com/ad-freiburg/qlever triggers an automatic
 conformance test against the W3C's SPARQL 1.1 test suite. To see the results of
 the latest commit:
 
