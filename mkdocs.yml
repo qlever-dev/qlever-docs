@@ -7,6 +7,7 @@ nav:
   - Quickstart: quickstart.md
   - Benchmarks: benchmarks.md
   - Compliance: compliance.md
+  - Demos: demos.md
   - FAQ: faq.md
   # - Getting started:
   #   - qlever-control: qlever-control.md
@@ -14,7 +15,7 @@ nav:
     - Qleverfile settings: qleverfile.md
     # - Datasets: qlever-control/datasets.md
 
-repo_url: https://github.com/qlever-dev/qlever-docs
+repo_url: https://github.com/ad-freiburg/qlever
 edit_uri: edit/master/docs
 site_description: Documentation for the QLever graph database
 site_author: The QLever authors
@@ -72,7 +73,7 @@ plugins:
   - search
   - social
   - git-revision-date-localized:
-      enable_creation_date: true
+      enable_creation_date: false
       type: timeago
 
 # https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-contributors
