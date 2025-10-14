@@ -39,3 +39,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          secrets: |
+            MKDOCS_GIT_COMMITTERS_APIKEY=${{ secrets.QLEVER_DEV_READ_PAT }}

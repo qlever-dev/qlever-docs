@@ -24,6 +24,8 @@ jobs:
             mkdocs-material-
       - run: pip install -e .
       - run: mkdocs build
+        env:
+          MKDOCS_GIT_COMMITTERS_APIKEY: ${{ secrets.QLEVER_DEV_READ_PAT }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: site/

@@ -76,6 +76,9 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: false
       type: timeago
+  - git-committers:
+      repository: qlever-dev/qlever-docs
+      branch: master
 
 # https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-contributors
 # or https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-authors
