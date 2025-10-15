@@ -14,6 +14,7 @@ nav:
   #   - qlever-control: qlever-control.md
   - Reference:
     - Qleverfile settings: qleverfile.md
+    - GeoSPARQL support: geosparql.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
