@@ -8,7 +8,7 @@ services:
     command: "--label-enable --interval 60"
 
   qlever-docs:
-    # Switch the following two lines to build the local version
+    # Switch commenting of the following two lines to run the local version with `dc up -d --build`
     #build: .
     image: ghcr.io/qlever-dev/qlever-docs:master
     ports:
