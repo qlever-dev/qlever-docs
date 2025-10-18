@@ -1,4 +1,6 @@
-QLever has support for a selection of the most relevant features from the [OGC GeoSPARQL standard](https://docs.ogc.org/is/22-047r1/22-047r1.html): see below for a detailed list. Additionally, QLever supports some custom spatial querying features beyond the GeoSPARQL standard, like nearest neighbor search.
+# GeoSPARQL Support in QLever
+
+This page describe which features from the [OGC GeoSPARQL standard](https://docs.ogc.org/is/22-047r1/22-047r1.html) are supported in QLever, and how to use them. It also described some custom extensions, like nearest neighbor search.
 
 ## Geometry Preprocessing
 
@@ -10,125 +12,117 @@ If this option is used, QLever will currently precompute centroid, bounding boxe
 
 ## GeoSPARQL Functions
 
-Currently QLever implements these functions from GeoSPARQL:
+`geof:distance(?geom_1, ?geom_2 ?unit)`: Returns the geodesic distance between
+two geometries on the WGS84 ellipsoid. The first two arguments must be literals
+with datatype `geo:wktLiteral`, representing geometries in WKT format. The
+optional third argument specifies the unit, and must be one of `unit:M`
+(meters), `unit:KiloM` (kilometers), `unit:MI` (land miles), where `unit:` is
+the prefix for `http://qudt.org/vocab/unit/`. Alternatively, the unit IRI can
+be given as an `xsd:anyURI` literal. If no unit is given, the distance is
+returned in meters. The distance is returned as a literal with datatype
+`xsd:distance`. RESTRICTION: Currently, only `POINT` geometries are supported;
+this will be extended to other geometry types in the near future. NOTE: For a
+fast distance-based search, please also see [GeoSPARQL Maximum Distance
+Search](#geosparql-maximum-distance-search) below.
 
-### `geof:distance`, `geof:metricDistance`
-
-The function `geof:distance(?a, ?b, ?unit)` currently expects two values with `geo:wktLiteral` datatype and optionally a unit of measurement as an IRI or literal with `xsd:anyURI` datatype. Units are expressed using the `qudt` vocabulary as recommended in the GeoSPARQL standard. If no unit is given, the function returns the distance in kilometers. QLever also supports the `geof:metricDistance(?a, ?b)` function, which takes two points like `geof:distance` but always returns meters.
-
-Currently, both functions only support `POINT` literals. They will be extended to other geometry types in the near future.
-
-For a fast distance-based search, please also see [GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search) below.
-
-#### Supported Units
-
-- Meters: `http://qudt.org/vocab/unit/M`
-- Kilometers: `http://qudt.org/vocab/unit/KiloM`
-- Land miles: `http://qudt.org/vocab/unit/MI`
-
-#### Example Query
-
+`geof:metricDistance(?geom_1, ?geom_2`): Like `geof:distance`, but always
+returns the distance in meters as `xsd:distance`. Example query (the correct
+distance between the two points is approximately 446.363 meters):
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX unit: <http://qudt.org/vocab/unit/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-
 SELECT * WHERE {
-  BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a) # Freiburg Central Railway Station
-  BIND ("POINT(7.8450491 47.9946000)"^^geo:wktLiteral AS ?b) # Freiburg University Library
+  # Freiburg Central Railway Station and Freiburg University Library
+  BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
+  BIND ("POINT(7.8450491 47.9946000)"^^geo:wktLiteral AS ?b)
 
-  BIND (geof:distance(?a, ?b, unit:M) AS ?d_meters) # 446.363 m
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?d_meters2) # 446.363 m
-  BIND (geof:metricDistance(?a, ?b) AS ?d_meters3) # 446.363 m
-  BIND (geof:distance(?a, ?b, unit:KiloM) AS ?d_kilometers) # 0.446363 km
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?d_kilometers2) # 0.446363 km
-  BIND (geof:distance(?a, ?b, unit:MI) AS ?d_miles) # 0.277357 mi
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?d_miles2) # 0.277357 mi
+  # Using unit: for unit IRIs
+  BIND (geof:distance(?a, ?b, unit:M) AS ?d_meters_1)
+  BIND (geof:distance(?a, ?b, unit:KiloM) AS ?d_kilometers_1)
+  BIND (geof:distance(?a, ?b, unit:MI) AS ?d_miles_1)
 
-  # For backward-compatibility
-  BIND (geof:distance(?a, ?b) AS ?d_kilometers3) # 0.446363 km
+  # Using xsd:anyURI for unit IRIs
+  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?d_meters_2)
+  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?d_kilometers_2)
+  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?d_miles_2)
+
+  # Without unit argument, defaults to meters
+  BIND (geof:distance(?a, ?b) AS ?d_kilometers_3)
+
+  # For backwards compatibility
+  BIND (geof:metricDistance(?a, ?b) AS ?d_meters_3)
 }
 ```
 
-### `geof:latitude`, `geof:longitude`
-
-The functions `geof:latitude(?x)` and `geof:longitude(?x)` extract the latitude or longitude coordinate from a valid coordinate point with `geo:wktLiteral` datatype.
-
-#### Example Query
-
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-
-SELECT * WHERE {
-  BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a) # Freiburg Central Railway Station
-
-  BIND (geof:latitude(?a) AS ?lat) # 47.9977
-  BIND (geof:longitude(?a) AS ?lng) # 7.84129
-}
-```
-
-### `geof:centroid`
-
-The function `geof:centroid` provides the centroid of a WKT literal, as a `POINT` WKT literal.
-
-#### Example Query
-
+`geof:latitude(?geom)`, `geof:longitude(?geom)`: Returns latitude and longitude
+coordinates from a `POINT` geometry, given as a literal with datatype
+`geo:wktLiteral`. The return value is a literal with datatype `xsd:double`.
+Example query (coordinates of Freiburg Central Railway Station):
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 SELECT * WHERE {
-  BIND(geof:centroid("POLYGON((2 4, 4 4, 4 2, 2 2, 2 4))"^^geo:wktLiteral) AS ?c)
-  # "POINT(3 3)"^^geo:wktLiteral
+  BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
+  BIND (geof:latitude(?a) AS ?lat)
+  BIND (geof:longitude(?a) AS ?lng)
 }
 ```
 
-### `geof:envelope`
+`geof:centroid(?geom)`: Returns the centroid of the given geometry, which must
+be a literal with datatype `geo:wktLiteral`. The return value is a literal
+with datatype `geo:wktLiteral`, representing a `POINT`. Example query (the
+centroid should be 3,3):
+```sparql
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+SELECT * WHERE {
+  BIND(geof:centroid("POLYGON((2 4, 4 4, 4 2, 2 2, 2 4))"^^geo:wktLiteral) AS ?centroid)
+}
+```
 
-The function `geof:envelope` provides the bounding box of a WKT literal, as a `POLYGON` WKT literal.
-
-#### Example Query
-
+`geof:envelope`(?geom): Returns the bounding box of a geometry. The geometry
+must be given as a literal with datatype `geo:wktLiteral`. The return value is
+a literal with datatype `geo:wktLiteral`, representing a `POLYGON` with exactly
+five points (the first and last point are identical). Example query (the
+envelope of the given `LINESTRING` should be the rectangle with corners (2,4),
+(8,4), (8,6), (2,6), (2,4)):
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 SELECT * {
   BIND(geof:envelope("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?envelope)
-  # Result: "POLYGON((2 4,8 4,8 6,2 6,2 4))"^^geo:wktLiteral
 }
 ```
 
-### `geof:geometryType`
-
-The function `geof:geometryType` returns an `xsd:anyURI` literal containing the identifier of the given WKT literal. For a geometry of a supported type, the type identifier will be one of the following.
-
-- `http://www.opengis.net/ont/sf#Point`
-- `http://www.opengis.net/ont/sf#LineString`
-- `http://www.opengis.net/ont/sf#Polygon`
-- `http://www.opengis.net/ont/sf#MultiPoint`
-- `http://www.opengis.net/ont/sf#MultiLineString`
-- `http://www.opengis.net/ont/sf#MultiPolygon`
-- `http://www.opengis.net/ont/sf#GeometryCollection`
-
-#### Example Query
-
+`geof:geometryType(?geom)`: Returns the geometry type of the given geometry.
+The geometry must be given as literal with datatype `geo:wktLiteral`. The
+return value is a literal with datatype `xsd:anyURI`, where the value is one of
+the geometry type IRIs defined by the [OGC Simple Features
+Specification](https://www.ogc.org/standards/sfa):
+`http://www.opengis.net/ont/sf#Point`,
+`http://www.opengis.net/ont/sf#LineString`,
+`http://www.opengis.net/ont/sf#Polygon`,
+`http://www.opengis.net/ont/sf#MultiPoint`,
+`http://www.opengis.net/ont/sf#MultiLineString`,
+`http://www.opengis.net/ont/sf#MultiPolygon`,
+`http://www.opengis.net/ont/sf#GeometryCollection`.
+Example query (the result should be
+`"http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI`):
 ```sparql
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT * {
   BIND(geof:geometryType("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?geometryType)
-  # Result: "http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI
 }
 ```
 
-### `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY`
-
-The functions `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY` return the bounding coordinates of the geometry represented by the given WKT literal.
-
-#### Example Query
-
+`geof:minX(?geom)`, `geof:minY(?geom)`, `geof:maxX(?geom)`, `geof:maxY(?geom)`:
+Return the minimum and maximum X and Y coordinates of the bounding box of the
+given geometry. The geometry must be given as a literal with datatype
+`geo:wktLiteral`. The return values are literals with datatype `xsd:double`.
+Example Query:
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -158,10 +152,7 @@ The implementation currently has to parse WKT geometries for all geometry types 
 
 *Current quirk:* The maximum distance search (each of the `FILTER` patterns above) supports the WKT geometry types `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`, while the non-optimized `geof:distance` and `geof:metricDistance` implementation only supports `POINT` so far.
 
-### Example Query
-
-All pairs of restaurants within 50 meters of public transport stops:
-
+Example Query (all pairs of restaurants within 50 meters of public transport stops):
 ```sparql
 SELECT ?restaurant ?stop ?restaurant_geometry WHERE {
   ?restaurant osmkey:amenity "restaurant" ;
@@ -186,15 +177,18 @@ FILTER (geof:sfEquals(?geom1, ?geom2))
 FILTER (geof:sfOverlaps(?geom1, ?geom2))
 FILTER (geof:sfWithin(?geom1, ?geom2))
 ```
+These GeoSPARQL-compliant filters are a standard syntax method for using the
+[QLever Spatial Search](#qlever-spatial-search) with `qlss:algorithm` set to
+`qlss:libspatialjoin` and `qlss:joinType` set appropriately.
 
-These GeoSPARQL-compliant filters are a standard syntax method for using the [QLever Spatial Search](#qlever-spatial-search) with `qlss:algorithm` set to `qlss:libspatialjoin` and `qlss:joinType` set appropriately.
+NOTE: Currently, the functions stated above are only supported in `FILTER`s
+between two different variables. Also there may not be multiple filters on the
+same pair of variables. Otherwise the query processing will return an error.
+This will be fixed in the near future. Also, the implementation currently has
+to parse WKT geometries for all geometry types except points. This is being
+worked on, so you may expect a performance improvement in the future.
 
-*Note:* Currently, the functions stated above are only supported in `FILTER`s between two different variables. Also there may not be multiple filters on the same pair of variables. Otherwise the query processing will return an error. This will be fixed in the near future. Also, the implementation currently has to parse WKT geometries for all geometry types except points. This is being worked on, so you may expect a performance improvement in the future.
-
-### Example Query
-
-This query finds all railway lines crossing a river.
-
+Example Query ([all railway lines crossing rivers](https://qlever.cs.uni-freiburg.de/osm-planet/FKzeVH)):
 ```sparql
 SELECT ?river ?rail ?rail_geometry WHERE {
   ?river osmkey:waterway "river" ;
@@ -205,14 +199,12 @@ SELECT ?river ?rail ?rail_geometry WHERE {
 }
 ```
 
-Try it: <https://qlever.cs.uni-freiburg.de/osm-planet/FKzeVH>
-
-### Precomputing GeoSPARQL geometric relations using `osm2rdf`
+## Precomputing GeoSPARQL geometric relations using `osm2rdf`
 
 For OpenStreetMap data, geometric relations can be precomputed as part of the dataset (e.g. `ogc:sfContains`, `ogc:sfIntersects`, ... triples) using [`osm2rdf`](https://github.com/ad-freiburg/osm2rdf). Geometries from `osm2rdf` are represented as `geo:wktLiteral`s, which can be addressed by `geo:hasGeometry/geo:asWKT`. `osm2rdf` also provides centroids of objects via `geo:hasCentroid/geo:asWKT` and more, if requested. Please note that the geometric relations are given as triples between the OpenStreetMap entities, not the geometries.
 
-#### Example Query with `osm2rdf`: All Buildings in the City of Freiburg
-
+Example Query with `osm2rdf` ([all Buildings in the City of
+Freiburg](https://qlever.cs.uni-freiburg.de/osm-planet/7cxklb)):
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
@@ -226,19 +218,18 @@ SELECT ?osm_id ?hasgeometry WHERE {
 }
 ```
 
-Try it: <https://qlever.cs.uni-freiburg.de/osm-planet/7cxklb>
 
+## Custom spatial search
 
-## QLever Spatial Search
-
-QLever supports a custom fast spatial search operation for geometries from literals with `geo:wktLiteral` datatype. It can be invoked using a `SERVICE` operation to the IRI `<https://qlever.cs.uni-freiburg.de/spatialSearch/>`. Note that this address is not contacted but only used to activate the feature locally.
-
-A spatial query has the following form:
+QLever supports a custom fast spatial search operation for geometries from
+literals with `geo:wktLiteral` datatype. It can be invoked using a `SERVICE`
+operation to the IRI `<https://qlever.cs.uni-freiburg.de/spatialSearch/>`. Note
+that this address is not contacted but only used to activate the feature
+locally. A spatial query has the following form:
 
 ```sparql
 PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-
 SELECT * WHERE {
   # Arbitrary operations that select ?left_geometry
   ?some_entity geo:hasCentroid/geo:asWKT ?left_geometry .
@@ -262,7 +253,7 @@ SELECT * WHERE {
 
 The `SERVICE` must include the configuration triples and exactly one group graph pattern that selects the right geometry. If `numNearestNeighbors` is not used, the right geometry may also be provided outside of the `SERVICE` definition.
 
-### Configuration parameters
+## Configuration parameters
 
 The following configuration parameters are provided in the `SERVICE` as triples with arbitrary subject. The predicate must be an IRI of the form `<parameter>` or `qlss:parameter`. The parameters `left` and `right` are mandatory. Additionally you must provide search instructions, either `numNearestNeighbors` or `maxDistance` or `joinType`. The remaining parameters are optional.
 
@@ -277,14 +268,11 @@ The following configuration parameters are provided in the `SERVICE` as triples 
 | `payload` | variable or IRI `<all>` | Variable from the group graph pattern inside the `SERVICE` to be included in the result. `right` is automatically included. This parameter may be repeated to include multiple variables. For all variables use `<all>`. If `right` is given outside of the `SERVICE` do not use this parameter. |
 | `joinType` | `<intersects>`, `<covers>`, `<contains>`, `<touches>`, `<crosses>`, `<overlaps>`, `<equals>`, `<within-dist>` | The geometric relation to compute between the `left` and `right` geometries. If `within-dist` is chosen, the `maxDistance` parameter is required. Mandatory when using the `libspatialjoin` algorithm and illegal for all other algorithms.  |
 
-**Note**: The individual algorithms support different subsets of all valid literals of `geo:wktLiteral` datatype. The `libspatialjoin` algorithm supports `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`. The `baseline` and `boundingBox` algorithms support the same literals except `GEOMETRYCOLLECTION`. The `s2` algorithm currently only works with `POINT` literals.
+NOTE: The individual algorithms support different subsets of all valid literals of `geo:wktLiteral` datatype. The `libspatialjoin` algorithm supports `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`. The `baseline` and `boundingBox` algorithms support the same literals except `GEOMETRYCOLLECTION`. The `s2` algorithm currently only works with `POINT` literals.
 
-**Note**: Geometries except for points currently need to be parsed for every query leading to longer running times. We are working on it.
+NOTE: Geometries except for points currently need to be parsed for every query leading to longer running times. We are working on it.
 
-### Example: Nearest Neighbors Search: Railway Stations and Supermarkets
-
-This example query calculates the three closest supermarkets to every railway station.
-
+Example query ([for each railway station, the three closest supermarkets](https://qlever.cs.uni-freiburg.de/osm-planet/OXupEH)):
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
@@ -306,12 +294,8 @@ SELECT * WHERE {
 }
 ```
 
-Try it: <https://qlever.cs.uni-freiburg.de/osm-planet/OXupEH>
-
-### Example: Intersection: Railway Lines Crossing Rivers
-
-This query returns all railway line segments in Germany intersecting rivers (no matter whether by bridge, tunnel, etc.).
-
+Example query ([all railway lines intersecting rivers in
+Germany](https://qlever.cs.uni-freiburg.de/osm-planet/5QvF74)):
 ```sparql
 PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
 PREFIX osmrel: <https://www.openstreetmap.org/relation/>
@@ -339,13 +323,11 @@ SELECT DISTINCT ?rail ?rail_geometry WHERE {
 }
 ```
 
-Try it: <https://qlever.cs.uni-freiburg.de/osm-planet/5QvF74>
-
-### Special Predicate `<max-distance-in-meters:m>`
-
-As a shortcut, a special predicate `<max-distance-in-meters:m>` is also supported. The parameter `m` refers to the maximum search radius in meters. It may be used as a triple with the left join variable as subject and the right join variable as object.
-
-#### Example
+Special predicate `<max-distance-in-meters:m>`: As a shortcut, a special
+predicate `<max-distance-in-meters:m>` is also supported. The parameter `m`
+refers to the maximum search radius in meters. It may be used as a triple with
+the left join variable as subject and the right join variable as object.
+Example query:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -356,16 +338,15 @@ SELECT * WHERE {
 }
 ```
 
-### Deprecated: Special Predicate `<nearest-neighbors:k>` or `<nearest-neighbors:k:m>`
-
-*This feature is deprecated and will produce a warning, due to confusing semantics. Please use the `SERVICE` syntax instead.*
-
-A spatial search for nearest neighbors can be realized using `?left <nearest-neighbors:k:m> ?right`. Please replace `k` and `m` with integers as follows:
-
-- For each point `?left` QLever will output the `k` nearest points from `?right`. Of course, the sets `?left` and `?right` can each be limited using further statements.
-- Using the optional integer value `m` a maximum distance in meters can be given that restricts the search radius.
-
-#### Example
+Deprecated special predicate `<nearest-neighbors:k>` or
+`<nearest-neighbors:k:m>`: *This feature is deprecated and will produce a
+warning, due to confusing semantics. Please use the `SERVICE` syntax instead.*
+A spatial search for nearest neighbors can be realized using `?left
+<nearest-neighbors:k:m> ?right`. Please replace `k` and `m` with integers as
+follows: For each point `?left` QLever will output the `k` nearest points from
+`?right`. Of course, the sets `?left` and `?right` can each be limited using
+further statements. Using the optional integer value `m` a maximum distance in
+meters can be given that restricts the search radius. Example query:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -376,12 +357,21 @@ SELECT * WHERE {
 }
 ```
 
-## Server Configuration Options
+## Runtime parameters
 
-### `spatial-join-max-num-threads`
+`spatial-join-max-num-threads`: the number of threads for a spatial search
+operation (also GeoSPARQL `FILTER` on maximum distance or geometric relations)
+can be limited. Setting the option to `0` amounts to taking the number of CPU
+threads. The default value is `8`, since further threads seem to provide little
+additional performance gain.
 
-Using the option `spatial-join-max-num-threads`, the number of threads for a spatial search operation (also GeoSPARQL `FILTER` on maximum distance or geometric relations) can be limited. Setting the option to `0` amounts to taking the number of CPU threads. The default value is `8`, since further threads seem to provide little additional performance gain.
+`spatial-join-prefilter-max-size`: If the special `VOCABULARY_TYPE` for
+geometries is used (see [Geometry Preprocessing](#geometry-preprocessing)), the
+inputs from the larger side of a spatial search are automatically prefiltered
+based on the aggregated bounding box of the inputs from the smaller side. If
+the aggregated bounding box is very large, the cost for prefiltering can
+outweigh the savings. Thus prefiltering is disabled at a certain bounding box
+size. This can be configured using `spatial-join-prefilter-max-size`. By
+default the limit is `2500` square coordinates. To deactivate prefiltering
+completely, set this to `0`.
 
-### `spatial-join-prefilter-max-size`
-
-If the special `VOCABULARY_TYPE` for geometries is used (see [Geometry Preprocessing](#geometry-preprocessing)), the inputs from the larger side of a spatial search are automatically prefiltered based on the aggregated bounding box of the inputs from the smaller side. If the aggregated bounding box is very large, the cost for prefiltering can outweigh the savings. Thus prefiltering is disabled at a certain bounding box size. This can be configured using `spatial-join-prefilter-max-size`. By default the limit is `2500` square coordinates. To deactivate prefiltering completely, set this to `0`.
