@@ -1,16 +1,15 @@
 # Watchtower deployment:
-# services:
-#  watchtower:
-#    image: containrrr/watchtower:1.7.1
-#    restart: always
-#    volumes:
-#      - /root/.docker/config.json:/config.json:ro
-#      - /var/run/docker.sock:/var/run/docker.sock
-#    command: "--label-enable --interval 60"
-
-
 services:
+  watchtower:
+    image: containrrr/watchtower:1.7.1
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: "--label-enable --interval 60"
+
   qlever-docs:
+    # Switch commenting of the following two lines to run the local version with `dc up -d --build`
+    #build: .
     image: ghcr.io/qlever-dev/qlever-docs:master
     ports:
       - "8080:80"
