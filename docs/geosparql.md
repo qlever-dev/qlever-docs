@@ -31,7 +31,7 @@ Search](#geosparql-maximum-distance-search) below.
 Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`.
 
 <details>
-<summary>Example query for `geof:distance` and `geof:metricDistance`</summary>
+<summary>Example query for <code>geof:distance</code> and <code>geof:metricDistance</code></summary><br />
 
 The correct distance between the two points is approximately 446.363 meters.
 
@@ -70,7 +70,7 @@ literal with datatype `geo:wktLiteral`. The return value is a literal with
 datatype `xsd:decimal`.
 
 <details>
-<summary>Example query for `geof:latitude` and `geof:longitude`</summary>
+<summary>Example query for <code>geof:latitude</code> and <code>geof:longitude</code></summary><br />
 
 Coordinates of Freiburg Central Railway Station:
 
@@ -91,7 +91,7 @@ return value is a literal with datatype `geo:wktLiteral`, representing a `POINT`
 This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 <details>
-<summary>Example query for `geof:centroid`</summary>
+<summary>Example query for <code>geof:centroid</code></summary><br />
 
 The centroid should be 3,3.
 
@@ -111,9 +111,9 @@ five points (the first and last point are identical). This function benefits
 from [geometry preprocessing](#geometry-preprocessing).
 
 <details>
-<summary>Example query for `geof:envelope`</summary>
+<summary>Example query for <code>geof:envelope</code></summary><br />
 
-The envelope of the given `LINESTRING` should be the rectangle with corners (2,4),
+The envelope of the given <code>LINESTRING</code> should be the rectangle with corners (2,4),
 (8,4), (8,6), (2,6), (2,4).
 
 ```sparql
@@ -140,9 +140,9 @@ Specification](https://www.ogc.org/standards/sfa):
 from [geometry preprocessing](#geometry-preprocessing).
 
 <details>
-<summary>Example query for `geof:geometryType`</summary>
+<summary>Example query for <code>geof:geometryType</code></summary><br />
 
-The result should be `"http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI`.
+The result should be <code>"http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI</code>.
 
 ```sparql
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -161,7 +161,7 @@ given geometry. The geometry must be given as a literal with datatype
 literals with datatype `xsd:decimal`.
 
 <details>
-<summary>Example query for `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY`</summary>
+<summary>Example query for <code>geof:minX</code>, <code>geof:minY</code>, <code>geof:maxX</code> and <code>geof:maxY</code></summary><br />
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -181,9 +181,9 @@ SELECT * {
 `geof:metricLength(?geom)`<a id="geof-metriclength"></a>: The same as `geof:length`` but always returns the length in meters.
 
 <details>
-<summary>Example query for `geof:length` and `geof:metricLength`</summary>
+<summary>Example query for <code>geof:length</code> and <code>geof:metricLength</code></summary><br />
 
-Length of the [Rhine Valley Railway Mannheim - Basel](https://openstreetmap.org/relation/1781296):
+Length of the <a href="https://openstreetmap.org/relation/1781296">Rhine Valley Railway Mannheim - Basel</a>:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -212,9 +212,9 @@ SELECT * {
 `geof:metricArea(?geom)`<a id="geof-metricarea"></a>: The same as `geof:area` but always returns the area in square meters.
 
 <details>
-<summary>Example query for `geof:area` and `geof:metricArea`</summary>
+<summary>Example query for <code>geof:area</code> and <code>geof:metricArea</code></summary><br />
 
-Area of the [water reservoir "Llac d'Engolasters" in Andorra](https://www.openstreetmap.org/way/6593464):
+Area of the <a href="https://www.openstreetmap.org/way/6593464">water reservoir "Llac d'Engolasters" in Andorra</a>:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -241,7 +241,7 @@ SELECT * WHERE {
 `geof:numGeometries(?geom)`<a id="geof-numgeometries"></a>: This function returns the number of child geometries contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. It returns an `xsd:integer`. This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 <details>
-<summary>Example query for `geof:numGeometries`</summary>
+<summary>Example query for <code>geof:numGeometries</code></summary><br />
 
 The top 100 geometries with the most members:
 
@@ -276,7 +276,7 @@ The implementation currently has to parse WKT geometries for all geometry types 
 *Current quirk:* The maximum distance search (each of the `FILTER` patterns above) supports the WKT geometry types `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`, while the non-optimized `geof:distance` and `geof:metricDistance` implementation only supports `POINT` so far.
 
 <details>
-<summary>Example query</summary>
+<summary>Example query</summary><br />
 
 All restaurants within 50 meters of public transport stops:
 
@@ -318,9 +318,9 @@ to parse WKT geometries for all geometry types except points. This is being
 worked on, so you may expect a performance improvement in the future.
 
 <details>
-<summary>Example query</summary>
+<summary>Example query</summary><br />
 
-[All railway lines crossing rivers](https://qlever.dev/osm-planet/FKzeVH):
+<a href="https://qlever.dev/osm-planet/FKzeVH">All railway lines crossing rivers</a>:
 
 ```sparql
 SELECT ?river ?rail ?rail_geometry WHERE {
@@ -338,9 +338,9 @@ SELECT ?river ?rail ?rail_geometry WHERE {
 For OpenStreetMap data, geometric relations can be precomputed as part of the dataset (e.g. `ogc:sfContains`, `ogc:sfIntersects`, ... triples) using [`osm2rdf`](https://github.com/ad-freiburg/osm2rdf). Geometries from `osm2rdf` are represented as `geo:wktLiteral`s, which can be addressed by `geo:hasGeometry/geo:asWKT`. `osm2rdf` also provides centroids of objects via `geo:hasCentroid/geo:asWKT` and more, if requested. Please note that the geometric relations are given as triples between the OpenStreetMap entities, not the geometries.
 
 <details>
-<summary>Example query with `osm2rdf`</summary>
+<summary>Example query with <code>osm2rdf</code></summary><br />
 
-[All Buildings in the City of Freiburg](https://qlever.dev/osm-planet/7cxklb):
+<a href="https://qlever.dev/osm-planet/7cxklb">All Buildings in the City of Freiburg</a>:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -410,9 +410,9 @@ NOTE: The individual algorithms support different subsets of all valid literals 
 NOTE: Geometries except for points currently need to be parsed for every query leading to longer running times. We are working on it.
 
 <details>
-<summary>Example queries</summary>
+<summary>Example queries</summary><br />
 
-[For each railway station, the three closest supermarkets](https://qlever.dev/osm-planet/OXupEH):
+<a href="https://qlever.dev/osm-planet/OXupEH">For each railway station, the three closest supermarkets</a>:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -435,7 +435,7 @@ SELECT * WHERE {
 }
 ```
 
-[All railway lines intersecting rivers in Germany](https://qlever.dev/osm-planet/5QvF74):
+<a href="https://qlever.dev/osm-planet/5QvF74">All railway lines intersecting rivers in Germany</a>:
 
 ```sparql
 PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
