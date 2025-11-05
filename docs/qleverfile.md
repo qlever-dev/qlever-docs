@@ -136,7 +136,7 @@ with the effect that all IRIs starting with one of these prefixes and followed
 by a sequence of at most 12 digits will not be stored as strings in the
 vocabulary, but stored directly in one of QLever's internal 64-bit identifiers.
 See
-[Qleverfile.osm-planet](https://github.com/ad-freiburg/qlever-control/blob/main/src/qlever/Qleverfiles/Qleverfile.osm-planet) for an example. Default: none.
+[Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/blob/main/src/qlever/Qleverfiles/Qleverfile.osm-planet) for an example. Default: none.
 
 `TEXT_INDEX`, `--text-index`: Four options: `none` (no text index),
 `from_literals` (create a text index from all literals in the dataset),

@@ -7,9 +7,10 @@
 3. Install the dependencies with `uv sync` or `pip install -e .`
 4. Run the development server `mkdocs serve`
 
----
+## Deployments
 
-__Deployed docs__: https://ad-freiburg.github.io/qlever-docs/
+- official page: <https://docs.qlever.dev/>
+- automatic via GitHub Pages: <https://qlever-dev.github.io/qlever-docs/>
 
 ---
 
