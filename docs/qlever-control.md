@@ -1,6 +1,6 @@
 # qlever-control
 
-[qlever-control](https://github.com/ad-freiburg/qlever-control) is a tool for running QLever instances. qlever-control can do the following for you
+[qlever-control](https://github.com/qlever-dev/qlever-control) is a tool for running QLever instances. qlever-control can do the following for you
 
 - download datasets
 - create QLever indices
