@@ -9,7 +9,7 @@
 
 ---
 
-__Deployed docs__: https://ad-freiburg.github.io/qlever-docs/
+__Deployed docs__: https://qlever-dev.github.io/qlever-docs/
 
 ---
 
