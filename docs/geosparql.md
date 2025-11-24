@@ -18,7 +18,7 @@ Returns the geodesic distance between two geometries on the WGS84 ellipsoid.
 The first two arguments must be literals
 with datatype `geo:wktLiteral`, representing geometries in WKT format. The
 (optional) third argument specifies the unit, and must be one of `unit:M`
-(meters), `unit:KiloM` (kilometers), `unit:MI` (land miles), where `unit:` is
+(meters), `unit:KiloM` (kilometers), `unit:MI` (land miles), `unit:FT` (feet) and `unit:YD` (yard), where `unit:` is
 the prefix for `http://qudt.org/vocab/unit/`. Alternatively, the unit IRI can
 be given as an `xsd:anyURI` literal. If no unit is given, the distance is
 returned in kilometers. The distance is returned as a literal with datatype
@@ -49,11 +49,15 @@ SELECT * WHERE {
   BIND (geof:distance(?a, ?b, unit:M) AS ?d_meters_1)
   BIND (geof:distance(?a, ?b, unit:KiloM) AS ?d_kilometers_1)
   BIND (geof:distance(?a, ?b, unit:MI) AS ?d_miles_1)
+  BIND (geof:distance(?a, ?b, unit:FT) AS ?d_feet_1)
+  BIND (geof:distance(?a, ?b, unit:YD) AS ?d_yards_1)
 
   # Using xsd:anyURI for unit IRIs
   BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?d_meters_2)
   BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?d_kilometers_2)
   BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?d_miles_2)
+  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?d_feet_2)
+  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?d_yards_2)
 
   # Without unit argument, defaults to kilometers
   BIND (geof:distance(?a, ?b) AS ?d_kilometers_3)
@@ -194,20 +198,24 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 SELECT * {
   osmrel:1781296 geo:hasGeometry/geo:asWKT ?geom .
   
-  BIND (geof:metricLength(?geom) AS ?meters) # Result: 267084
+  BIND (geof:metricLength(?geom) AS ?meters)
 
-  BIND (geof:length(?geom, unit:M) AS ?meters2) # Result: 267084
-  BIND (geof:length(?geom, unit:KiloM) AS ?kilometers2) # Result: 267.084
-  BIND (geof:length(?geom, unit:MI) AS ?miles2) # Result: 165.958
+  BIND (geof:length(?geom, unit:M) AS ?meters2)
+  BIND (geof:length(?geom, unit:KiloM) AS ?kilometers2)
+  BIND (geof:length(?geom, unit:MI) AS ?miles2)
+  BIND (geof:length(?geom, unit:FT) AS ?feet2)
+  BIND (geof:length(?geom, unit:YD) AS ?yards2)
   
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?meters3) # Result: 267084
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?kilometers3) # Result: 267.084
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?miles3) # Result: 165.958
+  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?meters3)
+  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?kilometers3)
+  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?miles3)
+  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?feet3)
+  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?yards3)
 }
 ```
 </details>
 
-`geof:area(?geom, ?unit)`<a id="geof-area"></a>: This function computes the area of a geometry given as `geo:wktLiteral`. The supported units are currently square meters `unit:M2`, square kilometers `unit:KiloM2` and square land miles `unit:MI2`. The units may be passed as an IRI with the prefix `http://qudt.org/vocab/unit/` or as `xsd:anyURI` literal. The function returns an `xsd:decimal`. This function benefits from [geometry preprocessing](#geometry-preprocessing). *NOTE*: The OGC standard says that `geof:area` and `geof:metricArea` "must return zero for all geometry types other than Polygon". We interpret this such that an area may still be returned for polygons contained in `MULTIPOLYGON` or `GEOMETRYCOLLECTION` literals.
+`geof:area(?geom, ?unit)`<a id="geof-area"></a>: This function computes the area of a geometry given as `geo:wktLiteral`. The supported units are currently square meters `unit:M2`, square kilometers `unit:KiloM2`, square land miles `unit:MI2`,  square feet `unit:FT2`, square yards `unit:YD2`, acre `unit:AC`, are `unit:ARE` and hectare `unit:HA`. The units may be passed as an IRI with the prefix `http://qudt.org/vocab/unit/` or as `xsd:anyURI` literal. The function returns an `xsd:decimal`. This function benefits from [geometry preprocessing](#geometry-preprocessing). *NOTE*: The OGC standard says that `geof:area` and `geof:metricArea` "must return zero for all geometry types other than Polygon". We interpret this such that an area may still be returned for polygons contained in `MULTIPOLYGON` or `GEOMETRYCOLLECTION` literals.
 
 `geof:metricArea(?geom)`<a id="geof-metricarea"></a>: The same as `geof:area` but always returns the area in square meters.
 
@@ -230,10 +238,20 @@ SELECT * WHERE {
   BIND (geof:area(?geometry, unit:M2) AS ?area_sqm)
   BIND (geof:area(?geometry, unit:KiloM2) AS ?area_sqkm)
   BIND (geof:area(?geometry, unit:MI2) AS ?area_sqmi)
+  BIND (geof:area(?geometry, unit:FT2) AS ?area_sqft)
+  BIND (geof:area(?geometry, unit:YD2) AS ?area_sqyd)
+  BIND (geof:area(?geometry, unit:AC) AS ?area_acre)
+  BIND (geof:area(?geometry, unit:ARE) AS ?area_are)
+  BIND (geof:area(?geometry, unit:HA) AS ?area_ha)
 
   BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/M2"^^xsd:anyURI) AS ?area_sqm_2)
   BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/KiloM2"^^xsd:anyURI) AS ?area_sqkm_2)
   BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/MI2"^^xsd:anyURI) AS ?area_sqmi_2)
+  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/FT2"^^xsd:anyURI) AS ?area_sqft_2)
+  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/YD2"^^xsd:anyURI) AS ?area_sqyd_2)
+  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/AC"^^xsd:anyURI) AS ?area_acre_2)
+  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/ARE"^^xsd:anyURI) AS ?area_are_2)
+  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/HA"^^xsd:anyURI) AS ?area_ha_2)
 }
 ```
 </details>
@@ -469,7 +487,10 @@ Special predicate `<max-distance-in-meters:m>`: As a shortcut, a special
 predicate `<max-distance-in-meters:m>` is also supported. The parameter `m`
 refers to the maximum search radius in meters. It may be used as a triple with
 the left join variable as subject and the right join variable as object.
-Example query:
+
+
+<details>
+<summary>Example query for <code>&lt;max-distance-in-meters:m&gt;</code></summary><br />
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -479,6 +500,7 @@ SELECT * WHERE {
   ?b geo:hasCentroid/geo:asWKT ?right_geometry .
 }
 ```
+</details>
 
 Deprecated special predicate `<nearest-neighbors:k>` or
 `<nearest-neighbors:k:m>`: *This feature is deprecated and will produce a
@@ -490,6 +512,10 @@ follows: For each point `?left` QLever will output the `k` nearest points from
 further statements. Using the optional integer value `m` a maximum distance in
 meters can be given that restricts the search radius. Example query:
 
+
+<details>
+<summary>Example query for <code>&lt;nearest-neighbors:k:m&gt;</code></summary><br />
+
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 SELECT * WHERE {
@@ -498,6 +524,7 @@ SELECT * WHERE {
   ?b geo:hasCentroid/geo:asWKT ?right_geometry .
 }
 ```
+</details>
 
 ## Runtime parameters
 
