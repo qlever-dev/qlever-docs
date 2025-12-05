@@ -256,7 +256,7 @@ SELECT * WHERE {
 ```
 </details>
 
-`geof:numGeometries(?geom)`<a id="geof-numgeometries"></a>: This function returns the number of child geometries contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. It returns an `xsd:integer`. This function benefits from [geometry preprocessing](#geometry-preprocessing).
+`geof:numGeometries(?geom)`<a id="geof-numgeometries"></a>: This function returns the number of child geometries contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the result is `1`. The result has datatype `xsd:int`. This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 <details>
 <summary>Example query for <code>geof:numGeometries</code></summary><br />
@@ -273,6 +273,24 @@ SELECT * WHERE {
 ORDER BY DESC(?num)
 LIMIT 100
 ```
+</details>
+
+
+`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`.
+
+<details>
+<summary>Example query for <code>geof:geometryN</code></summary><br />
+
+```sparql
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+SELECT * WHERE {
+  BIND (geof:geometryN("MULTIPOINT(1 2,3 4,5 6,7 8)"^^geo:wktLiteral, 4) AS ?wkt1) # POINT(7 8)
+  BIND (geof:geometryN("MULTILINESTRING((1 2,3 4),(5 6,7 8,9 0))"^^geo:wktLiteral, 2) AS ?wkt2) # LINESTRING(5 6,7 8,9 0)
+  BIND (geof:geometryN("POINT(3 4)"^^geo:wktLiteral, 1) AS ?wkt3) # POINT(3 4)
+}
+```
+
 </details>
 
 
