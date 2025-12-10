@@ -16,6 +16,7 @@ nav:
   - Reference:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
+    - Update: update.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
