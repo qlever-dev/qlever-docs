@@ -49,41 +49,50 @@ and `Clear Cache (Complete)` become available below the editor.
 
 ## SPARQL 1.1 Graph Store HTTP Protocol
 
-Here are some example `curl` commands for the different HTTP methods:
+Here are some example `curl` commands for the different HTTP methods, extended
+by the non-standard `TSOP` method.
 
 === "GET"
-    ```bash
-    curl -X "GET"
-         -H "Accept: text/turtle"
+    ```bash title="Get all triples from a graph"
+    curl -X "GET" \
+         -H "Accept: text/turtle" \
          "http://localhost:7019?graph=http://example.com/person/1.ttl"
     ```
 === "PUT"
-    ```bash
-    curl -X "PUT"
-         -H "Content-Type: text/turtle"
-         -H "Authorization: Bearer {token}"
-         --data-binary @graph.ttl
+    ```bash title="Replace all triples in a graph"
+    curl -X "PUT" \
+         -H "Content-Type: text/turtle" \
+         -H "Authorization: Bearer {token}" \
+         --data-binary @graph.ttl \
          "http://localhost:7019?graph=http://example.com/person/1.ttl"
     ```
 === "DELETE"
-    ```bash
-    curl -X "DELETE"
-         -H "Authorization: Bearer {token}"
+    ```bash title="Delete all triples from a graph"
+    curl -X "DELETE" \
+         -H "Authorization: Bearer {token}" \
          "http://localhost:7019?graph=http://example.com/person/1.ttl"
     ```
 === "POST"
-    ```bash
-    curl -X "POST"
-         -H "Content-Type: text/turtle"
-         -H "Authorization: Bearer {token}"
-         --data-binary @graph.ttl
+    ```bash title="Add triples to a graph"
+    curl -X "POST" \
+         -H "Content-Type: text/turtle" \
+         -H "Authorization: Bearer {token}" \
+         --data-binary @graph.ttl \
+         "http://localhost:7019?graph=http://example.com/person/1.ttl"
+    ```
+=== "TSOP"
+    ```bash title="Delete triples from a graph"
+    curl -X "TSOP" \
+         -H "Content-Type: text/turtle" \
+         -H "Authorization: Bearer {token}" \
+         --data-binary @graph.ttl \
          "http://localhost:7019?graph=http://example.com/person/1.ttl"
     ```
 === "HEAD"
-    ```bash
-    curl -X "HEAD"
-         "http://localhost:7019?graph=http://example.com/person/1.ttl"
+    ```bash title="Same as GET, but without response body"
+    curl -I "http://localhost:7019?graph=http://example.com/person/1.ttl"
     ```
+
 
 ## Updates involving large files
 
