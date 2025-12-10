@@ -2,29 +2,29 @@
 
 In a nutshell: There is a self-documenting command-line
 tool `qlever`, which is controlled by a single configuration file, called
-`Qleverfile`. For most applications, the `qlever` command-line too is all you
+`Qleverfile`. For most applications, the `qlever` command-line tool is all you
 need to use QLever. [See here for a complete reference of all the possible settings in a `Qleverfile`](/qleverfile/).
 
 ## Installation
 
 === "pip"
-    ``` bash title="Olympics"
+    ``` bash
     # inside a virtual environment
     pip install qlever
     ```
 === "pipx"
-    ``` bash title="Olympics"
+    ``` bash
     pipx install qlever
     ```
 === "uv"
-    ```bash title="Olympics"
+    ```bash
     uv tool install --upgrade qlever
     ```
 
 ## Usage
 
 === "pip"
-    ``` bash title="Olympics"
+    ``` bash
     # inside a virtual environment
     qlever setup-config olympics # Get Qleverfile (config file) for this dataset
     qlever get-data              # Download the dataset
@@ -34,7 +34,7 @@ need to use QLever. [See here for a complete reference of all the possible setti
     qlever ui                    # optional: Launch the QLever UI
     ```
 === "pipx"
-    ``` bash title="Olympics"
+    ``` bash
     qlever setup-config olympics # Get Qleverfile (config file) for this dataset
     qlever get-data              # Download the dataset
     qlever index                 # Build index data structures for this dataset
@@ -43,7 +43,7 @@ need to use QLever. [See here for a complete reference of all the possible setti
     qlever ui                    # optional: Launch the QLever UI
     ```
 === "uv"
-    ```bash title="Olympics"
+    ```bash
     uvx qlever setup-config olympics # Get Qleverfile (config file) for this dataset
     uvx qlever get-data              # Download the dataset
     uvx qlever index                 # Build index data structures for this dataset
@@ -61,3 +61,10 @@ qlever index --show
 ```
 
 There are many more commands and options, see `qlever --help` for general help, `qlever <command> --help` for help on a specific command, or just use the autocompletion.
+
+## Code and further documentation
+
+The code for the `qlever` command-line tool can be found at
+https://github.com/qlever-dev/qlever-control. There you also find more
+information on the usage on macOS and Windows, for usage with your own dataset,
+and for developers.
