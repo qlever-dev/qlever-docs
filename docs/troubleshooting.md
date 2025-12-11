@@ -47,4 +47,4 @@ this phase.
 
 Regarding 4: The index can crash here if `STXLL_MEMORY` is too low or the
 number of triples is very large. Increase `STXXL_MEMORY` or make us of
-https://github.com/ad-freiburg/qlever/pull/2443.
+<https://github.com/ad-freiburg/qlever/pull/2443>.
