@@ -6,19 +6,14 @@ QLever (pronounced "Clever") is a graph database implementing the
 efficiently load and query very large datasets, even with hundreds of billions
 of triples, on a single commodity PC or server.
 
-<a href="quickstart/" class="button">Quickstart:</a> Use QLever with some
-preconfigured datasets or your own data.
+[Quickstart](quickstart.md): Use QLever with some preconfigured datasets or your own data.
 
-<a href="benchmarks/" class="button">Benchmarks:</a> Performance evaluation and
-comparison with other systems.
+[Benchmarks](benchmarks.md): Performance evaluation and comparison with other systems.
 
-<a href="compliance/" class="button">Compliance:</a> Compliance with the SPARQL
-1.1 standard.
+[Compliance](compliance.md): Compliance with the SPARQL 1.1 standard.
 
-<a href="publications/" class="button">Publications:</a> Publications on the
-various aspects and internals of QLever.
+[Publications](publications.md): Publications on the various aspects and internals of QLever.
 
-<a href="demos/" class="button">Demos:</a> Links to public SPARQL endpoints
-running QLever.
+[Demos](demos.md): Links to public SPARQL endpoints running QLever.
 
-<a href="faq/" class="button">FAQ:</a> Frequently asked questions.
+[FAQ](faq.md): Frequently asked questions.

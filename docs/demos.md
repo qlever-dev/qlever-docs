@@ -1,7 +1,7 @@
 # Demos
 
-https://qlever.dev provides public SPARQL endpoints for a variety of RDF
-datasets, including 
+<https://qlever.dev> provides public SPARQL endpoints for a variety of RDF
+datasets, including
 
 - [DBLP+OpenCitations](https://qlever.dev/dblp) (1.5 billion triples)
 - [Wikidata](https://qlever.dev/wikidata) (20 billion triples)

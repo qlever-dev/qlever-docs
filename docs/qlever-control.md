@@ -10,7 +10,7 @@
 ## Installation
 
 === "pip"
-    ``` bash 
+    ``` bash
     pip install --break-system-packages qlever
     ```
 === "pipx"
@@ -42,7 +42,7 @@ A Qleverfile[^1] is required for using qlever-control. In an empty folder create
 Download the dataset and create an index for QLever.
 
 === "pip"
-    ``` bash 
+    ``` bash
     qlever get-data
     qlever index
     ```
@@ -60,7 +60,7 @@ Download the dataset and create an index for QLever.
 Start the Qlever server.
 
 === "pip"
-    ``` bash 
+    ``` bash
     qlever start
     ```
 === "pipx"
@@ -77,7 +77,7 @@ The QLever server is now running and ready to accept SPARQL operations.
 Launch a UI for running SPARQL operations against the QLever server.
 
 === "pip"
-    ``` bash 
+    ``` bash
     qlever ui
     ```
 === "pipx"

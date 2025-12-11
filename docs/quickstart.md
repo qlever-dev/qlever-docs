@@ -3,7 +3,7 @@
 In a nutshell: There is a self-documenting command-line
 tool `qlever`, which is controlled by a single configuration file, called
 `Qleverfile`. For most applications, the `qlever` command-line tool is all you
-need to use QLever. [See here for a complete reference of all the possible settings in a `Qleverfile`](/qleverfile/).
+need to use QLever. [See here for a complete reference of all the possible settings in a `Qleverfile`](qleverfile.md).
 
 ## Installation
 
@@ -65,6 +65,6 @@ There are many more commands and options, see `qlever --help` for general help, 
 ## Code and further documentation
 
 The code for the `qlever` command-line tool can be found at
-https://github.com/qlever-dev/qlever-control. There you also find more
+<https://github.com/qlever-dev/qlever-control>. There you also find more
 information on the usage on macOS and Windows, for usage with your own dataset,
 and for developers.
