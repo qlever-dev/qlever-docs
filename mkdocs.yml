@@ -87,6 +87,12 @@ plugins:
 # or https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-authors
 # https://squidfunk.github.io/mkdocs-material/reference/
 
+extra_javascript:
+  - js/qlever-demo.js
+
+extra_css:
+  - css/qlever-demo.css
+
 extra:
   version:
     provider: mike
