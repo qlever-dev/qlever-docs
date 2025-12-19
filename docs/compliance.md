@@ -1,17 +1,17 @@
 # Compliance with the SPARQL 1.1 standard
 
-Each commit to https://github.com/ad-freiburg/qlever triggers an automatic
+Each commit to <https://github.com/ad-freiburg/qlever> triggers an automatic
 conformance test against the W3C's SPARQL 1.1 test suite. The test results for
-the current master branch can be found at https://qlever.dev/sparql-conformance-ui .
+the current master branch can be found at <https://qlever.dev/sparql-conformance-ui> .
 
 To find the test results for a specific commit, do the following:
 
-1. Got to https://github.com/ad-freiburg/qlever/commits/master/
+1. Got to <https://github.com/ad-freiburg/qlever/commits/master/>
 2. Click on the #... of the commit you are interested in
 3. Search for "sparql-conformance"
 4. Click on the link after "Details:"
 
-You can also run the tests yourself, see https://github.com/ad-freiburg/sparql-conformance
+You can also run the tests yourself, see <https://github.com/ad-freiburg/sparql-conformance>
 
 ## Intended deviations from the standard
 
