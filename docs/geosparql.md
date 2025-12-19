@@ -42,24 +42,24 @@ Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`
       # Freiburg Central Railway Station and Freiburg University Library
       BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
       BIND ("POINT(7.8450491 47.9946000)"^^geo:wktLiteral AS ?b)
-    
+
       # Using unit: for unit IRIs
       BIND (geof:distance(?a, ?b, unit:M) AS ?d_meters_1)
       BIND (geof:distance(?a, ?b, unit:KiloM) AS ?d_kilometers_1)
       BIND (geof:distance(?a, ?b, unit:MI) AS ?d_miles_1)
       BIND (geof:distance(?a, ?b, unit:FT) AS ?d_feet_1)
       BIND (geof:distance(?a, ?b, unit:YD) AS ?d_yards_1)
-    
+
       # Using xsd:anyURI for unit IRIs
       BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?d_meters_2)
       BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?d_kilometers_2)
       BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?d_miles_2)
       BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?d_feet_2)
       BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?d_yards_2)
-    
+
       # Without unit argument, defaults to kilometers
       BIND (geof:distance(?a, ?b) AS ?d_kilometers_3)
-    
+
       # For backwards compatibility
       BIND (geof:metricDistance(?a, ?b) AS ?d_meters_3)
     }
@@ -183,7 +183,7 @@ literals with datatype `xsd:decimal`.
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     SELECT * {
       osmrel:1781296 geo:hasGeometry/geo:asWKT ?geom .
-      
+
       BIND (geof:metricLength(?geom) AS ?meters)
 
       BIND (geof:length(?geom, unit:M) AS ?meters2)
