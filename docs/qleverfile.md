@@ -1,10 +1,10 @@
 # Qleverfile settings
 
 The `Qleverfile` contains the full configuration for the `qlever` command, see
-[Quickstart](quickstart/). The variables in the `Qleverfile` are written in
+[Quickstart](quickstart.md). The variables in the `Qleverfile` are written in
 `UPPER_SNAKE_CASE` and are grouped into sections. The sections are
 `[data]`, `[index]`, `[server]`, `[runtime]`, and `[ui]`. See
-https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles
+<https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles>
 for a wide selection of example Qleverfiles.
 
 For each `Qleverfile` variable, there is a corresponding command-line option for
@@ -176,7 +176,7 @@ Default: `5G`.
 `TIMEOUT`, `--timeout`: The maximum time a query is allowed to run, specified
 with standard suffixes like `s`, `m`, and `h`. This is an approximate upper
 bound, queries might run longer in some cases. Default: `30s`.
- 
+
 `CACHE_MAX_SIZE`, `--cache-max-size`: The maximum size of the cache used for
 caching query results, specified with standard suffixes like `k`, `M`,
 `G`, and `T`. When the total size of the cached results exceeds this value, the
@@ -222,7 +222,7 @@ instead of `Docker`). Default: `docker`.
 ## Section `[ui]`
 
 `UI_CONFIG`, `--ui-config`: The name of one of the preconfigurations from
-https://qlever.dev (the slug after the https://qlever.dev/ is the name of the
+<https://qlever.dev> (the slug after the <https://qlever.dev/> is the name of the
 preconfiguration). You cannot choose your own name here yet; this will be fixed
 soon. But once you have picked a preconfiguration, you can modify it
 arbitrarily (except for the name) after running `qlever ui` once, see the
