@@ -2,7 +2,7 @@
 
 ## Does QLever run on Windows and MacOS?
 
-The <a href="quickstart/">`qlever` command-line tool</a> uses the official
+The [`qlever` command-line tool](quickstart.md) uses the official
 Docker image of QLever by default. Docker runs natively on Linux, with only a
 small performance penalty. However, on Windows and MacOS, Docker runs inside a
 virtual machine, which may incur a significant performance penalty. In
@@ -14,17 +14,17 @@ QLever on a Linux machine.
 
 Yes, QLever can process multiple input streams produced by arbitrary commands
 supported by your system. See the options `CAT_INPUT_FILES` and
-`MULTI_INPUT_FILES` in the [Qleverfile settings](/qleverfile/#section-index).
+`MULTI_INPUT_FILES` in the [Qleverfile settings](qleverfile.md#section-index).
 
 ## My index build runs out of memory, what can I do?
 
 If you have a large input set or a machine with little RAM, you should
 carefully set `STXXL_MEMORY`, `ULIMIT`, and `SETTINGS_JSON`. See the
-explanations in the [Qleverfile settings](/qleverfile/#section-index).
+explanations in the [Qleverfile settings](qleverfile.md#section-index).
 
 ## I have problems or I think I found a bug, what can I do?
 
-Please first search https://github.com/ad-freiburg/qlever/issues, maybe your
+Please first search <https://github.com/ad-freiburg/qlever/issues>, maybe your
 issue has already been reported or solved. If it has been reported before but
 is not yet solved, please add a comment to the existing issue. If it has not
 been reported before, please open a new issue. Please provide as much detail as
@@ -36,10 +36,10 @@ possible, including the exact command you ran, the content of your `Qleverfile`
 
 We currently treat every commit to the `master` branch as a release. In
 particular, each commit comes with a detailed description and an own Docker
-image on https://hub.docker.com/r/adfreiburg/qlever/, tagged with the commit
+image on <https://hub.docker.com/r/adfreiburg/qlever/>, tagged with the commit
 hash as well as with the corresponding pull request number. Each commit is
 extensively tested and reviewed before being merged into the QLever `master`.
 
 ## Are there publications about QLever?
 
-Yes, see the README of https://github.com/ad-freiburg/qlever.
+Yes, see the README of <https://github.com/ad-freiburg/qlever>.

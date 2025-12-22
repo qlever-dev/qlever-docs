@@ -12,7 +12,6 @@ If this option is used, QLever will currently precompute centroid, bounding box,
 
 ## GeoSPARQL Functions
 
-
 `geof:distance(?geom_1, ?geom_2, ?unit)`<a id="geof-distance"></a>:
 Returns the geodesic distance between two geometries on the WGS84 ellipsoid.
 The first two arguments must be literals
@@ -30,83 +29,77 @@ Search](#geosparql-maximum-distance-search) below.
 `geof:metricDistance(?geom_1, ?geom_2)`<a id="geof-metricdistance"></a>:
 Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`.
 
-<details>
-<summary>Example query for <code>geof:distance</code> and <code>geof:metricDistance</code></summary><br />
+??? note "Example query for `geof:distance` and `geof:metricDistance`"
 
-The correct distance between the two points is approximately 446.363 meters.
+    The correct distance between the two points is approximately 446.363 meters.
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-PREFIX unit: <http://qudt.org/vocab/unit/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-SELECT * WHERE {
-  # Freiburg Central Railway Station and Freiburg University Library
-  BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
-  BIND ("POINT(7.8450491 47.9946000)"^^geo:wktLiteral AS ?b)
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX unit: <http://qudt.org/vocab/unit/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT * WHERE {
+      # Freiburg Central Railway Station and Freiburg University Library
+      BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
+      BIND ("POINT(7.8450491 47.9946000)"^^geo:wktLiteral AS ?b)
 
-  # Using unit: for unit IRIs
-  BIND (geof:distance(?a, ?b, unit:M) AS ?d_meters_1)
-  BIND (geof:distance(?a, ?b, unit:KiloM) AS ?d_kilometers_1)
-  BIND (geof:distance(?a, ?b, unit:MI) AS ?d_miles_1)
-  BIND (geof:distance(?a, ?b, unit:FT) AS ?d_feet_1)
-  BIND (geof:distance(?a, ?b, unit:YD) AS ?d_yards_1)
+      # Using unit: for unit IRIs
+      BIND (geof:distance(?a, ?b, unit:M) AS ?d_meters_1)
+      BIND (geof:distance(?a, ?b, unit:KiloM) AS ?d_kilometers_1)
+      BIND (geof:distance(?a, ?b, unit:MI) AS ?d_miles_1)
+      BIND (geof:distance(?a, ?b, unit:FT) AS ?d_feet_1)
+      BIND (geof:distance(?a, ?b, unit:YD) AS ?d_yards_1)
 
-  # Using xsd:anyURI for unit IRIs
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?d_meters_2)
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?d_kilometers_2)
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?d_miles_2)
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?d_feet_2)
-  BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?d_yards_2)
+      # Using xsd:anyURI for unit IRIs
+      BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?d_meters_2)
+      BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?d_kilometers_2)
+      BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?d_miles_2)
+      BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?d_feet_2)
+      BIND (geof:distance(?a, ?b, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?d_yards_2)
 
-  # Without unit argument, defaults to kilometers
-  BIND (geof:distance(?a, ?b) AS ?d_kilometers_3)
+      # Without unit argument, defaults to kilometers
+      BIND (geof:distance(?a, ?b) AS ?d_kilometers_3)
 
-  # For backwards compatibility
-  BIND (geof:metricDistance(?a, ?b) AS ?d_meters_3)
-}
-```
-</details>
+      # For backwards compatibility
+      BIND (geof:metricDistance(?a, ?b) AS ?d_meters_3)
+    }
+    ```
 
 `geof:latitude(?geom)`, `geof:longitude(?geom)`<a id="geof-lat-lon"></a>:
 Returns latitude and longitude coordinates from a `POINT` geometry, given as a
 literal with datatype `geo:wktLiteral`. The return value is a literal with
 datatype `xsd:decimal`.
 
-<details>
-<summary>Example query for <code>geof:latitude</code> and <code>geof:longitude</code></summary><br />
+??? note "Example query for `geof:latitude` and `geof:longitude`"
 
-Coordinates of Freiburg Central Railway Station:
+    Coordinates of Freiburg Central Railway Station:
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT * WHERE {
-  BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
-  BIND (geof:latitude(?a) AS ?lat)
-  BIND (geof:longitude(?a) AS ?lng)
-}
-```
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * WHERE {
+      BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
+      BIND (geof:latitude(?a) AS ?lat)
+      BIND (geof:longitude(?a) AS ?lng)
+    }
+    ```
 
 `geof:centroid(?geom)`<a id="geof-centroid"></a>: Returns the centroid of the
 given geometry, which must be a literal with datatype `geo:wktLiteral`. The
 return value is a literal with datatype `geo:wktLiteral`, representing a `POINT`.
 This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
-<details>
-<summary>Example query for <code>geof:centroid</code></summary><br />
+??? note "Example query for `geof:centroid`"
 
-The centroid should be 3,3.
+    The centroid should be 3,3.
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT * WHERE {
-  BIND(geof:centroid("POLYGON((2 4, 4 4, 4 2, 2 2, 2 4))"^^geo:wktLiteral) AS ?centroid)
-}
-```
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * WHERE {
+      BIND(geof:centroid("POLYGON((2 4, 4 4, 4 2, 2 2, 2 4))"^^geo:wktLiteral) AS ?centroid)
+    }
+    ```
 
 `geof:envelope(?geom)`<a id="geof-envelope"></a>: Returns the bounding box of a geometry. The geometry
 must be given as a literal with datatype `geo:wktLiteral`. The return value is
@@ -114,20 +107,18 @@ a literal with datatype `geo:wktLiteral`, representing a `POLYGON` with exactly
 five points (the first and last point are identical). This function benefits
 from [geometry preprocessing](#geometry-preprocessing).
 
-<details>
-<summary>Example query for <code>geof:envelope</code></summary><br />
+??? note "Example query for `geof:envelope`"
 
-The envelope of the given <code>LINESTRING</code> should be the rectangle with corners (2,4),
-(8,4), (8,6), (2,6), (2,4).
+    The envelope of the given `LINESTRING` should be the rectangle with corners (2,4),
+    (8,4), (8,6), (2,6), (2,4).
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT * {
-  BIND(geof:envelope("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?envelope)
-}
-```
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * {
+      BIND(geof:envelope("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?envelope)
+    }
+    ```
 
 `geof:geometryType(?geom)`<a id="geof-geometrytype"></a>: Returns the geometry type of the given geometry.
 The geometry must be given as literal with datatype `geo:wktLiteral`. The
@@ -143,19 +134,17 @@ Specification](https://www.ogc.org/standards/sfa):
 `http://www.opengis.net/ont/sf#GeometryCollection`. This function benefits
 from [geometry preprocessing](#geometry-preprocessing).
 
-<details>
-<summary>Example query for <code>geof:geometryType</code></summary><br />
+??? note "Example query for `geof:geometryType`"
 
-The result should be <code>"http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI</code>.
+    The result should be `"http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI`.
 
-```sparql
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-SELECT * {
-  BIND(geof:geometryType("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?geometryType)
-}
-```
-</details>
+    ```sparql
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * {
+      BIND(geof:geometryType("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?geometryType)
+    }
+    ```
 
 `geof:minX(?geom)`, `geof:minY(?geom)`, `geof:maxX(?geom)`, `geof:maxY(?geom)`<a id="geof-minmaxXY"></a>:
 Return the minimum and maximum X (longitude) and Y (latitude) coordinates of the
@@ -164,117 +153,108 @@ given geometry. The geometry must be given as a literal with datatype
 [geometry preprocessing](#geometry-preprocessing). The return values are 
 literals with datatype `xsd:decimal`.
 
-<details>
-<summary>Example query for <code>geof:minX</code>, <code>geof:minY</code>, <code>geof:maxX</code> and <code>geof:maxY</code></summary><br />
+??? note "Example query for `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY`"
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT * {
-  BIND("LINESTRING(2 4, 3 3, 6 8)"^^geo:wktLiteral AS ?geometry)
-  BIND (geof:minX(?geometry) AS ?minX) # Result: 2
-  BIND (geof:minY(?geometry) AS ?minY) # Result: 3
-  BIND (geof:maxX(?geometry) AS ?maxX) # Result: 6
-  BIND (geof:maxY(?geometry) AS ?maxY) # Result: 8
-}
-```
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * {
+      BIND("LINESTRING(2 4, 3 3, 6 8)"^^geo:wktLiteral AS ?geometry)
+      BIND (geof:minX(?geometry) AS ?minX) # Result: 2
+      BIND (geof:minY(?geometry) AS ?minY) # Result: 3
+      BIND (geof:maxX(?geometry) AS ?maxX) # Result: 6
+      BIND (geof:maxY(?geometry) AS ?maxY) # Result: 8
+    }
+    ```
 
 `geof:length(?geom, ?unit)`<a id="geof-length"></a>: This function computes the length of a geometry given as `geo:wktLiteral`. Note that not only linestrings have a length according to the OGC standard, but also for example polygons. The length function supports the same units as the [`geof:distance` function](#geof-distance).  This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
-`geof:metricLength(?geom)`<a id="geof-metriclength"></a>: The same as `geof:length`` but always returns the length in meters.
+`geof:metricLength(?geom)`<a id="geof-metriclength"></a>: The same as `geof:length` but always returns the length in meters.
 
-<details>
-<summary>Example query for <code>geof:length</code> and <code>geof:metricLength</code></summary><br />
+??? note "Example query for `geof:length` and `geof:metricLength`"
 
-Length of the <a href="https://openstreetmap.org/relation/1781296">Rhine Valley Railway Mannheim - Basel</a>:
+    Length of the [Rhine Valley Railway Mannheim - Basel](https://openstreetmap.org/relation/1781296):
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-PREFIX unit: <http://qudt.org/vocab/unit/>
-PREFIX osmrel: <https://www.openstreetmap.org/relation/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-SELECT * {
-  osmrel:1781296 geo:hasGeometry/geo:asWKT ?geom .
-  
-  BIND (geof:metricLength(?geom) AS ?meters)
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX unit: <http://qudt.org/vocab/unit/>
+    PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT * {
+      osmrel:1781296 geo:hasGeometry/geo:asWKT ?geom .
 
-  BIND (geof:length(?geom, unit:M) AS ?meters2)
-  BIND (geof:length(?geom, unit:KiloM) AS ?kilometers2)
-  BIND (geof:length(?geom, unit:MI) AS ?miles2)
-  BIND (geof:length(?geom, unit:FT) AS ?feet2)
-  BIND (geof:length(?geom, unit:YD) AS ?yards2)
-  
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?meters3)
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?kilometers3)
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?miles3)
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?feet3)
-  BIND (geof:length(?geom, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?yards3)
-}
-```
-</details>
+      BIND (geof:metricLength(?geom) AS ?meters)
+
+      BIND (geof:length(?geom, unit:M) AS ?meters2)
+      BIND (geof:length(?geom, unit:KiloM) AS ?kilometers2)
+      BIND (geof:length(?geom, unit:MI) AS ?miles2)
+      BIND (geof:length(?geom, unit:FT) AS ?feet2)
+      BIND (geof:length(?geom, unit:YD) AS ?yards2)
+
+      BIND (geof:length(?geom, "http://qudt.org/vocab/unit/M"^^xsd:anyURI) AS ?meters3)
+      BIND (geof:length(?geom, "http://qudt.org/vocab/unit/KiloM"^^xsd:anyURI) AS ?kilometers3)
+      BIND (geof:length(?geom, "http://qudt.org/vocab/unit/MI"^^xsd:anyURI) AS ?miles3)
+      BIND (geof:length(?geom, "http://qudt.org/vocab/unit/FT"^^xsd:anyURI) AS ?feet3)
+      BIND (geof:length(?geom, "http://qudt.org/vocab/unit/YD"^^xsd:anyURI) AS ?yards3)
+    }
+    ```
 
 `geof:area(?geom, ?unit)`<a id="geof-area"></a>: This function computes the area of a geometry given as `geo:wktLiteral`. The supported units are currently square meters `unit:M2`, square kilometers `unit:KiloM2`, square land miles `unit:MI2`,  square feet `unit:FT2`, square yards `unit:YD2`, acre `unit:AC`, are `unit:ARE` and hectare `unit:HA`. The units may be passed as an IRI with the prefix `http://qudt.org/vocab/unit/` or as `xsd:anyURI` literal. The function returns an `xsd:decimal`. This function benefits from [geometry preprocessing](#geometry-preprocessing). *NOTE*: The OGC standard says that `geof:area` and `geof:metricArea` "must return zero for all geometry types other than Polygon". We interpret this such that an area may still be returned for polygons contained in `MULTIPOLYGON` or `GEOMETRYCOLLECTION` literals.
 
 `geof:metricArea(?geom)`<a id="geof-metricarea"></a>: The same as `geof:area` but always returns the area in square meters.
 
-<details>
-<summary>Example query for <code>geof:area</code> and <code>geof:metricArea</code></summary><br />
+??? note "Example query for `geof:area` and `geof:metricArea`"
 
-Area of the <a href="https://www.openstreetmap.org/way/6593464">water reservoir "Llac d'Engolasters" in Andorra</a>:
+    Area of the [water reservoir "Llac d'Engolasters" in Andorra](https://www.openstreetmap.org/way/6593464):
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX osmway: <https://www.openstreetmap.org/way/>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-PREFIX unit: <http://qudt.org/vocab/unit/>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-SELECT * WHERE {
-  osmway:6593464 geo:hasGeometry/geo:asWKT ?geometry .
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX osmway: <https://www.openstreetmap.org/way/>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX unit: <http://qudt.org/vocab/unit/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT * WHERE {
+      osmway:6593464 geo:hasGeometry/geo:asWKT ?geometry .
 
-  BIND (geof:metricArea(?geometry) AS ?metric_area)
+      BIND (geof:metricArea(?geometry) AS ?metric_area)
 
-  BIND (geof:area(?geometry, unit:M2) AS ?area_sqm)
-  BIND (geof:area(?geometry, unit:KiloM2) AS ?area_sqkm)
-  BIND (geof:area(?geometry, unit:MI2) AS ?area_sqmi)
-  BIND (geof:area(?geometry, unit:FT2) AS ?area_sqft)
-  BIND (geof:area(?geometry, unit:YD2) AS ?area_sqyd)
-  BIND (geof:area(?geometry, unit:AC) AS ?area_acre)
-  BIND (geof:area(?geometry, unit:ARE) AS ?area_are)
-  BIND (geof:area(?geometry, unit:HA) AS ?area_ha)
+      BIND (geof:area(?geometry, unit:M2) AS ?area_sqm)
+      BIND (geof:area(?geometry, unit:KiloM2) AS ?area_sqkm)
+      BIND (geof:area(?geometry, unit:MI2) AS ?area_sqmi)
+      BIND (geof:area(?geometry, unit:FT2) AS ?area_sqft)
+      BIND (geof:area(?geometry, unit:YD2) AS ?area_sqyd)
+      BIND (geof:area(?geometry, unit:AC) AS ?area_acre)
+      BIND (geof:area(?geometry, unit:ARE) AS ?area_are)
+      BIND (geof:area(?geometry, unit:HA) AS ?area_ha)
 
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/M2"^^xsd:anyURI) AS ?area_sqm_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/KiloM2"^^xsd:anyURI) AS ?area_sqkm_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/MI2"^^xsd:anyURI) AS ?area_sqmi_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/FT2"^^xsd:anyURI) AS ?area_sqft_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/YD2"^^xsd:anyURI) AS ?area_sqyd_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/AC"^^xsd:anyURI) AS ?area_acre_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/ARE"^^xsd:anyURI) AS ?area_are_2)
-  BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/HA"^^xsd:anyURI) AS ?area_ha_2)
-}
-```
-</details>
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/M2"^^xsd:anyURI) AS ?area_sqm_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/KiloM2"^^xsd:anyURI) AS ?area_sqkm_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/MI2"^^xsd:anyURI) AS ?area_sqmi_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/FT2"^^xsd:anyURI) AS ?area_sqft_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/YD2"^^xsd:anyURI) AS ?area_sqyd_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/AC"^^xsd:anyURI) AS ?area_acre_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/ARE"^^xsd:anyURI) AS ?area_are_2)
+      BIND (geof:area(?geometry, "http://qudt.org/vocab/unit/HA"^^xsd:anyURI) AS ?area_ha_2)
+    }
+    ```
 
 `geof:numGeometries(?geom)`<a id="geof-numgeometries"></a>: This function returns the number of child geometries contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the result is `1`. The result has datatype `xsd:int`. This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
-<details>
-<summary>Example query for <code>geof:numGeometries</code></summary><br />
+??? note "Example query for `geof:numGeometries`"
 
-The top 100 geometries with the most members:
+    The top 100 geometries with the most members:
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT * WHERE {
-  ?any geo:hasGeometry/geo:asWKT ?any_geometry .
-  BIND (geof:numGeometries(?any_geometry) AS ?num)
-}
-ORDER BY DESC(?num)
-LIMIT 100
-```
-</details>
-
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * WHERE {
+      ?any geo:hasGeometry/geo:asWKT ?any_geometry .
+      BIND (geof:numGeometries(?any_geometry) AS ?num)
+    }
+    ORDER BY DESC(?num)
+    LIMIT 100
+    ```
 
 `geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`.
 
@@ -308,21 +288,19 @@ The implementation currently has to parse WKT geometries for all geometry types 
 
 *Current quirk:* The maximum distance search (each of the `FILTER` patterns above) supports the WKT geometry types `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`, while the non-optimized `geof:distance` and `geof:metricDistance` implementation only supports `POINT` so far.
 
-<details>
-<summary>Example query</summary><br />
+??? note "Example query"
 
-All restaurants within 50 meters of public transport stops:
+    All restaurants within 50 meters of public transport stops:
 
-```sparql
-SELECT ?restaurant ?stop ?restaurant_geometry WHERE {
-  ?restaurant osmkey:amenity "restaurant" ;
-              geo:hasGeometry/geo:asWKT ?restaurant_geometry .
-  ?stop osmkey:public_transport "stop_position" ;
-        geo:hasGeometry/geo:asWKT ?stop_geometry .
-  FILTER (geof:metricDistance(?restaurant_geometry,?stop_geometry) <= 50)
-}
-```
-</details>
+    ```sparql
+    SELECT ?restaurant ?stop ?restaurant_geometry WHERE {
+      ?restaurant osmkey:amenity "restaurant" ;
+                  geo:hasGeometry/geo:asWKT ?restaurant_geometry .
+      ?stop osmkey:public_transport "stop_position" ;
+            geo:hasGeometry/geo:asWKT ?stop_geometry .
+      FILTER (geof:metricDistance(?restaurant_geometry,?stop_geometry) <= 50)
+    }
+    ```
 
 ## GeoSPARQL Geometric Relations
 
@@ -350,44 +328,40 @@ This will be fixed in the near future. Also, the implementation currently has
 to parse WKT geometries for all geometry types except points. This is being
 worked on, so you may expect a performance improvement in the future.
 
-<details>
-<summary>Example query</summary><br />
+??? note "Example query"
 
-<a href="https://qlever.dev/osm-planet/FKzeVH">All railway lines crossing rivers</a>:
+    [All railway lines crossing rivers](https://qlever.dev/osm-planet/FKzeVH):
 
-```sparql
-SELECT ?river ?rail ?rail_geometry WHERE {
-  ?river osmkey:waterway "river" ;
-         geo:hasGeometry/geo:asWKT ?river_geometry .
-  ?rail osmkey:railway "rail" ;
-        geo:hasGeometry/geo:asWKT ?rail_geometry .
-  FILTER (geof:sfIntersects(?rail_geometry,?river_geometry))
-}
-```
-</details>
+    ```sparql
+    SELECT ?river ?rail ?rail_geometry WHERE {
+      ?river osmkey:waterway "river" ;
+            geo:hasGeometry/geo:asWKT ?river_geometry .
+      ?rail osmkey:railway "rail" ;
+            geo:hasGeometry/geo:asWKT ?rail_geometry .
+      FILTER (geof:sfIntersects(?rail_geometry,?river_geometry))
+    }
+    ```
 
 ## Precomputing GeoSPARQL geometric relations using `osm2rdf`
 
 For OpenStreetMap data, geometric relations can be precomputed as part of the dataset (e.g. `ogc:sfContains`, `ogc:sfIntersects`, ... triples) using [`osm2rdf`](https://github.com/ad-freiburg/osm2rdf). Geometries from `osm2rdf` are represented as `geo:wktLiteral`s, which can be addressed by `geo:hasGeometry/geo:asWKT`. `osm2rdf` also provides centroids of objects via `geo:hasCentroid/geo:asWKT` and more, if requested. Please note that the geometric relations are given as triples between the OpenStreetMap entities, not the geometries.
 
-<details>
-<summary>Example query with <code>osm2rdf</code></summary><br />
+??? note "Example query with `osm2rdf`"
 
-<a href="https://qlever.dev/osm-planet/7cxklb">All Buildings in the City of Freiburg</a>:
+    [All Buildings in the City of Freiburg](https://qlever.dev/osm-planet/7cxklb):
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
-PREFIX ogc: <http://www.opengis.net/rdf#>
-PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+    PREFIX ogc: <http://www.opengis.net/rdf#>
+    PREFIX osmrel: <https://www.openstreetmap.org/relation/>
 
-SELECT ?osm_id ?hasgeometry WHERE {
-  osmrel:62768 ogc:sfContains ?osm_id .
-  ?osm_id geo:hasGeometry/geo:asWKT ?hasgeometry .
-  ?osm_id osmkey:building [] .
-}
-```
-</details>
+    SELECT ?osm_id ?hasgeometry WHERE {
+      osmrel:62768 ogc:sfContains ?osm_id .
+      ?osm_id geo:hasGeometry/geo:asWKT ?hasgeometry .
+      ?osm_id osmkey:building [] .
+    }
+    ```
 
 ## Custom spatial search
 
@@ -442,80 +416,75 @@ NOTE: The individual algorithms support different subsets of all valid literals 
 
 NOTE: Geometries except for points currently need to be parsed for every query leading to longer running times. We are working on it.
 
-<details>
-<summary>Example queries</summary><br />
+??? note "Example queries"
 
-<a href="https://qlever.dev/osm-planet/OXupEH">For each railway station, the three closest supermarkets</a>:
+    [For each railway station, the three closest supermarkets](https://qlever.dev/osm-planet/OXupEH):
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
-PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
-SELECT * WHERE {
-  ?station osmkey:railway "station" ;
-           osmkey:name ?name ;
-           geo:hasCentroid/geo:asWKT ?station_geometry .
-  
-  SERVICE qlss: {
-    _:config  qlss:left ?station_geometry ;
-              qlss:right ?supermarket_geometry ;
-              qlss:numNearestNeighbors 3 .
-    {
-      ?supermarket osmkey:shop "supermarket" ;
-                   geo:hasCentroid/geo:asWKT ?supermarket_geometry .
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+    PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
+    SELECT * WHERE {
+      ?station osmkey:railway "station" ;
+              osmkey:name ?name ;
+              geo:hasCentroid/geo:asWKT ?station_geometry .
+
+      SERVICE qlss: {
+        _:config  qlss:left ?station_geometry ;
+                  qlss:right ?supermarket_geometry ;
+                  qlss:numNearestNeighbors 3 .
+        {
+          ?supermarket osmkey:shop "supermarket" ;
+                      geo:hasCentroid/geo:asWKT ?supermarket_geometry .
+        }
+      }
     }
-  }
-}
-```
+    ```
 
-<a href="https://qlever.dev/osm-planet/5QvF74">All railway lines intersecting rivers in Germany</a>:
+    [All railway lines intersecting rivers in Germany](https://qlever.dev/osm-planet/5QvF74):
 
-```sparql
-PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
-PREFIX osmrel: <https://www.openstreetmap.org/relation/>
-PREFIX ogc: <http://www.opengis.net/rdf#>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
+    ```sparql
+    PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+    PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+    PREFIX ogc: <http://www.opengis.net/rdf#>
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
 
-SELECT DISTINCT ?rail ?rail_geometry WHERE {
-  osmrel:51477 ogc:sfIntersects ?river .
-  ?river osmkey:water "river" .
-  ?river geo:hasGeometry/geo:asWKT ?river_geometry .
+    SELECT DISTINCT ?rail ?rail_geometry WHERE {
+      osmrel:51477 ogc:sfIntersects ?river .
+      ?river osmkey:water "river" .
+      ?river geo:hasGeometry/geo:asWKT ?river_geometry .
 
-  SERVICE qlss: {
-    _:config qlss:algorithm qlss:libspatialjoin ;
-             qlss:left ?river_geometry ;
-             qlss:right ?rail_geometry ;
-             qlss:payload ?rail ;
-             qlss:joinType qlss:intersects .
-    {
-      osmrel:51477 ogc:sfContains ?rail .
-      ?rail osmkey:railway "rail" .
-      ?rail geo:hasGeometry/geo:asWKT ?rail_geometry .
+      SERVICE qlss: {
+        _:config qlss:algorithm qlss:libspatialjoin ;
+                qlss:left ?river_geometry ;
+                qlss:right ?rail_geometry ;
+                qlss:payload ?rail ;
+                qlss:joinType qlss:intersects .
+        {
+          osmrel:51477 ogc:sfContains ?rail .
+          ?rail osmkey:railway "rail" .
+          ?rail geo:hasGeometry/geo:asWKT ?rail_geometry .
+        }
+      }
     }
-  }
-}
-```
-</details>
+    ```
 
 Special predicate `<max-distance-in-meters:m>`: As a shortcut, a special
 predicate `<max-distance-in-meters:m>` is also supported. The parameter `m`
 refers to the maximum search radius in meters. It may be used as a triple with
 the left join variable as subject and the right join variable as object.
 
+??? note "Example query for `<max-distance-in-meters:m>`"
 
-<details>
-<summary>Example query for <code>&lt;max-distance-in-meters:m&gt;</code></summary><br />
-
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-SELECT * WHERE {
-  ?a geo:hasCentroid/geo:asWKT ?left_geometry .
-  ?left_geometry <max-distance-in-meters:300> ?right_geometry .
-  ?b geo:hasCentroid/geo:asWKT ?right_geometry .
-}
-```
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * WHERE {
+      ?a geo:hasCentroid/geo:asWKT ?left_geometry .
+      ?left_geometry <max-distance-in-meters:300> ?right_geometry .
+      ?b geo:hasCentroid/geo:asWKT ?right_geometry .
+    }
+    ```
 
 Deprecated special predicate `<nearest-neighbors:k>` or
 `<nearest-neighbors:k:m>`: *This feature is deprecated and will produce a
@@ -527,19 +496,16 @@ follows: For each point `?left` QLever will output the `k` nearest points from
 further statements. Using the optional integer value `m` a maximum distance in
 meters can be given that restricts the search radius. Example query:
 
+??? note "Example query for `<nearest-neighbors:k:m>`"
 
-<details>
-<summary>Example query for <code>&lt;nearest-neighbors:k:m&gt;</code></summary><br />
-
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-SELECT * WHERE {
-  ?a geo:hasCentroid/geo:asWKT ?left_geometry .
-  ?left_geometry <nearest-neighbors:2:1000> ?right_geometry .
-  ?b geo:hasCentroid/geo:asWKT ?right_geometry .
-}
-```
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * WHERE {
+      ?a geo:hasCentroid/geo:asWKT ?left_geometry .
+      ?left_geometry <nearest-neighbors:2:1000> ?right_geometry .
+      ?b geo:hasCentroid/geo:asWKT ?right_geometry .
+    }
+    ```
 
 ## Runtime parameters
 
@@ -558,4 +524,3 @@ outweigh the savings. Thus prefiltering is disabled at a certain bounding box
 size. This can be configured using `spatial-join-prefilter-max-size`. By
 default the limit is `2500` square coordinates. To deactivate prefiltering
 completely, set this to `0`.
-
