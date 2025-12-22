@@ -278,20 +278,17 @@ LIMIT 100
 
 `geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`.
 
-<details>
-<summary>Example query for <code>geof:geometryN</code></summary><br />
+??? "Example query for `geof:geometryN`"
 
-```sparql
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT * WHERE {
-  BIND (geof:geometryN("MULTIPOINT(1 2,3 4,5 6,7 8)"^^geo:wktLiteral, 4) AS ?wkt1) # POINT(7 8)
-  BIND (geof:geometryN("MULTILINESTRING((1 2,3 4),(5 6,7 8,9 0))"^^geo:wktLiteral, 2) AS ?wkt2) # LINESTRING(5 6,7 8,9 0)
-  BIND (geof:geometryN("POINT(3 4)"^^geo:wktLiteral, 1) AS ?wkt3) # POINT(3 4)
-}
-```
-
-</details>
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * WHERE {
+      BIND (geof:geometryN("MULTIPOINT(1 2,3 4,5 6,7 8)"^^geo:wktLiteral, 4) AS ?wkt1) # POINT(7 8)
+      BIND (geof:geometryN("MULTILINESTRING((1 2,3 4),(5 6,7 8,9 0))"^^geo:wktLiteral, 2) AS ?wkt2) # LINESTRING(5 6,7 8,9 0)
+      BIND (geof:geometryN("POINT(3 4)"^^geo:wktLiteral, 1) AS ?wkt3) # POINT(3 4)
+    }
+    ```
 
 
 ## GeoSPARQL Maximum Distance Search
