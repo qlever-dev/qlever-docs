@@ -17,6 +17,7 @@ nav:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
     - Update: update.md
+    - Materialized Views: materialized-views.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
