@@ -18,6 +18,7 @@ nav:
     - GeoSPARQL support: geosparql.md
     - Update: update.md
     - Materialized Views: materialized-views.md
+    - Rebuild index: rebuild-index.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
