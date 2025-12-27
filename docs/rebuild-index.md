@@ -31,12 +31,13 @@ The feature is not yet part of the QLever master branch. It is available via
 the Docker image `qlever/qlever:REBUILD-INDEX-BETA`, or, if you want to build
 QLever from source, via https://github.com/ad-freiburg/qlever/pull/2408.
 
-In its simplest form, you can just call `qlever rebuild-index`. This will
-create a new index in a subdirectory `rebuild.YYYY-MM-DDTHH:MM' of the current
-directory, with the same base name as the current index. You can specify a different 
-base name via the option `--index-name`, and a different target directory with
-the option `--index-dir'. To automatically restart the server once the rebuild
-is complete, use the option `--restart-when-finished`. Alternatively, you can
+In its simplest form, you can just call `qlever rebuild-index` (you need
+version `0.5.37` or later for this). This will create a new index in a
+subdirectory `rebuild.YYYY-MM-DDTHH:MM' of the current directory, with the same
+base name as the current index. You can specify a different base name via the
+option `--index-name`, and a different target directory with the option
+`--index-dir'. To automatically restart the server once the rebuild is
+complete, use the option `--restart-when-finished`. Alternatively, you can
 trigger the rebuild via the QLever HTTP API as described below.
 
 === "qlever CLI"
