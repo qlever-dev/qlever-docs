@@ -46,7 +46,9 @@ and a dataset with 360 million triples and 530 million text records.
 
 You can get statistics for the currently active index in the following way:
 
-    <server>:<port>/?cmd=stats
+```
+<server>:<port>/?cmd=stats
+```
 
 This query will yield a JSON response that features:
 
@@ -59,12 +61,10 @@ This query will yield a JSON response that features:
 * The number of word occurrences/postings in the text index (if a text index is present)
 * The number of entity occurrences/postings in the text index (if a text index is present)
 
-
 The name of an index is the name of the input file (and wordsfile for the
 text index), but can also be specified manually while building an index.
 Therefore, IndexbuilderMain takes two optional arguments: `--text-index-name` (`-T`)
 and `--kb-index-name` (`-K`).
-
 
 ## Send vs Compute
 
