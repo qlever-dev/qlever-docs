@@ -28,7 +28,7 @@ data in RDF, each property is represented as a separate set of triples. Let's
 assume we want all these properties for a subset of the geometries, e.g., all
 lakes. The natural SPARQL query for this looks as follows.
 
-```sparql
+```sparql {data-demo-engine="osm-planet"}
 PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
