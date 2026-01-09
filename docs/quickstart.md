@@ -7,6 +7,47 @@ need to use QLever. [See here for a complete reference of all the possible setti
 
 ## Installation
 
+### Debian and Ubuntu
+
+When using Debian or Ubuntu we recommend using our package repository. Installing QLever natively as a package has the advantages that it has no performance penalty compared to running in Docker, you get easy updates through your packet manager and shell completions for bash, zsh and fish.
+
+```bash title="Configure the QLever repository"
+# Install the repositories signing key
+sudo apt update && sudo apt install -y wget gpg ca-certificates
+wget -qO - https://packages.qlever.dev/pub.asc | gpg --dearmor | sudo tee /usr/share/keyrings/qlever.gpg > /dev/null
+# Add the repository
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/qlever.gpg] https://packages.qlever.dev/ $(. /etc/os-release && echo "$VERSION_CODENAME") main" | sudo tee /etc/apt/sources.list.d/qlever.list
+# Fetch the available packages from the repository
+sudo apt update
+```
+
+```bash title="Install QLever"
+sudo apt install qlever
+```
+
+=== "bash"
+    ```bash title="Enable completions"
+    sudo apt install bash-completions
+    echo ". /usr/share/bash-completion/bash_completion" >> ~/.bashrc
+    # To enable system wide completion remove the comments from the completions block in /etc/bash.bashrc
+    ```
+=== "zsh"
+    ```zsh title="Enable completions"
+    echo "autoload -U compinit && compinit" >> ~/.zshrc
+    ```
+=== "fish"
+    ```fish title="Enable completions"
+    # Nothing to do
+    ```
+
+### Mac
+
+Download and install the latest native version from the [QLever Releases on Github](https://github.com/ad-freiburg/qlever/releases).
+
+### Others
+
+For any of the platforms not listed above you can install the `qever` CLI tool using system indepent methods. Note: QLever will be executed in a container which will come with a performance penalty.
+
 === "pip"
     ``` bash
     # inside a virtual environment
