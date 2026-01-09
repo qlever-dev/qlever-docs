@@ -113,6 +113,7 @@ SELECT ?start ?end ?path ?edge WHERE {
     ```
 
     This query will search forall between all sources and all targets, i.e.
+
     - (`<source1>`, `<target1>`)
     - (`<source1>`, `<target2>`)
     - (`<source2>`, `<target1>`)
@@ -120,6 +121,7 @@ SELECT ?start ?end ?path ?edge WHERE {
 
     It is possible to specify, whether the sources and targets should be combined according
     to the cartesian product (as seen above) or if they should be matched up pairwise, i.e.
+    
     - (`<source1>`, `<target1>`)
     - (`<source2>`, `<target2>`)
 
