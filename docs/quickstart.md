@@ -12,12 +12,9 @@ need to use QLever. [See here for a complete reference of all the possible setti
 When using Debian or Ubuntu we recommend using our package repository. In particular, this enables easy updates via your packet manager and tab completion for `bash`, `zsh` and `fish`.
 
 ```bash title="Configure the QLever repository"
-# Install the repositories signing key
 sudo apt update && sudo apt install -y wget gpg ca-certificates
 wget -qO - https://packages.qlever.dev/pub.asc | gpg --dearmor | sudo tee /usr/share/keyrings/qlever.gpg > /dev/null
-# Add the repository
 echo "deb [arch=amd64 signed-by=/usr/share/keyrings/qlever.gpg] https://packages.qlever.dev/ $(. /etc/os-release && echo "$VERSION_CODENAME") main" | sudo tee /etc/apt/sources.list.d/qlever.list
-# Fetch the available packages from the repository
 sudo apt update
 ```
 
@@ -41,7 +38,14 @@ sudo apt install qlever
 
 ### Mac (Apple Silicon)
 
-Download and install the latest native version from the [QLever Releases on Github](https://github.com/ad-freiburg/qlever/releases).
+On Mac, QLever is available via homebrew.
+
+=== "bash"
+    ```bash
+    brew tap qlever-dev/qlever
+    brew install qlever
+    ```
+
 
 ### Others
 
