@@ -38,13 +38,10 @@ sudo apt install qlever
 
 ### Mac (Apple Silicon)
 
-On Mac, QLever is available via homebrew.
-
-=== "bash"
-    ```bash
-    brew tap qlever-dev/qlever
-    brew install qlever
-    ```
+```bash title="Install QLever via Homebrew"
+brew tap qlever-dev/qlever
+brew install qlever
+```
 
 
 ### Others
