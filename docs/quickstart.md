@@ -9,7 +9,7 @@ need to use QLever. [See here for a complete reference of all the possible setti
 
 ### Debian and Ubuntu
 
-When using Debian or Ubuntu we recommend using our package repository. Installing QLever natively as a package has the advantages that it has no performance penalty compared to running in Docker, you get easy updates through your packet manager and shell completions for bash, zsh and fish.
+When using Debian or Ubuntu we recommend using our package repository. In particular, this enables easy updates via your packet manager and tab completion for `bash`, `zsh` and `fish`.
 
 ```bash title="Configure the QLever repository"
 # Install the repositories signing key
@@ -26,21 +26,20 @@ sudo apt install qlever
 ```
 
 === "bash"
-    ```bash title="Enable completions"
-    sudo apt install bash-completions
-    echo ". /usr/share/bash-completion/bash_completion" >> ~/.bashrc
-    # To enable system wide completion remove the comments from the completions block in /etc/bash.bashrc
+    ```bash title="Enable tab completion"
+    sudo apt install bash-completion
+    echo "source /etc/bash_completion" >> ~/.bashrc
     ```
 === "zsh"
-    ```zsh title="Enable completions"
+    ```zsh title="Enable tab completion"
     echo "autoload -U compinit && compinit" >> ~/.zshrc
     ```
 === "fish"
-    ```fish title="Enable completions"
+    ```fish title="Enable tab completion"
     # Nothing to do
     ```
 
-### Mac
+### Mac (Apple Silicon)
 
 Download and install the latest native version from the [QLever Releases on Github](https://github.com/ad-freiburg/qlever/releases).
 
