@@ -24,7 +24,7 @@ need to use QLever. [See here for a complete reference of all the possible setti
         uv tool uninstall qlever
         ```
 
-When using Debian or Ubuntu we recommend using our package repository. In particular, this enables easy updates via your packet manager and tab completion for `bash`, `zsh` and `fish`.
+When using Debian or Ubuntu we recommend using our package repository. In particular, this enables easy updates via your package manager and tab completion for `bash`, `zsh` and `fish`.
 
 ```bash title="Configure the QLever repository"
 sudo apt update && sudo apt install -y wget gpg ca-certificates
@@ -51,7 +51,9 @@ sudo apt install qlever
     # Nothing to do
     ```
 
-### Mac (Apple Silicon)
+### macOS (Apple Silicon)
+
+On macOS, we recommend installing QLever via [Homebrew](https://brew.sh/).
 
 !!! warning "Uninstall old versions"
     Uninstall any old versions of QLever that have been installed with other methods. They may conflict with the package.
@@ -75,7 +77,7 @@ brew install qlever
 
 ### Others
 
-For any of the platforms not listed above you can install the `qever` CLI tool using system indepent methods. Note: QLever will be executed in a container which will come with a performance penalty.
+For any of the platforms not listed above you can install the `qlever` CLI tool using system independent methods. Note: QLever will be executed in a container which will come with a performance penalty.
 
 === "pip"
     ``` bash
