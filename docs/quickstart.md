@@ -9,6 +9,21 @@ need to use QLever. [See here for a complete reference of all the possible setti
 
 ### Debian and Ubuntu
 
+!!! warning "Uninstall old versions"
+    Uninstall any old versions of QLever that have been installed with other methods. They may conflict with the package.
+    === "pip"
+        ```bash
+        pip uninstall qlever
+        ```
+    === "pipx"
+        ```bash
+        pipx uninstall qlever
+        ```
+    === "uv"
+        ```bash
+        uv tool uninstall qlever
+        ```
+
 When using Debian or Ubuntu we recommend using our package repository. In particular, this enables easy updates via your packet manager and tab completion for `bash`, `zsh` and `fish`.
 
 ```bash title="Configure the QLever repository"
@@ -38,11 +53,25 @@ sudo apt install qlever
 
 ### Mac (Apple Silicon)
 
+!!! warning "Uninstall old versions"
+    Uninstall any old versions of QLever that have been installed with other methods. They may conflict with the package.
+    === "pip"
+        ```bash
+        pip uninstall qlever
+        ```
+    === "pipx"
+        ```bash
+        pipx uninstall qlever
+        ```
+    === "uv"
+        ```bash
+        uv tool uninstall qlever
+        ```
+
 ```bash title="Install QLever via Homebrew"
 brew tap qlever-dev/qlever
 brew install qlever
 ```
-
 
 ### Others
 
