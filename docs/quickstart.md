@@ -5,15 +5,15 @@ tool `qlever`, which is controlled by a single configuration file, called
 `Qleverfile`. For most applications, the `qlever` command-line tool is all you
 need to use QLever. [See here for a complete reference of all the possible settings in a `Qleverfile`](qleverfile.md).
 
-## Installation
+## Installing QLever
 
 ### Debian and Ubuntu
 
 !!! warning "Uninstall old versions"
-    Uninstall any old versions of QLever that have been installed with other methods. They may conflict with the package.
+    Since 21.01.2026, there are official QLever packages for Debian, Ubuntu, and Ubuntu-derived distributions. Please uninstall any old versions of QLever that have been installed with other methods because they may conflict with the package.
     === "pip"
         ```bash
-        pip uninstall qlever
+        pip uninstall qlever --break-system-packages
         ```
     === "pipx"
         ```bash
@@ -24,17 +24,17 @@ need to use QLever. [See here for a complete reference of all the possible setti
         uv tool uninstall qlever
         ```
 
-When using Debian or Ubuntu we recommend using our package repository. In particular, this enables easy updates via your package manager and tab completion for `bash`, `zsh` and `fish`.
-
-```bash title="Configure the QLever repository"
+```bash title="Install QLever on Debian and Ubuntu"
 sudo apt update && sudo apt install -y wget gpg ca-certificates
 wget -qO - https://packages.qlever.dev/pub.asc | gpg --dearmor | sudo tee /usr/share/keyrings/qlever.gpg > /dev/null
-echo "deb [arch=amd64 signed-by=/usr/share/keyrings/qlever.gpg] https://packages.qlever.dev/ $(. /etc/os-release && echo "$VERSION_CODENAME") main" | sudo tee /etc/apt/sources.list.d/qlever.list
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/qlever.gpg] https://packages.qlever.dev/ $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") main" | sudo tee /etc/apt/sources.list.d/qlever.list
 sudo apt update
+sudo apt install qlever
 ```
 
-```bash title="Install QLever"
-sudo apt install qlever
+```bash title="Update QLever on Debian and Ubuntu"
+sudo apt update
+sudo apt upgrade qlever
 ```
 
 === "bash"
@@ -56,10 +56,10 @@ sudo apt install qlever
 On macOS, we recommend installing QLever via [Homebrew](https://brew.sh/).
 
 !!! warning "Uninstall old versions"
-    Uninstall any old versions of QLever that have been installed with other methods. They may conflict with the package.
+    Since 21.01.2026, there is an official QLever packages for macOS. Please uninstall any old versions of QLever that have been installed with other methods because they may conflict with the new package.
     === "pip"
         ```bash
-        pip uninstall qlever
+        pip uninstall qlever --break-system-packages
         ```
     === "pipx"
         ```bash
@@ -75,25 +75,46 @@ brew tap qlever-dev/qlever
 brew install qlever
 ```
 
+```bash title="Update QLever via Homebrew"
+brew update
+brew upgrade qlever
+```
+
 ### Others
 
 For any of the platforms not listed above you can install the `qlever` CLI tool using system independent methods. Note: QLever will be executed in a container which will come with a performance penalty.
 
 === "pip"
-    ``` bash
+    ``` bash title="Install QLever via pip"
     # inside a virtual environment
     pip install qlever
     ```
 === "pipx"
-    ``` bash
+    ``` bash title="Install QLever via pipx"
     pipx install qlever
     ```
 === "uv"
-    ```bash
-    uv tool install --upgrade qlever
+    ```bash title="Install QLever via uv"
+    uv tool install qlever
     ```
 
-## Usage
+<!-- Dummy HTML comment to prevent MkDocs from glueing the previous and next code block together -->
+
+=== "pip"
+    ``` bash title="Update QLever via pip"
+    # inside a virtual environment
+    pip uninstall qlever && pip install qlever
+    ```
+=== "pipx"
+    ``` bash title="Update QLever via pipx"
+    pipx upgrade qlever
+    ```
+=== "uv"
+    ```bash title="Install QLever via uv"
+    uv tool upgrade qlever
+    ```
+
+## Using QLever
 
 === "pip"
     ``` bash
