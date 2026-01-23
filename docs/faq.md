@@ -34,11 +34,14 @@ possible, including the exact command you ran, the content of your `Qleverfile`
 
 ## Does QLever have releases?
 
-We currently treat every commit to the `master` branch as a release. In
-particular, each commit comes with a detailed description and an own Docker
-image on <https://hub.docker.com/r/adfreiburg/qlever/>, tagged with the commit
-hash as well as with the corresponding pull request number. Each commit is
-extensively tested and reviewed before being merged into the QLever `master`.
+Yes, see [Quickstart, Installing QLever](quickstart.md#installing-qlever).
+
+If you want the latest features and fixes, you can use the latest commit
+on the `master` branch of http://github.com/ad-freiburg/qlever. Each commit
+comes with a detailed description and an own Docker image on
+<https://hub.docker.com/r/adfreiburg/qlever/>, tagged with the commit hash as
+well as with the corresponding pull request number. Each commit is
+extensively tested and reviewed before being merged into the `master` branch.
 
 ## Are there publications about QLever?
 
