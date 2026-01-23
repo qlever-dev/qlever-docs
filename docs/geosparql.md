@@ -21,10 +21,8 @@ with datatype `geo:wktLiteral`, representing geometries in WKT format. The
 the prefix for `http://qudt.org/vocab/unit/`. Alternatively, the unit IRI can
 be given as an `xsd:anyURI` literal. If no unit is given, the distance is
 returned in kilometers. The distance is returned as a literal with datatype
-`xsd:decimal`. *RESTRICTION*: Currently, only `POINT` geometries are supported;
-this will be extended to other geometry types in the near future. *NOTE*: For a
-fast distance-based search, please also see [GeoSPARQL Maximum Distance
-Search](#geosparql-maximum-distance-search) below.
+`xsd:decimal`. *NOTE*: For a fast distance-based search, please also see 
+[GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search) below.
 
 `geof:metricDistance(?geom_1, ?geom_2)`<a id="geof-metricdistance"></a>:
 Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`.

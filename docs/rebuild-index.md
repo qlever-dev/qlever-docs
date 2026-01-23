@@ -28,7 +28,7 @@ triples.
 ## Usage
 
 The feature is not yet part of the QLever master branch. It is available via
-the Docker image `qlever/qlever:REBUILD-INDEX-BETA`, or, if you want to build
+the Docker image `ad-freiburg/qlever:REBUILD-INDEX-BETA`, or, if you want to build
 QLever from source, via https://github.com/ad-freiburg/qlever/pull/2408.
 
 In its simplest form, you can just call `qlever rebuild-index` (you need

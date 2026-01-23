@@ -205,7 +205,7 @@ Default: `false`.
 ## Section `[runtime]`
 
 `SYSTEM`, `--system`: Three options: `native` (run natively, assuming that the
-QLever binaries `ServerMain` and `IndexBuilderMain` are in your `PATH`),
+QLever binaries `qlever-server` and `qlever-index` are in your `PATH`),
 `docker` (pull `Docker` image if none is present locally, and run in a
 `Docker` container), and `podman` (same as `docker`, but using `Podman`
 instead of `Docker`). Default: `docker`.
