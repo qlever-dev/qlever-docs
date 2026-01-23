@@ -33,11 +33,10 @@ PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX unit: <http://qudt.org/vocab/unit/>
-SELECT ?lake ?geometry ?centroid ?envelope ?area ?length WHERE {
+SELECT ?lake ?geometry ?centroid ?area ?length WHERE {
   ?lake osmkey:water "lake" .
   ?lake geo:hasGeometry/geo:asWKT ?geometry .
   BIND(geof:centroid(?geometry) AS ?centroid) .
-  BIND(geof:envelope(?geometry) AS ?envelope) .
   BIND(geof:area(?geometry, unit:M2) AS ?area) .
   BIND(geof:length(?geometry, unit:M) AS ?length) .
 }
@@ -45,7 +44,7 @@ SELECT ?lake ?geometry ?centroid ?envelope ?area ?length WHERE {
 
 This is a very expensive query. It has to find the around one million lake
 geometries among the over ten billion geometries. And it has to compute the
-centroid, envelope, area, and length for each of these geometries. Imagine
+centroid, area, and length for each of these geometries. Imagine
 instead that we have precomputed the result for the following SPARQL query,
 which computes these attributes for **all** geometries in the dataset:
 
@@ -53,10 +52,9 @@ which computes these attributes for **all** geometries in the dataset:
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX unit: <http://qudt.org/vocab/unit/>
-SELECT ?subject ?geometry ?centroid ?envelope ?area ?length WHERE {
+SELECT ?subject ?geometry ?centroid ?area ?length WHERE {
   ?subject geo:hasGeometry/geo:asWKT ?geometry .
   BIND(geof:centroid(?geometry) AS ?centroid) .
-  BIND(geof:envelope(?geometry) AS ?envelope) .
   BIND(geof:area(?geometry, unit:M2) AS ?area) .
   BIND(geof:length(?geometry, unit:M) AS ?length) .
 }
@@ -70,13 +68,12 @@ assume this one is called `geometries`.
 ```sparql
 PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
 PREFIX view: <https://qlever.cs.uni-freiburg.de/materializedView/>
-SELECT ?lake ?geometry ?centroid ?envelope ?area ?length WHERE {
+SELECT ?lake ?geometry ?centroid ?area ?length WHERE {
   ?lake osmkey:water "lake" .
   SERVICE view:geometries { [
     view:column-subject ?lake ;
     view:column-geometry ?geometry ;
     view:column-centroid ?centroid ;
-    view:column-envelope ?envelope ;
     view:column-area ?area ;
     view:column-length ?length
   ] }
@@ -157,7 +154,7 @@ When using the `SERVICE` syntax, the user may freely select an arbitrary subset 
 ??? note "Example queries on a materialized view"
 
     Assume the materialized view `geometries` from the motivating example above
-    exists, with columns `subject`, `geometry`, `centroid`, `envelope`, `area`,
+    exists, with columns `subject`, `geometry`, `centroid`, `area`,
     and `length`.
 
     **1. Special predicate with a fixed subject (geometry of Germany)**
