@@ -21,7 +21,6 @@ nav:
     - Rebuild index: rebuild-index.md
     - Text search: text-search.md
     - Path search: path-search.md
-    - Miscellaneous: misc.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
