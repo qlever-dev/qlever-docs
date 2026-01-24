@@ -41,10 +41,12 @@ sudo apt upgrade qlever
     ```bash title="Enable tab completion"
     sudo apt install bash-completion
     echo "source /etc/bash_completion" >> ~/.bashrc
+    # restart your shell
     ```
 === "zsh"
     ```zsh title="Enable tab completion"
     echo "autoload -U compinit && compinit" >> ~/.zshrc
+    # restart your shell
     ```
 === "fish"
     ```fish title="Enable tab completion"

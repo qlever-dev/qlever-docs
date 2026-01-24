@@ -1,14 +1,18 @@
 # Frequently asked questions
 
-## Does QLever run on Windows and MacOS?
+## Does QLever run on macOS?
+
+Yes QLever natively runs on macOS. Please use the [official homebrew tap](quickstart.md#macos-apple-silicon).
+
+## Does QLever run on Windows?
 
 The [`qlever` command-line tool](quickstart.md) uses the official
 Docker image of QLever by default. Docker runs natively on Linux, with only a
-small performance penalty. However, on Windows and MacOS, Docker runs inside a
+small performance penalty. However on Windows Docker runs inside a
 virtual machine, which may incur a significant performance penalty. In
 particular, RAM consumption may be prohibitive. We are working towards binary
-releases for Windows and MacOS. In the meantime, we strongly recommend using
-QLever on a Linux machine.
+releases for Windows. In the meantime, we strongly recommend using QLever on
+a Linux or macOS machine.
 
 ## Can QLever read compressed files or multiple files?
 
