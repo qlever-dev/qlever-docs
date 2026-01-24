@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 site_name: QLever Documentation
+site_url: https://qlever.dev
 
 # Navigation on the left side
 nav:
@@ -26,7 +27,7 @@ edit_uri: edit/master/docs
 site_description: Documentation for the QLever graph database
 site_author: The QLever authors
 copyright: >
-  Copyright &copy; 2025 The QLever authors
+  Copyright &copy; 2025-2026 The QLever authors
 theme:
   name: material
   language: en
