@@ -149,6 +149,8 @@ For any of the platforms not listed above you can install the `qlever` CLI tool 
 
 This will create a SPARQL endpoint for the 120 Years of Olympics dataset. It is a great dataset for getting started because it is small, but not trivial (around 2 million triples), and the downloading and indexing should only take a few seconds.
 
+You can fetch any of a number of example `Qleverfile`s via `qlever setup-config <config-name>`.  In particular, a `Qleverfile` is available for each of the demos at <https://qlever.dev>: [list of all example `Qleverfile`s](https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles). To write a `Qleverfile` for your own data, pick one of these configurations as a starting point and edit the `Qleverfile` as you see fit. A detailed explanation of all `Qleverfile` options may also be found at [Qleverfile settings](qleverfile.md). 
+
 Each command will also show you the command line it uses. That way you can learn, on the side, how QLever works internally. If you just want to know the command line for a particular command, without executing it, you can append `--show` like this:
 
 ```bash
