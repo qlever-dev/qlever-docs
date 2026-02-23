@@ -1,5 +1,8 @@
 # Rebuild Index
 
+!!! info "History"
+    - Added in QLever 0.5.45
+
 QLever currently distinguishes between triples that are part of the original
 dataset (pre-processed by QLever via the `qlever index` command) and triples
 added or modified via update operations (`INSERT`, `DELETE`, and the various
