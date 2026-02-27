@@ -82,6 +82,22 @@ brew update
 brew upgrade qlever
 ```
 
+=== "zsh"
+    ```zsh title="Enable tab completion"
+    echo "autoload -U compinit && compinit" >> ~/.zshrc
+    # restart your shell
+    ```
+=== "bash"
+    ```bash title="Enable tab completion"
+    brew install bash-completion@2
+    echo '[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"' >> ~/.bashrc
+    # restart your shell
+    ```
+=== "fish"
+    ```fish title="Enable tab completion"
+    # Nothing to do
+    ```
+
 ### Others
 
 For any of the platforms not listed above you can install the `qlever` CLI tool using system independent methods. Note: QLever will be executed in a container which will come with a performance penalty.
