@@ -57,8 +57,11 @@ sudo apt upgrade qlever
 
 On macOS, we recommend installing QLever via [Homebrew](https://brew.sh/).
 
+!!! note "Apple Silicon only"
+    The QLever homebrew package is only available for ARM64 (M-series) Apple Silicon Macs. Intel-based Macs are not supported by this package. If you are on an Intel Mac, use the [platform-independent installation methods](#others) below.
+
 !!! warning "Uninstall old versions"
-    Since 21.01.2026, there is an official QLever packages for macOS. Please uninstall any old versions of QLever that have been installed with other methods because they may conflict with the new package.
+    Since 21.01.2026, there is an official QLever package for macOS. Please uninstall any old versions of QLever that have been installed with other methods because they may conflict with the new package.
     === "pip"
         ```bash
         pip uninstall qlever --break-system-packages
@@ -81,6 +84,22 @@ brew install qlever
 brew update
 brew upgrade qlever
 ```
+
+=== "zsh"
+    ```zsh title="Enable tab completion"
+    echo "autoload -U compinit && compinit" >> ~/.zshrc
+    # restart your shell
+    ```
+=== "bash"
+    ```bash title="Enable tab completion"
+    brew install bash-completion@2
+    echo '[[ -r "$(brew --prefix)/etc/profile.d/bash_completion.sh" ]] && source "$(brew --prefix)/etc/profile.d/bash_completion.sh"' >> ~/.bashrc
+    # restart your shell
+    ```
+=== "fish"
+    ```fish title="Enable tab completion"
+    # Nothing to do
+    ```
 
 ### Others
 
