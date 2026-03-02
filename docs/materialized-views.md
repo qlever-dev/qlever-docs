@@ -1,4 +1,4 @@
-# Materialized Views (beta)
+# Materialized Views
 
 !!! info "History"
     - Beta version added in QLever 0.5.37
