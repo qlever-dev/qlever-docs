@@ -9,7 +9,7 @@ nav:
   - Benchmarks: benchmarks.md
   - Compliance: compliance.md
   - Publications: publications.md
-  - Demos: demos.md
+  - Use Cases: use-cases.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
   # - Getting started:
@@ -20,7 +20,6 @@ nav:
     - Update: update.md
     - Materialized Views: materialized-views.md
     - Rebuild index: rebuild-index.md
-    # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
 edit_uri: https://github.com/qlever-dev/qlever-docs/edit/master/docs
