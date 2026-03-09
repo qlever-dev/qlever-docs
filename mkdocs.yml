@@ -23,7 +23,7 @@ nav:
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
-edit_uri: edit/master/docs
+edit_uri: https://github.com/qlever-dev/qlever-docs/edit/master/docs
 site_description: Documentation for the QLever graph database
 site_author: The QLever authors
 copyright: >
