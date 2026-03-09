@@ -8,7 +8,7 @@ dependencies = [
     "mkdocs",
     # click==8.3.0 and 8.3.1 are incompatible, see https://github.com/squidfunk/mkdocs-material/issues/8478
     "click!=8.3.0,!=8.3.1",
-    "mkdocs-material",
+    "mkdocs-material>=9.7.0",
     "mkdocs-material[imaging]",
     "mkdocs-git-revision-date-localized-plugin",
     "mkdocs-git-committers-plugin-2"

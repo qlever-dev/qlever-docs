@@ -1,14 +1,18 @@
 # Frequently asked questions
 
-## Does QLever run on Windows and MacOS?
+## Does QLever run on macOS?
+
+Yes QLever natively runs on macOS. Please use the [official homebrew tap](quickstart.md#macos-apple-silicon).
+
+## Does QLever run on Windows?
 
 The [`qlever` command-line tool](quickstart.md) uses the official
 Docker image of QLever by default. Docker runs natively on Linux, with only a
-small performance penalty. However, on Windows and MacOS, Docker runs inside a
+small performance penalty. However on Windows Docker runs inside a
 virtual machine, which may incur a significant performance penalty. In
 particular, RAM consumption may be prohibitive. We are working towards binary
-releases for Windows and MacOS. In the meantime, we strongly recommend using
-QLever on a Linux machine.
+releases for Windows. In the meantime, we strongly recommend using QLever on
+a Linux or macOS machine.
 
 ## Can QLever read compressed files or multiple files?
 
@@ -34,11 +38,14 @@ possible, including the exact command you ran, the content of your `Qleverfile`
 
 ## Does QLever have releases?
 
-We currently treat every commit to the `master` branch as a release. In
-particular, each commit comes with a detailed description and an own Docker
-image on <https://hub.docker.com/r/adfreiburg/qlever/>, tagged with the commit
-hash as well as with the corresponding pull request number. Each commit is
-extensively tested and reviewed before being merged into the QLever `master`.
+Yes, see [Quickstart, Installing QLever](quickstart.md#installing-qlever).
+
+If you want the latest features and fixes, you can use the latest commit
+on the `master` branch of http://github.com/ad-freiburg/qlever. Each commit
+comes with a detailed description and an own Docker image on
+<https://hub.docker.com/r/adfreiburg/qlever/>, tagged with the commit hash as
+well as with the corresponding pull request number. Each commit is
+extensively tested and reviewed before being merged into the `master` branch.
 
 ## Are there publications about QLever?
 

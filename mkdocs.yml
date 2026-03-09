@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 site_name: QLever Documentation
+site_url: https://qlever.dev
 
 # Navigation on the left side
 nav:
@@ -17,14 +18,16 @@ nav:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
     - Update: update.md
+    - Materialized Views: materialized-views.md
+    - Rebuild index: rebuild-index.md
     - Datasets: datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
-edit_uri: edit/master/docs
+edit_uri: https://github.com/qlever-dev/qlever-docs/edit/master/docs
 site_description: Documentation for the QLever graph database
 site_author: The QLever authors
 copyright: >
-  Copyright &copy; 2025 The QLever authors
+  Copyright &copy; 2025-2026 The QLever authors
 theme:
   name: material
   language: en
@@ -86,6 +89,12 @@ plugins:
 # https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-contributors
 # or https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-authors
 # https://squidfunk.github.io/mkdocs-material/reference/
+
+extra_javascript:
+  - js/qlever-demo.js
+
+extra_css:
+  - css/qlever-demo.css
 
 extra:
   version:

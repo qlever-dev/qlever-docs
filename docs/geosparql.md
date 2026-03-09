@@ -21,10 +21,8 @@ with datatype `geo:wktLiteral`, representing geometries in WKT format. The
 the prefix for `http://qudt.org/vocab/unit/`. Alternatively, the unit IRI can
 be given as an `xsd:anyURI` literal. If no unit is given, the distance is
 returned in kilometers. The distance is returned as a literal with datatype
-`xsd:decimal`. *RESTRICTION*: Currently, only `POINT` geometries are supported;
-this will be extended to other geometry types in the near future. *NOTE*: For a
-fast distance-based search, please also see [GeoSPARQL Maximum Distance
-Search](#geosparql-maximum-distance-search) below.
+`xsd:decimal`. *NOTE*: For a fast distance-based search, please also see 
+[GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search) below.
 
 `geof:metricDistance(?geom_1, ?geom_2)`<a id="geof-metricdistance"></a>:
 Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`.
@@ -33,7 +31,7 @@ Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`
 
     The correct distance between the two points is approximately 446.363 meters.
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     PREFIX unit: <http://qudt.org/vocab/unit/>
@@ -74,7 +72,7 @@ datatype `xsd:decimal`.
 
     Coordinates of Freiburg Central Railway Station:
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT * WHERE {
@@ -93,7 +91,7 @@ This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
     The centroid should be 3,3.
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT * WHERE {
@@ -112,7 +110,7 @@ from [geometry preprocessing](#geometry-preprocessing).
     The envelope of the given `LINESTRING` should be the rectangle with corners (2,4),
     (8,4), (8,6), (2,6), (2,4).
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT * {
@@ -138,7 +136,7 @@ from [geometry preprocessing](#geometry-preprocessing).
 
     The result should be `"http://www.opengis.net/ont/sf#LineString"^^xsd:anyURI`.
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     SELECT * {
@@ -155,7 +153,7 @@ literals with datatype `xsd:decimal`.
 
 ??? note "Example query for `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY`"
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT * {
@@ -175,7 +173,7 @@ literals with datatype `xsd:decimal`.
 
     Length of the [Rhine Valley Railway Mannheim - Basel](https://openstreetmap.org/relation/1781296):
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     PREFIX unit: <http://qudt.org/vocab/unit/>
@@ -208,7 +206,7 @@ literals with datatype `xsd:decimal`.
 
     Area of the [water reservoir "Llac d'Engolasters" in Andorra](https://www.openstreetmap.org/way/6593464):
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX osmway: <https://www.openstreetmap.org/way/>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -239,7 +237,7 @@ literals with datatype `xsd:decimal`.
     }
     ```
 
-`geof:numGeometries(?geom)`<a id="geof-numgeometries"></a>: This function returns the number of child geometries contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. It returns an `xsd:integer`. This function benefits from [geometry preprocessing](#geometry-preprocessing).
+`geof:numGeometries(?geom)`<a id="geof-numgeometries"></a>: This function returns the number of child geometries contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the result is `1`. The result has datatype `xsd:int`. This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:numGeometries`"
 
@@ -255,6 +253,21 @@ literals with datatype `xsd:decimal`.
     ORDER BY DESC(?num)
     LIMIT 100
     ```
+
+`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`.
+
+??? note "Example query for `geof:geometryN`"
+
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * WHERE {
+      BIND (geof:geometryN("MULTIPOINT(1 2,3 4,5 6,7 8)"^^geo:wktLiteral, 4) AS ?wkt1) # POINT(7 8)
+      BIND (geof:geometryN("MULTILINESTRING((1 2,3 4),(5 6,7 8,9 0))"^^geo:wktLiteral, 2) AS ?wkt2) # LINESTRING(5 6,7 8,9 0)
+      BIND (geof:geometryN("POINT(3 4)"^^geo:wktLiteral, 1) AS ?wkt3) # POINT(3 4)
+    }
+    ```
+
 
 ## GeoSPARQL Maximum Distance Search
 
@@ -277,7 +290,10 @@ The implementation currently has to parse WKT geometries for all geometry types 
 
     All restaurants within 50 meters of public transport stops:
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT ?restaurant ?stop ?restaurant_geometry WHERE {
       ?restaurant osmkey:amenity "restaurant" ;
                   geo:hasGeometry/geo:asWKT ?restaurant_geometry .
@@ -315,12 +331,15 @@ worked on, so you may expect a performance improvement in the future.
 
 ??? note "Example query"
 
-    [All railway lines crossing rivers](https://qlever.dev/osm-planet/FKzeVH):
+    [All railway lines crossing rivers](https://qlever.dev/osm-planet/oU2Uqb):
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT ?river ?rail ?rail_geometry WHERE {
       ?river osmkey:waterway "river" ;
-            geo:hasGeometry/geo:asWKT ?river_geometry .
+             geo:hasGeometry/geo:asWKT ?river_geometry .
       ?rail osmkey:railway "rail" ;
             geo:hasGeometry/geo:asWKT ?rail_geometry .
       FILTER (geof:sfIntersects(?rail_geometry,?river_geometry))
@@ -333,14 +352,13 @@ For OpenStreetMap data, geometric relations can be precomputed as part of the da
 
 ??? note "Example query with `osm2rdf`"
 
-    [All Buildings in the City of Freiburg](https://qlever.dev/osm-planet/7cxklb):
+    [All Buildings in the City of Freiburg](https://qlever.dev/osm-planet/M3zUjp):
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
     PREFIX ogc: <http://www.opengis.net/rdf#>
     PREFIX osmrel: <https://www.openstreetmap.org/relation/>
-
     SELECT ?osm_id ?hasgeometry WHERE {
       osmrel:62768 ogc:sfContains ?osm_id .
       ?osm_id geo:hasGeometry/geo:asWKT ?hasgeometry .
@@ -403,49 +421,46 @@ NOTE: Geometries except for points currently need to be parsed for every query l
 
 ??? note "Example queries"
 
-    [For each railway station, the three closest supermarkets](https://qlever.dev/osm-planet/OXupEH):
+    [For each railway station, the three closest supermarkets](https://qlever.dev/osm-planet/AvZDr1):
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
     PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
     SELECT * WHERE {
       ?station osmkey:railway "station" ;
-              osmkey:name ?name ;
-              geo:hasCentroid/geo:asWKT ?station_geometry .
-
+               osmkey:name ?name ;
+               geo:hasCentroid/geo:asWKT ?station_geometry .
       SERVICE qlss: {
-        _:config  qlss:left ?station_geometry ;
-                  qlss:right ?supermarket_geometry ;
-                  qlss:numNearestNeighbors 3 .
+        _:config qlss:left ?station_geometry ;
+                 qlss:right ?supermarket_geometry ;
+                 qlss:numNearestNeighbors 3 .
         {
           ?supermarket osmkey:shop "supermarket" ;
-                      geo:hasCentroid/geo:asWKT ?supermarket_geometry .
+                       geo:hasCentroid/geo:asWKT ?supermarket_geometry .
         }
       }
     }
     ```
 
-    [All railway lines intersecting rivers in Germany](https://qlever.dev/osm-planet/5QvF74):
+    [All railway lines intersecting rivers in Germany](https://qlever.dev/osm-planet/gs83Sz):
 
-    ```sparql
+    ```sparql {data-demo-engine="osm-planet"}
     PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
     PREFIX osmrel: <https://www.openstreetmap.org/relation/>
     PREFIX ogc: <http://www.opengis.net/rdf#>
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX qlss: <https://qlever.cs.uni-freiburg.de/spatialSearch/>
-
     SELECT DISTINCT ?rail ?rail_geometry WHERE {
       osmrel:51477 ogc:sfIntersects ?river .
       ?river osmkey:water "river" .
       ?river geo:hasGeometry/geo:asWKT ?river_geometry .
-
       SERVICE qlss: {
         _:config qlss:algorithm qlss:libspatialjoin ;
-                qlss:left ?river_geometry ;
-                qlss:right ?rail_geometry ;
-                qlss:payload ?rail ;
-                qlss:joinType qlss:intersects .
+                 qlss:left ?river_geometry ;
+                 qlss:right ?rail_geometry ;
+                 qlss:payload ?rail ;
+                 qlss:joinType qlss:intersects .
         {
           osmrel:51477 ogc:sfContains ?rail .
           ?rail osmkey:railway "rail" .
