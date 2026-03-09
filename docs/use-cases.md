@@ -1,19 +1,8 @@
-# Datasets
+# Use Cases
 
-qlever-control comes with a number of (mostly) ready to go datasets. They can be used to get up and running quickly.
-This page contains an overview over all pre-configured datasets.
+QLever comes with a number of ready-to-use `Qleverfile`s for a variety of datasets. To get one of these `Qleverfile`s, run `qlever setup-config <name>`; for example `qlever setup-config wikidata`. Using that `Qleverfile`, you can then download the data, load it into QLever, and start a QLever server using simple `qlever` commands as described in the [quickstart](quickstart.md).
 
-To get running with a dataset first create a Qleverfile for that dataset with `qlever setup-config`. For example to create a QLeverfile for the [`scientists` dataset](#scientists) run `qlever setup-config scientists`. Then download the data, build the index and run the server as described in the [quickstart](quickstart.md).
-
-<!--
-
-[Yago 3](https://qlever.dev/yago-3) and [Wikimedia Commons](https://qlever.dev/wikimedia-commons) are available on <qlever.dev> but have no QLeverfile. Add them once a QLeverfile exists.
-
--->
-
-The purpose of this table is to give an overview of the available datasets and the general system requirements. The numbers are not exact and were measured on a system with an AMD Ryzen 9 9950X.
-The disk consumption from QLever (excluding the dataset itself) during index building is slightly larger than the final index size. Twice as much disk space will always be sufficient for QLever.
-No more RAM is needed to queries than for building the index. The RAM consumption at query time can be [limited in the settings](qleverfile.md#section-server).
+The following table provides an overview of the available `Qleverfile`s and the associated system requirements. The numbers measured on a machine with an AMD Ryzen 9 9950X processor (16 cores), 128 GB of RAM, and sufficient disk space. The disk consumption from QLever (excluding the dataset itself) during index building is slightly larger than the final index size (twice as much is always sufficient). No more RAM is needed to queries than for building the index. The RAM consumption at query time can be [limited in the settings](qleverfile.md#section-server).
 
 | Dataset                             | Endpoint                                                                                  | Number of triples | Index size | RAM (Indexing) | Indexing time | Description                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ----------------------------------- | ----------------------------------------------------------------------------------------- | ----------------- | ---------- | -------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
