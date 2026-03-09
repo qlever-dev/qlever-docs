@@ -14,6 +14,6 @@ of triples, on a single commodity PC or server.
 
 [Publications](publications.md): Publications on the various aspects and internals of QLever.
 
-[Uses Cases](use-cases.md): Foo bar baz
+[Uses Cases](use-cases.md): A selection of uses cases for QLever, many with public demos.
 
 [FAQ](faq.md): Frequently asked questions.
