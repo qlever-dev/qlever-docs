@@ -10,6 +10,10 @@ If this option is used, QLever will currently precompute centroid, bounding box,
 
 *Note:* If you use this option, please expect that you have to rebuild your index multiple times in the coming weeks and months while QLever is being updated to support more GeoSPARQL features efficiently. The server will report an error during startup if an index rebuild is necessary.
 
+## Faster GeoSPARQL Queries using Materialized Views
+
+TODO
+
 ## GeoSPARQL Functions
 
 `geof:distance(?geom_1, ?geom_2, ?unit)`<a id="geof-distance"></a>:

@@ -159,6 +159,8 @@ using `SYSTEM = native`. The binary must either be in your `PATH` or you must
 specify the full path. Default: `IndexBuilderMain` (which is the default name
 of the binary for index building when compiling QLever).
 
+TODO materialized view
+
 ## Section `[server]`
 
 `PORT`, `--port`: The port of the SPARQL endpoint created by `qlever start`.
@@ -201,6 +203,8 @@ alternative, see `qlever update-wikidata`, where updates come from an SSE
 stream, and can be replayed any time from an arbitrary point in time, and the
 date until which the dataset is up to date is stored in dedicated triples.
 Default: `false`.
+
+TODO load materialized views
 
 ## Section `[runtime]`
 
