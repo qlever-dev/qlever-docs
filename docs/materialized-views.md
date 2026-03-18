@@ -227,6 +227,8 @@ Note that during query planning a suitable view is selected independently of its
 
 Coming soon: Join stars.
 
+TODO runtime parameter
+
 ## Sort order
 
 Materialized views are sorted by the first column, then the second column, and
