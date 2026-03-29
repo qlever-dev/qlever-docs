@@ -120,8 +120,8 @@ SELECT ?start ?end ?path ?edge WHERE {
     - (`<source2>`, `<target2>`)
 
     It is possible to specify, whether the sources and targets should be combined according
-    to the cartesian product (as seen above) or if they should be matched up pairwise, i.e.
-    
+    to the Cartesian product (as seen above) or if they should be matched up pairwise, i.e.
+
     - (`<source1>`, `<target1>`)
     - (`<source2>`, `<target2>`)
 
