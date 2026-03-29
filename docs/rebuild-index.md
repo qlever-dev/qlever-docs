@@ -1,4 +1,7 @@
-# Rebuild Index (beta)
+# Rebuild Index
+
+!!! info "History"
+    - Added in QLever 0.5.45
 
 QLever currently distinguishes between triples that are part of the original
 dataset (pre-processed by QLever via the `qlever index` command) and triples
@@ -17,36 +20,32 @@ feature is available, a good workaround is to periodically rebuild the index
 for the entire dataset (original triples and update triples). In principle,
 this can be done by first exporting the entire dataset and then call `qlever
 index` on the exported data. However, this is inefficient, as it requires
-serializing all triples to disk and then reading them back.
+serializing all triples to disk and then reading them back in.
 
 To rebuild the index efficiently, QLever provides the command `qlever
 rebuild-index`, which directly rebuilds the index from the existing data
 structures. With a Ryzen 9 9950X (16 cores) and NVMe SSD, this takes less than
-one minute for 500 million triples, and around 15 minutes for 10 billion
+one minute for 500 million triples, and around 20 minutes for 10 billion
 triples.
 
 ## Usage
 
-The feature is not yet part of the QLever master branch. It is available via
-the Docker image `ad-freiburg/qlever:REBUILD-INDEX-BETA`, or, if you want to build
-QLever from source, via https://github.com/ad-freiburg/qlever/pull/2408.
-
-In its simplest form, you can just call `qlever rebuild-index` (you need
-version `0.5.37` or later for this). This will create a new index in a
-subdirectory `rebuild.YYYY-MM-DDTHH:MM' of the current directory, with the same
-base name as the current index. You can specify a different base name via the
-option `--index-name`, and a different target directory with the option
-`--index-dir'. To automatically restart the server once the rebuild is
-complete, use the option `--restart-when-finished`. Alternatively, you can
-trigger the rebuild via the QLever HTTP API as described below.
+In its simplest form, you can just call `qlever rebuild-index`. This will
+create a new index in a subdirectory `rebuild.YYYY-MM-DDTHH:MM` of the current
+directory, with the same base name as the current index. You can specify a
+different base name via the option `--index-name`, and a different target
+directory with the option `--index-dir`. To automatically restart the server
+once the rebuild is complete, use the option `--restart-when-finished`.
+Alternatively, you can trigger the rebuild via the QLever HTTP API as described
+below.
 
 === "qlever CLI"
     ``` bash
-    qlever rebuild-index [--index-[--index-dir PATH] [--restart-when-finished]
+    qlever rebuild-index [--index-name NAME] [--index-dir PATH] [--restart-when-finished]
     ```
-=== "curl"
+=== "HTTP API"
     ``` bash
-    curl -s http://$HOST:$PORT -d cmd=rebuild-index -d access-token=$ACCESS_TOKEN [-d index-name=$PATH/$BASE_NAME]
+    curl -s http://$HOST:$PORT -d cmd=rebuild-index -d access-token=$ACCESS_TOKEN [-d index-name=$PATH/$NAME]
     ```
 ## Limitations
 
@@ -60,8 +59,8 @@ will be an interruption nonetheless.
 If avoiding even short interruptions is important for your application, you
 could start a server with the new index on a different port, and have a 
 middleman server that routes queries to the new server once it is ready, and
-shut down the old server once it processes no more queries. Eventually, this
-functionality will be built into QLever.
+shut down the old server once it no longer processes any queries. Eventually,
+this functionality will be built into QLever.
 
 For rebuilding the index, you need disk space for both the old and the new
 index. Once the rebuild is complete, and the old index is no longer needed for

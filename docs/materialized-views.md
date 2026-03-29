@@ -1,4 +1,7 @@
-# Materialized Views (beta)
+# Materialized Views
+
+!!! info "History"
+    - Added in QLever 0.5.37
 
 QLever allows storing the result of a SPARQL query as a so-called **materialized
 view**, which can then be incorporated into subsequent queries. The

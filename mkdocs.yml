@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://squidfunk.github.io/mkdocs-material/schema.json
 site_name: QLever Documentation
+site_url: https://qlever.dev
 
 # Navigation on the left side
 nav:
@@ -8,7 +9,7 @@ nav:
   - Benchmarks: benchmarks.md
   - Compliance: compliance.md
   - Publications: publications.md
-  - Demos: demos.md
+  - Use Cases: use-cases.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
   # - Getting started:
@@ -24,11 +25,11 @@ nav:
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
-edit_uri: edit/master/docs
+edit_uri: https://github.com/qlever-dev/qlever-docs/edit/master/docs
 site_description: Documentation for the QLever graph database
 site_author: The QLever authors
 copyright: >
-  Copyright &copy; 2025 The QLever authors
+  Copyright &copy; 2025-2026 The QLever authors
 theme:
   name: material
   language: en
