@@ -51,10 +51,14 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
 
 ??? note "Example query for `xsd:date - dayTimeDuration`"
 
-    The date X is Y earlier than date Z.
+    The date 2025-05-05 at 23:10:30 is 10 days, 49 minutes and 30 seconds earlier than the start date.
 
     ```sparql {data-demo-engine="osm-planet"}
-
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date ?duration ((?date - ?duration) AS ?difference)  WHERE {
+        BIND("2025-05-16"^^xsd:date AS ?date)
+        BIND("P10DT0H49M30S"^^xsd:dayTimeDuration AS ?duration)
+    }
     ```
 
 `xsd:date - xsd:yearMonthDuration`<a id="date-yearMonthDuration"></a>: TODO: supported?
@@ -63,10 +67,74 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
 `xsd:time - xsd:dayTimeDuration`<a id="time-dayTimeDuration"></a>: TODO: supported?
 
 `xsd:dateTime - xsd:dateTime`<a id="dateTime-dateTime"></a>:
+Returns the `xsd:dayTimeDuration` between the two date and their times. The arguments need to be valid dates.
+
+??? note "Example query for `xsd:dateTime - xsd:dateTime`"
+
+    There are 23 days, 6 hours, 14 minutes, and 30 seconds between the two dates and their times.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2
+        ((?date1 - ?date2) AS ?difference) WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+        BIND("2025-12-01T12:00:30Z"^^xsd:dateTime AS ?date2)
+    }   
+    ```
 
 `xsd:dateTime - xsd:dayTimeDuration`<a id="dateTime-dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration earlier than the given date and time. The first argument needs to be a valid date.
+
+??? note "Example query for `xsd:dateTime - dayTimeDuration`"
+
+    The date 2000-01-01 is 2 days, 12 hours, 12 minutes and 12 seconds earlier than the start date and time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?dateTime ?duration ((?dateTime - ?duration) AS ?difference) WHERE {
+        BIND("2000-01-03T12:12:12Z"^^xsd:dateTime AS ?dateTime)
+        BIND("P2DT12H12M12S"^^xsd:dayTimeDuration AS ?duration)
+    }
+
+    ```
 
 `xsd:dateTime - xsd:yearMonthDuration`<a id="dateTime-yearMonthDuration"></a>: TODO: supported?
 
 
 ### Addition
+
+`xsd:date + xsd:dayTimeDuration`<a id="date+dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
+
+??? note "Example query for `xsd:date + dayTimeDuration`"
+
+    The date 2025-05-26 at 00:49:30 is 10 days, 49 minutes and 30 seconds later than the start date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date ?duration ((?date + ?duration) AS ?difference)  WHERE {
+        BIND("2025-05-16"^^xsd:date AS ?date)
+        BIND("P10DT0H49M30S"^^xsd:dayTimeDuration AS ?duration)
+    }
+    ```
+
+`xsd:date + xsd:yearMonthDuration`<a id="date+yearMonthDuration"></a>: TODO: supported?
+
+`xsd:time + xsd:dayTimeDuration`<a id="time+dayTimeDuration"></a>: TODO: supported?
+
+`xsd:dateTime + xsd:dayTimeDuration`<a id="dateTime+dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
+
+??? note "Example query for `xsd:dateTime - dayTimeDuration`"
+
+    The date 2000-01-01 is 7 days, 3 hours, 44 minutes and 30 seconds later than the start date and time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?dateTime ?duration ((?dateTime + ?duration) AS ?difference) WHERE {
+        BIND("1999-12-24T20:15:30Z"^^xsd:dateTime AS ?dateTime)
+        BIND("P7DT3H44M30S"^^xsd:dayTimeDuration AS ?duration)
+    }
+    ```
+
+`xsd:dateTime + xsd:yearMonthDuration`<a id="date+dayTimeDuration"></a>:  TODO: supported?
