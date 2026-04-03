@@ -9,23 +9,133 @@ QLever supports the following `xsd` Date/Time datatypes:
 |--|--|--|
 |`xsd:time`|`"09:30:10Z"^^xsd:time`|A time containing hour, minute, and second.|
 |`xsd:date`|`"2025-12-24"^^xsd:date`|Simple date containing year, month and day. |
-|`xsd:dateTime`|`"2025-12-24T18:11:00Z"^^xsd:dateTime`|Date combined with time (hour, minute, second, and timezone).|
+|`xsd:dateTime`|`"2025-12-24T18:11:00Z"^^xsd:dateTime`|Date combined with time (hour, minute, second, and optional timezone).|
 |`xsd:duration`|`"P1Y2M1D"^^xsd:duration`|A time interval that may contain years, months, days and time components (hours, minutes, seconds).|
 |`xsd:dayTimeDuration`|`"P2DT4H5M6S"^^xsd:dayTimeDuration`|A time interval consisting of days and time components (hours, minutes, seconds).|
 |`xsd:yearMonthDuration`|`"P12Y2M"^^xsd:yearMonthDuration`|A time interval consisting of years and months.| 
-|`xsd:gYear`|`"12000"^^xsd:gYear`|A (potentially large) year.|
+|`xsd:gYear`|`"12000"^^xsd:gYear`|A (potentially large) year. Negative years are also allowed.|
 
 TODO: time und yearMonthDuration supported?
 
 ## Arithmetics
 
-### ==
+### =
 
-### !=
+`xsd:duration = xsd:duration`<a id="durationEQduration"></a>:
+??? note "Example query for `xsd:duration = xsd:duration`"
+
+    The first two durations are equal. The third duration has an additional year.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?duration3 ?eq ?neq
+    WHERE {
+        BIND("P1Y2M1D"^^xsd:duration AS ?duration1)
+	    BIND("P1Y2M1D"^^xsd:duration AS ?duration2)
+	    BIND("P2Y2M1D"^^xsd:duration AS ?duration3)
+		BIND(?duration1 = ?duration2 AS ?eq)
+		BIND(?duration1 = ?duration3 AS ?neq)
+    }
+    ```
+
+`xsd:date = xsd:date`<a id="dateEQdate"></a>:
+??? note "Example query for `xsd:date = xsd:date`"
+
+    The first two dates are equal. The third date is from another year.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?date3 ?eq ?neq
+    WHERE {
+        BIND("2025-12-24"^^xsd:date AS ?date1)
+	    BIND("2025-12-24"^^xsd:date AS ?date2)
+	    BIND("1925-12-24"^^xsd:date AS ?date3)
+		BIND(?date1 = ?date2 AS ?eq)
+		BIND(?date1 = ?date3 AS ?neq)
+    }
+    ```
+
+`xsd:time = xsd:time`<a id="timeEQtime"></a>: TODO: supported?
 
 ### <
 
+`xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>: TODO: supported?
+
+`xsd:dayTimeDuration < xsd:dayTimeDuration`<a id="dayTimeDurationLTdayTimeDuration"></a>:
+??? note "Example query for `xsd:dayTimeDuration < xsd:dayTimeDuration`"
+
+    The first duration is smaller than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?lt1 ?lt2
+    WHERE {
+        BIND("P2DT4H5M6S"^^xsd:dayTimeDuration AS ?duration1)
+        BIND("P4DT4H5M6S"^^xsd:dayTimeDuration AS ?duration2)
+
+        BIND(?duration1 < ?duration2 AS ?lt1)
+        BIND(?duration2 < ?duration1 AS ?lt2)
+    }
+    ```
+
+`xsd:date < xsd:date`<a id="dateLTdate"></a>:
+??? note "Example query for `xsd:date < xsd:date`"
+
+    The first date is earlier than the second date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?lt1 ?lt2
+    WHERE {
+        BIND("2019-12-31"^^xsd:date AS ?date1)
+        BIND("2020-03-13"^^xsd:date AS ?date2)
+
+        BIND(?date1 < ?date2 AS ?lt1)
+        BIND(?date2 < ?date1 AS ?lt2)
+    }
+    ```
+
+`xsd:time < xsd:time`<a id="timeLTtime"></a>: TODO: supported?
+
 ### >
+
+`xsd:yearMonthDuration > xsd:yearMonthDuration`<a id="yearMonthDurationGTyearMonthDuration"></a>: TODO: supported?
+
+`xsd:dayTimeDuration > xsd:dayTimeDuration`<a id="dayTimeDurationGTdayTimeDuration"></a>:
+??? note "Example query for  `xsd:dayTimeDuration > xsd:dayTimeDuration`"
+
+    The first duration is larger than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?gt1 ?gt2
+    WHERE {
+        BIND("P4DT4H5M6S"^^xsd:dayTimeDuration AS ?duration1)
+        BIND("P2DT4H5M6S"^^xsd:dayTimeDuration AS ?duration2)
+
+        BIND(?duration1 > ?duration2 AS ?gt1)
+        BIND(?duration2 > ?duration1 AS ?gt2)
+    }
+    ```
+
+`xsd:date > xsd:date`<a id="dateGTdate"></a>:
+??? note "Example query for  `xsd:date > xsd:date`"
+
+    The first date is later than the second date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?gt1 ?gt2
+    WHERE {
+        BIND("2020-03-13"^^xsd:date AS ?date1)
+        BIND("2019-12-31"^^xsd:date AS ?date2)
+
+        BIND(?date1 > ?date2 AS ?gt1)
+        BIND(?date2 > ?date1 AS ?gt2)
+    }
+    ```
+
+`xsd:time > xsd:time`<a id="timeGTtime"></a>: TODO: supported?
 
 ### Subtraction
 
@@ -47,7 +157,7 @@ Returns the `xsd:dayTimeDuration` between the two dates. The arguments need to b
     ```
 
 `xsd:date - xsd:dayTimeDuration`<a id="date-dayTimeDuration"></a>:
-Returns the `xsd:dateTime` that is the amount of days and the time of the duration earlier than the given date. The first argument needs to be a valid date.
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration earlier than the given date. The first argument needs to be a valid date. If the duration only specifies days the time of the result date is set to `00:00:00`.
 
 ??? note "Example query for `xsd:date - dayTimeDuration`"
 
@@ -125,7 +235,7 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
 `xsd:dateTime + xsd:dayTimeDuration`<a id="dateTime+dayTimeDuration"></a>:
 Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
 
-??? note "Example query for `xsd:dateTime - dayTimeDuration`"
+??? note "Example query for `xsd:dateTime + dayTimeDuration`"
 
     The date 2000-01-01 is 7 days, 3 hours, 44 minutes and 30 seconds later than the start date and time.
 
