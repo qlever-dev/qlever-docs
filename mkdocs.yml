@@ -17,6 +17,7 @@ nav:
   - Reference:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
+    - Date and Time operations: datetime.md
     - Update: update.md
     - Materialized Views: materialized-views.md
     - Rebuild index: rebuild-index.md

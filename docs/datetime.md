@@ -17,6 +17,8 @@ QLever supports the following `xsd` Date/Time datatypes:
 
 TODO: time und yearMonthDuration supported?
 
+TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mit TimeZone).
+
 ## Arithmetics
 
 ### =
@@ -55,11 +57,41 @@ TODO: time und yearMonthDuration supported?
     }
     ```
 
-`xsd:time = xsd:time`<a id="timeEQtime"></a>: TODO: supported?
+`xsd:time = xsd:time`<a id="timeEQtime"></a>: TODO: does only work if the string representations are equal, not if the timezones are different.
+??? note "Example query for `xsd:time = xsd:time`"
+
+    The first two times are equal. The third time is two hours earlier.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?time1 ?time2 ?time3 ?eq ?neq
+    WHERE {
+        BIND("09:30:10Z"^^xsd:time AS ?time1)
+	    BIND("09:30:10Z"^^xsd:time AS ?time2)
+	    BIND("07:30:10Z"^^xsd:time AS ?time3)
+		BIND(?time1 = ?time2 AS ?eq)
+		BIND(?time1 = ?time3 AS ?neq)
+    }
+    ```
 
 ### <
 
-`xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>: TODO: supported?
+`xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>:
+??? note "Example query for `xsd:yearMonthDuration < xsd:yearMonthDuration`"
+
+    The first duration is smaller than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?lt1 ?lt2
+    WHERE {
+        BIND("P12Y2M"^^xsd:yearMonthDuration AS ?duration1)
+        BIND("P14Y2M"^^xsd:yearMonthDuration AS ?duration2)
+
+        BIND(?duration1 < ?duration2 AS ?lt1)
+        BIND(?duration2 < ?duration1 AS ?lt2)
+    }
+    ```
 
 `xsd:dayTimeDuration < xsd:dayTimeDuration`<a id="dayTimeDurationLTdayTimeDuration"></a>:
 ??? note "Example query for `xsd:dayTimeDuration < xsd:dayTimeDuration`"
@@ -95,7 +127,22 @@ TODO: time und yearMonthDuration supported?
     }
     ```
 
-`xsd:time < xsd:time`<a id="timeLTtime"></a>: TODO: supported?
+`xsd:time < xsd:time`<a id="timeLTtime"></a>: TODO: does not work correctly with timezones; same time UTC - 6 < UTC + 4 is not correct.
+??? note "Example query for `xsd:time < xsd:time`"
+
+    The first time is two hours and one minute earlier than the second time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?time1 ?time2 ?lt1 ?lt2
+    WHERE {
+        BIND("09:30:10Z"^^xsd:time AS ?time1)
+        BIND("11:31:10Z"^^xsd:time AS ?time2)
+
+        BIND(?time1 < ?time2 AS ?lt1)
+        BIND(?time2 < ?time1 AS ?lt2)
+    }
+    ```
 
 ### >
 
