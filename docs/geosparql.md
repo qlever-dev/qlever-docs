@@ -6,9 +6,11 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
 
 QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of `IndexBuilderMain`.
 
-If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)). More optimizations will be added over time.
+If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
 
-*Note:* If you use this option, please expect that you have to rebuild your index multiple times in the coming weeks and months while QLever is being updated to support more GeoSPARQL features efficiently. The server will report an error during startup if an index rebuild is necessary.
+## Faster GeoSPARQL Queries using Materialized Views
+
+TODO
 
 ## GeoSPARQL Functions
 
@@ -283,8 +285,6 @@ FILTER(geof:distance(?geom1, ?geom2, "some-supported-unit-iri"^^xsd:anyURI) <= c
 In the *Analysis* view of the QLever UI you can see *Spatial Join* instead of *Cartesian Product Join*, when the optimization is in effect. The GeoSPARQL maximum distance search is a standard syntax method for using the [QLever Spatial Search](#custom-spatial-search). The custom feature provides more options, for example nearest neighbor search.
 
 The implementation currently has to parse WKT geometries for all geometry types except points. This is being worked on, so you may expect a performance improvement in the future.
-
-*Current quirk:* The maximum distance search (each of the `FILTER` patterns above) supports the WKT geometry types `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`, while the non-optimized `geof:distance` and `geof:metricDistance` implementation only supports `POINT` so far.
 
 ??? note "Example query"
 
