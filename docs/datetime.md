@@ -76,7 +76,7 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
 
 ### <
 
-`xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>:
+`xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>: TODO: this only works with same digits -> P2Y2M < P14Y2M does not work correctly
 ??? note "Example query for `xsd:yearMonthDuration < xsd:yearMonthDuration`"
 
     The first duration is smaller than the second.
@@ -146,7 +146,22 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
 
 ### >
 
-`xsd:yearMonthDuration > xsd:yearMonthDuration`<a id="yearMonthDurationGTyearMonthDuration"></a>: TODO: supported?
+`xsd:yearMonthDuration > xsd:yearMonthDuration`<a id="yearMonthDurationGTyearMonthDuration"></a>: TODO: this only works with same digits -> P12Y2M > P9Y2M does not work correctly
+??? note "Example query for `xsd:yearMonthDuration > xsd:yearMonthDuration`"
+
+    The first duration is larger than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?gt1 ?gt2
+    WHERE {
+        BIND("P12Y2M"^^xsd:yearMonthDuration AS ?duration1)
+        BIND("P10Y2M"^^xsd:yearMonthDuration AS ?duration2)
+
+        BIND(?duration1 > ?duration2 AS ?gt1)
+        BIND(?duration2 > ?duration1 AS ?gt2)
+    }
+    ```
 
 `xsd:dayTimeDuration > xsd:dayTimeDuration`<a id="dayTimeDurationGTdayTimeDuration"></a>:
 ??? note "Example query for  `xsd:dayTimeDuration > xsd:dayTimeDuration`"
@@ -182,7 +197,22 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:time > xsd:time`<a id="timeGTtime"></a>: TODO: supported?
+`xsd:time > xsd:time`<a id="timeGTtime"></a>: TODO: does not work correctly with timezones
+??? note "Example query for `xsd:time > xsd:time`"
+
+    The first time is four hours, one minute, and two seconds later than the second time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?time1 ?time2 ?gt1 ?gt2
+    WHERE {
+        BIND("14:31:12Z"^^xsd:time AS ?time1)
+        BIND("10:30:10Z"^^xsd:time AS ?time2)
+
+        BIND(?time1 > ?time2 AS ?gt1)
+        BIND(?time2 > ?time1 AS ?gt2)
+    }
+    ```
 
 ### Subtraction
 
