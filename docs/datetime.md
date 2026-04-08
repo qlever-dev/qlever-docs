@@ -21,7 +21,7 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
 
 ## Arithmetics
 
-### =
+### Equality  = 
 
 `xsd:duration = xsd:duration`<a id="durationEQduration"></a>:
 ??? note "Example query for `xsd:duration = xsd:duration`"
@@ -74,7 +74,24 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-### <
+`xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>: TODO: NOT IN SEP; Timezone Problem
+??? note "Example query for `xsd:dateTime = xsd:dateTime`"
+
+    The first two dates and times are equal. The third date has another time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?date3 ?eq ?neq
+    WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date2)
+	    BIND("2025-12-24T18:20:30Z"^^xsd:dateTime AS ?date3)
+		BIND(?date1 = ?date2 AS ?eq)
+		BIND(?date1 = ?date3 AS ?neq)
+    }
+    ```
+
+### Less Than  <
 
 `xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>: TODO: this only works with same digits -> P2Y2M < P14Y2M does not work correctly
 ??? note "Example query for `xsd:yearMonthDuration < xsd:yearMonthDuration`"
@@ -144,7 +161,23 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-### >
+`xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>: TODO: NOT IN SEP; Timezone Problem
+??? note "Example query for `xsd:dateTime < xsd:dateTime`"
+
+    The dates are equal, but the first time is earlier than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?lt1 ?lt2
+    WHERE {
+        BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date2)
+		BIND(?date1 < ?date2 AS ?lt1)
+		BIND(?date2 < ?date1 AS ?lt2)
+    }
+    ```
+
+### Greater Than  >
 
 `xsd:yearMonthDuration > xsd:yearMonthDuration`<a id="yearMonthDurationGTyearMonthDuration"></a>: TODO: this only works with same digits -> P12Y2M > P9Y2M does not work correctly
 ??? note "Example query for `xsd:yearMonthDuration > xsd:yearMonthDuration`"
@@ -211,6 +244,22 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
 
         BIND(?time1 > ?time2 AS ?gt1)
         BIND(?time2 > ?time1 AS ?gt2)
+    }
+    ```
+
+`xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>: TODO: NOT IN SEP; Timezone Problem
+??? note "Example query for `xsd:dateTime > xsd:dateTime`"
+
+    The dates are equal, but the first time is later than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?gt1 ?gt2
+    WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date2)
+		BIND(?date1 > ?date2 AS ?gt1)
+		BIND(?date2 > ?date1 AS ?gt2)
     }
     ```
 
