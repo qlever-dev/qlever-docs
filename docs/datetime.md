@@ -57,7 +57,8 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:time = xsd:time`<a id="timeEQtime"></a>: TODO: does only work if the string representations are equal, not if the timezones are different.
+`xsd:time = xsd:time`<a id="timeEQtime"></a>:
+This operation does not handle different timezones correctly yet. For example `09:30:10Z` (UTC) and `08:30:10-01:00` (UTC - 1) will not be seen as equal.
 ??? note "Example query for `xsd:time = xsd:time`"
 
     The first two times are equal. The third time is two hours earlier.
@@ -74,7 +75,9 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>: TODO: NOT IN SEP; Timezone Problem
+`xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>:
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+This operation does not handle different timezones correctly yet. For example `2025-12-24T18:15:00Z` (UTC) and `2025-12-24T17:15:00-01:00` (UTC - 1) will not be seen as equal.
 ??? note "Example query for `xsd:dateTime = xsd:dateTime`"
 
     The first two dates and times are equal. The third date has another time.
@@ -144,7 +147,8 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:time < xsd:time`<a id="timeLTtime"></a>: TODO: does not work correctly with timezones; same time UTC - 6 < UTC + 4 is not correct.
+`xsd:time < xsd:time`<a id="timeLTtime"></a>:
+This operation does not handle different timezones correctly yet. For example `09:30:10Z` (UTC) will not be seen as earlier than `08:30:10-02:00` (UTC - 2).
 ??? note "Example query for `xsd:time < xsd:time`"
 
     The first time is two hours and one minute earlier than the second time.
@@ -161,7 +165,9 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>: TODO: NOT IN SEP; Timezone Problem
+`xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>:
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+This operation does not handle different timezones correctly yet. For example `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2).
 ??? note "Example query for `xsd:dateTime < xsd:dateTime`"
 
     The dates are equal, but the first time is earlier than the second.
@@ -230,7 +236,8 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:time > xsd:time`<a id="timeGTtime"></a>: TODO: does not work correctly with timezones
+`xsd:time > xsd:time`<a id="timeGTtime"></a>:
+This operation does not handle different timezones correctly yet. For example `10:30:10Z` (UTC) will not be seen as later than `12:30:10+04:00` (UTC + 4).
 ??? note "Example query for `xsd:time > xsd:time`"
 
     The first time is four hours, one minute, and two seconds later than the second time.
@@ -247,7 +254,9 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>: TODO: NOT IN SEP; Timezone Problem
+`xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>:
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+This operation does not handle different timezones correctly yet. For example `2025-12-24T10:30:10Z` (UTC) will not be seen as later than `2025-12-24T12:30:10+04:00` (UTC + 4).
 ??? note "Example query for `xsd:dateTime > xsd:dateTime`"
 
     The dates are equal, but the first time is later than the second.
