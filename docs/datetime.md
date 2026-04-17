@@ -7,23 +7,20 @@ QLever supports the following `xsd` Date/Time datatypes:
 
 | Type | Example | Description |
 |--|--|--|
-|`xsd:time`|`"09:30:10Z"^^xsd:time`|A time containing hour, minute, and second.|
 |`xsd:date`|`"2025-12-24"^^xsd:date`|Simple date containing year, month and day. |
 |`xsd:dateTime`|`"2025-12-24T18:11:00Z"^^xsd:dateTime`|Date combined with time (hour, minute, second, and optional timezone).|
 |`xsd:duration`|`"P1Y2M1D"^^xsd:duration`|A time interval that may contain years, months, days and time components (hours, minutes, seconds).|
 |`xsd:dayTimeDuration`|`"P2DT4H5M6S"^^xsd:dayTimeDuration`|A time interval consisting of days and time components (hours, minutes, seconds).|
-|`xsd:yearMonthDuration`|`"P12Y2M"^^xsd:yearMonthDuration`|A time interval consisting of years and months.| 
 |`xsd:gYear`|`"12000"^^xsd:gYear`|A (potentially large) year. Negative years are also allowed.|
 
-TODO: time und yearMonthDuration supported?
-
-TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mit TimeZone).
+The datatypes `xsd:time` and `xsd:yearMonthDuration` are not supported.
 
 ## Arithmetics
 
 ### Equality  = 
+The following datatypes can be tested for equality:
 
-`xsd:duration = xsd:duration`<a id="durationEQduration"></a>:
+`xsd:duration = xsd:duration`<a id="durationEQduration"></a>: Two durations are equal if all their components (years, months, days, hours, minutes, seconds) are identical.
 ??? note "Example query for `xsd:duration = xsd:duration`"
 
     The first two durations are equal. The third duration has an additional year.
@@ -40,7 +37,7 @@ TODO: dateTime = < > ist auch supported aber nicht im SEP (auch hier Probleme mi
     }
     ```
 
-`xsd:date = xsd:date`<a id="dateEQdate"></a>:
+`xsd:date = xsd:date`<a id="dateEQdate"></a>: Two dates are equal if they represent the same year, month, and day.
 ??? note "Example query for `xsd:date = xsd:date`"
 
     The first two dates are equal. The third date is from another year.
@@ -77,6 +74,7 @@ This operation does not handle different timezones correctly yet. For example `0
 
 `xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+Two `dateTime` objects are equal if the date parts are equal and the time parts are equal.
 This operation does not handle different timezones correctly yet. For example `2025-12-24T18:15:00Z` (UTC) and `2025-12-24T17:15:00-01:00` (UTC - 1) will not be seen as equal.
 ??? note "Example query for `xsd:dateTime = xsd:dateTime`"
 
@@ -95,25 +93,9 @@ This operation does not handle different timezones correctly yet. For example `2
     ```
 
 ### Less Than  <
+The following datatypes can be compared to each other using the less than:
 
-`xsd:yearMonthDuration < xsd:yearMonthDuration`<a id="yearMonthDurationLTyearMonthDuration"></a>: TODO: this only works with same digits -> P2Y2M < P14Y2M does not work correctly
-??? note "Example query for `xsd:yearMonthDuration < xsd:yearMonthDuration`"
-
-    The first duration is smaller than the second.
-
-    ```sparql {data-demo-engine="osm-planet"}
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    SELECT ?duration1 ?duration2 ?lt1 ?lt2
-    WHERE {
-        BIND("P12Y2M"^^xsd:yearMonthDuration AS ?duration1)
-        BIND("P14Y2M"^^xsd:yearMonthDuration AS ?duration2)
-
-        BIND(?duration1 < ?duration2 AS ?lt1)
-        BIND(?duration2 < ?duration1 AS ?lt2)
-    }
-    ```
-
-`xsd:dayTimeDuration < xsd:dayTimeDuration`<a id="dayTimeDurationLTdayTimeDuration"></a>:
+`xsd:dayTimeDuration < xsd:dayTimeDuration`<a id="dayTimeDurationLTdayTimeDuration"></a>: Returns `true` if the first duration is smaller than the second (first checking for days and then time).
 ??? note "Example query for `xsd:dayTimeDuration < xsd:dayTimeDuration`"
 
     The first duration is smaller than the second.
@@ -130,7 +112,7 @@ This operation does not handle different timezones correctly yet. For example `2
     }
     ```
 
-`xsd:date < xsd:date`<a id="dateLTdate"></a>:
+`xsd:date < xsd:date`<a id="dateLTdate"></a>: Returns `true` if the first date is earlier in time than the second date.
 ??? note "Example query for `xsd:date < xsd:date`"
 
     The first date is earlier than the second date.
@@ -166,7 +148,8 @@ This operation does not handle different timezones correctly yet. For example `0
     ```
 
 `xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>:
-This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.   
+Returns `true` if the first date is earlier in time than the second date or if the dates are equal and the first time is earlier than the second time. 
 This operation does not handle different timezones correctly yet. For example `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2).
 ??? note "Example query for `xsd:dateTime < xsd:dateTime`"
 
@@ -184,25 +167,9 @@ This operation does not handle different timezones correctly yet. For example `2
     ```
 
 ### Greater Than  >
+The following datatypes can be compared to each other using the greater than:
 
-`xsd:yearMonthDuration > xsd:yearMonthDuration`<a id="yearMonthDurationGTyearMonthDuration"></a>: TODO: this only works with same digits -> P12Y2M > P9Y2M does not work correctly
-??? note "Example query for `xsd:yearMonthDuration > xsd:yearMonthDuration`"
-
-    The first duration is larger than the second.
-
-    ```sparql {data-demo-engine="osm-planet"}
-    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-    SELECT ?duration1 ?duration2 ?gt1 ?gt2
-    WHERE {
-        BIND("P12Y2M"^^xsd:yearMonthDuration AS ?duration1)
-        BIND("P10Y2M"^^xsd:yearMonthDuration AS ?duration2)
-
-        BIND(?duration1 > ?duration2 AS ?gt1)
-        BIND(?duration2 > ?duration1 AS ?gt2)
-    }
-    ```
-
-`xsd:dayTimeDuration > xsd:dayTimeDuration`<a id="dayTimeDurationGTdayTimeDuration"></a>:
+`xsd:dayTimeDuration > xsd:dayTimeDuration`<a id="dayTimeDurationGTdayTimeDuration"></a>: Returns `true` if the first duration is larger than the second (first checking for days and then time).
 ??? note "Example query for  `xsd:dayTimeDuration > xsd:dayTimeDuration`"
 
     The first duration is larger than the second.
@@ -219,7 +186,7 @@ This operation does not handle different timezones correctly yet. For example `2
     }
     ```
 
-`xsd:date > xsd:date`<a id="dateGTdate"></a>:
+`xsd:date > xsd:date`<a id="dateGTdate"></a>: Returns `true` if the first date is later in time than the second date.
 ??? note "Example query for  `xsd:date > xsd:date`"
 
     The first date is later than the second date.
@@ -256,6 +223,7 @@ This operation does not handle different timezones correctly yet. For example `1
 
 `xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+Returns `true` if the first date is later in time than the second date or if the dates are equal and the first time is later than the second time. 
 This operation does not handle different timezones correctly yet. For example `2025-12-24T10:30:10Z` (UTC) will not be seen as later than `2025-12-24T12:30:10+04:00` (UTC + 4).
 ??? note "Example query for `xsd:dateTime > xsd:dateTime`"
 
@@ -273,6 +241,7 @@ This operation does not handle different timezones correctly yet. For example `2
     ```
 
 ### Subtraction
+The following combinations of datatypes can be used in subtractions:
 
 `xsd:date - xsd:date`<a id="date-date"></a>:
 Returns the `xsd:dayTimeDuration` between the two dates. The arguments need to be valid dates (e.g. `"2025-02-30"^^xsd:date` is not allowed).
@@ -306,11 +275,6 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
     }
     ```
 
-`xsd:date - xsd:yearMonthDuration`<a id="date-yearMonthDuration"></a>: TODO: supported?
-
-`xsd:time - xsd:time`<a id="time-time"></a>: TODO: supported?
-`xsd:time - xsd:dayTimeDuration`<a id="time-dayTimeDuration"></a>: TODO: supported?
-
 `xsd:dateTime - xsd:dateTime`<a id="dateTime-dateTime"></a>:
 Returns the `xsd:dayTimeDuration` between the two date and their times. The arguments need to be valid dates.
 
@@ -343,10 +307,8 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
 
     ```
 
-`xsd:dateTime - xsd:yearMonthDuration`<a id="dateTime-yearMonthDuration"></a>: TODO: supported?
-
-
 ### Addition
+The following combinations of datatypes can be used in additions:
 
 `xsd:date + xsd:dayTimeDuration`<a id="date+dayTimeDuration"></a>:
 Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
@@ -363,10 +325,6 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
     }
     ```
 
-`xsd:date + xsd:yearMonthDuration`<a id="date+yearMonthDuration"></a>: TODO: supported?
-
-`xsd:time + xsd:dayTimeDuration`<a id="time+dayTimeDuration"></a>: TODO: supported?
-
 `xsd:dateTime + xsd:dayTimeDuration`<a id="dateTime+dayTimeDuration"></a>:
 Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
 
@@ -381,5 +339,3 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
         BIND("P7DT3H44M30S"^^xsd:dayTimeDuration AS ?duration)
     }
     ```
-
-`xsd:dateTime + xsd:yearMonthDuration`<a id="date+dayTimeDuration"></a>:  TODO: supported?
