@@ -12,8 +12,6 @@ nav:
   - Use Cases: use-cases.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
-  # - Getting started:
-  #   - qlever-control: qlever-control.md
   - Reference:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
