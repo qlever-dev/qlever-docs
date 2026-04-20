@@ -178,9 +178,51 @@ qlever index --show
 
 There are many more commands and options, see `qlever --help` for general help, `qlever <command> --help` for help on a specific command, or just use the autocompletion.
 
+## Executing Operations
+
+The examples assume that the QLever instance is running at `http://localhost:7019`.
+
+### Via the QLever UI
+
+When using the QLever UI simply point the backend to the location of the QLever engine, `http://localhost:7019` in this example, and select it in the dropdown. Then you can simply write your SPARQL query or update in the editor and click execute. For Updates will need to the access token.
+
+### Programatically
+
+The SPARQL Endpoint for Query and Update is available under the path `/`[^1]. The examples assume that the QLever instance is running at `http://localhost:7019`. QLever supports all 3 options for sending queries [defined in the standard.](https://www.w3.org/TR/2013/REC-sparql11-protocol-20130321/#query-operation).
+Below are examples for executing queries using the `qlever` CLI tool for when you have the QLeverfile available as well as the 3 ways defined in the standard.
+
+=== "qlever"
+    ```bash
+    # In the folder with the QLeverfile
+    qlever query "SELECT * WHERE { ?s ?p ?o }"
+    ```
+=== "Option 1 (GET)"
+    ```bash
+    curl "http://localhost:7019?query=SELECT%20%2A%20WHERE%20%7B%20%3Fs%20%3Fp%20%3Fo%20%7D" # (1)
+    ```
+
+    1. This is the URL-encoding of the query `SELECT * WHERE { ?s ?p ?o }`. Without the encoding it would contain characters that are not allowed in an URL.
+=== "Option 2 (URL-encoded POST)"
+    ```bash
+    curl -X "POST"
+         -d "query=SELECT * WHERE { ?s ?p ?o }"
+         "http://localhost:7019"
+    ```
+=== "Option 3 (POST directly)"
+    ```bash
+    curl -X "POST"
+         -H "Content-Type: application/sparql-query"
+         -d "SELECT * WHERE { ?s ?p ?o }"
+         "http://localhost:7019"
+    ```
+
+Please see the [Updates](update.md) page for examples on executing updates.
+
 ## Code and further documentation
 
 The code for the `qlever` command-line tool can be found at
 <https://github.com/qlever-dev/qlever-control>. There you also find more
 information on the usage on macOS and Windows, for usage with your own dataset,
 and for developers.
+
+[^1]: Currently all paths except `/http-graph-store` can be used for SPARQL Query and Update operations. The official path is `/foo` and we recommend using that.
