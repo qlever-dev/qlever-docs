@@ -75,7 +75,6 @@ This operation does not handle different timezones correctly yet. For example `0
 `xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
 Two `dateTime` objects are equal if the date parts are equal and the time parts are equal.
-This operation does not handle different timezones correctly yet. For example `2025-12-24T18:15:00Z` (UTC) and `2025-12-24T17:15:00-01:00` (UTC - 1) will not be seen as equal.
 ??? note "Example query for `xsd:dateTime = xsd:dateTime`"
 
     The first two dates and times are equal. The third date has another time.
@@ -89,6 +88,21 @@ This operation does not handle different timezones correctly yet. For example `2
 	    BIND("2025-12-24T18:20:30Z"^^xsd:dateTime AS ?date3)
 		BIND(?date1 = ?date2 AS ?eq)
 		BIND(?date1 = ?date3 AS ?neq)
+    }
+    ```
+Different timezones can be handled correctly by first converting the date and time into an Epoch time.
+??? note "Example query for `xsd:dateTime = xsd:dateTime` using `ql:toEpoch()`"
+
+    The first two dates are equal. The times differ, but the represent the same point in time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?neqWithoutEpoch ?eqWithEpoch 
+    WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T17:15:00-01:00"^^xsd:dateTime AS ?date2)
+		BIND(?date1 = ?date2 AS ?neqWithoutEpoch)
+		BIND(ql:toEpoch(?date1) = ql:toEpoch(?date2) AS ?eqWithEpoch)
     }
     ```
 
@@ -150,7 +164,6 @@ This operation does not handle different timezones correctly yet. For example `0
 `xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.   
 Returns `true` if the first date is earlier in time than the second date or if the dates are equal and the first time is earlier than the second time. 
-This operation does not handle different timezones correctly yet. For example `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2).
 ??? note "Example query for `xsd:dateTime < xsd:dateTime`"
 
     The dates are equal, but the first time is earlier than the second.
@@ -163,6 +176,21 @@ This operation does not handle different timezones correctly yet. For example `2
 	    BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date2)
 		BIND(?date1 < ?date2 AS ?lt1)
 		BIND(?date2 < ?date1 AS ?lt2)
+    }
+    ```
+Different timezones can be handled correctly by first converting the date and time into an Epoch time.
+??? note "Example query for `xsd:dateTime < xsd:dateTime` using `ql:toEpoch()`"
+
+    The dates are equal, but the first time is earlier than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?lt1 ?lt2
+    WHERE {
+        BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T13:15:00-02:00"^^xsd:dateTime AS ?date2)
+		BIND(ql:toEpoch(?date1) < ql:toEpoch(?date2) AS ?lt1)
+		BIND(ql:toEpoch(?date2) < ql:toEpoch(?date1) AS ?lt2)
     }
     ```
 
@@ -224,7 +252,6 @@ This operation does not handle different timezones correctly yet. For example `1
 `xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
 Returns `true` if the first date is later in time than the second date or if the dates are equal and the first time is later than the second time. 
-This operation does not handle different timezones correctly yet. For example `2025-12-24T10:30:10Z` (UTC) will not be seen as later than `2025-12-24T12:30:10+04:00` (UTC + 4).
 ??? note "Example query for `xsd:dateTime > xsd:dateTime`"
 
     The dates are equal, but the first time is later than the second.
@@ -237,6 +264,21 @@ This operation does not handle different timezones correctly yet. For example `2
 	    BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date2)
 		BIND(?date1 > ?date2 AS ?gt1)
 		BIND(?date2 > ?date1 AS ?gt2)
+    }
+    ```
+Different timezones can be handled correctly by first converting the date and time into an Epoch time.
+??? note "Example query for `xsd:dateTime > xsd:dateTime` using `ql:toEpoch()`"
+
+    The dates are equal, but the first time is later than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?gt1 ?gt2
+    WHERE {
+        BIND("2025-12-24T10:30:10Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T12:30:10+04:00"^^xsd:dateTime AS ?date2)
+		BIND(ql:toEpoch(?date1) > ql:toEpoch(?date2) AS ?gt1)
+		BIND(ql:toEpoch(?date2) > ql:toEpoch(?date1) AS ?gt2)
     }
     ```
 
