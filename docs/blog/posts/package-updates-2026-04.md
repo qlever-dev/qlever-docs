@@ -6,9 +6,9 @@ links:
 
 # QLever package updates 04-2026
 
-## `qlever` package for Ubuntu Jammy
+## `qlever` package for Ubuntu
 
-The `qlever` (as well as `qlever-bin` and `qlever-control`) packages are now available for Ubuntu Jammy 22.04. Simply follow the [quickstart](../../quickstart.md).
+All `qlever` packages are now available for Ubuntu 22.04 Jammy and Ubuntu 26.04 LTS Resolute Raccoon. Simply follow the [quickstart](../../quickstart.md).
 
 *Note*: supporting Jammy is more complex due to the old packages in the release. The `qlever` packages for Jammy might be discontinued before Jammy's EOL in March 2027.
 
@@ -26,5 +26,5 @@ The `qlever` (as well as `qlever-bin` and `qlever-control`) packages are now ava
 
 [`qlever-petrimaps`](https://github.com/ad-freiburg/qlever-petrimaps) is now available as a package for Ubuntu[^1] and Debian[^2]. `qlever-petrimaps` is for interactive visualization of SPARQL query results with geospatial information on map, either as individual objects or as a heatmap. It is built for easy usage with `qlever` and `qlever-ui`.
 
-[^1]: Ubuntu 25.10 Questing, 25.04 Plucky, 24.04 Noble and 22.04 Jammy
+[^1]: Ubuntu 26.04 Resolute, Ubuntu 25.10 Questing, 25.04 Plucky, 24.04 Noble and 22.04 Jammy
 [^2]: Debian 12 Bookworm and 13 Trixie
