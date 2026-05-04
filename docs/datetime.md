@@ -2,6 +2,22 @@
 
 This page describes which features from the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md) are supported in QLever, and how to use them.
 
+## Standard SPARQL functions
+The following date or time functions are standard in SPARQL and therefore supported in QLever:
+
+| Function | Type of output | Description |
+|--|--|--|
+| `NOW ()` | `xsd:dateTime` | Returns the current date and time. |
+| `YEAR (xsd:dateTime arg)` | `xsd:integer` | Returns the year part of the `arg`. |
+| `MONTH (xsd:dateTime arg)` | `xsd:integer` | Returns the month part of the `arg`. |
+| `DAY (xsd:dateTime arg)` | `xsd:integer` | Returns the day part of the `arg`. |
+| `HOURS (xsd:dateTime arg)` | `xsd:integer` | Returns the hours of the time specified in `arg`. |
+| `MINUTES (xsd:dateTime arg)` | `xsd:integer` | Returns the minutes of the time specified in `arg`. |
+| `SECONDS (xsd:dateTime arg)` | `xsd:decimal` | Returns the seconds of the time specified in `arg`. |
+| `TIMEZONE (xsd:dateTime arg)` | `xsd:dayTimeDuration` | Returns the timezone specified in `arg` as part of a duration. |
+| `TZ (xsd:dateTime arg)` | `literal` | Returns the timezone specified in `arg`. |
+
+
 ## Datatypes
 QLever supports the following `xsd` Date/Time datatypes:
 
@@ -54,8 +70,8 @@ The following datatypes can be tested for equality:
     }
     ```
 
-`xsd:time = xsd:time`<a id="timeEQtime"></a>:
-This operation does not handle different timezones correctly yet. For example `09:30:10Z` (UTC) and `08:30:10-01:00` (UTC - 1) will not be seen as equal.
+`xsd:time = xsd:time`<a id="timeEQtime"></a>:  
+Two times are equal if they describe the same timepoint. (See also [current limitations](#current-limitations))
 ??? note "Example query for `xsd:time = xsd:time`"
 
     The first two times are equal. The third time is two hours earlier.
@@ -74,7 +90,7 @@ This operation does not handle different timezones correctly yet. For example `0
 
 `xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
-Two `dateTime` objects are equal if the date parts are equal and the time parts are equal.
+Two `dateTime` objects are equal if the date parts are equal and the time parts are equal. (See also [current limitations](#current-limitations))
 ??? note "Example query for `xsd:dateTime = xsd:dateTime`"
 
     The first two dates and times are equal. The third date has another time.
@@ -90,7 +106,7 @@ Two `dateTime` objects are equal if the date parts are equal and the time parts 
 		BIND(?date1 = ?date3 AS ?neq)
     }
     ```
-Different timezones can be handled correctly by first converting the date and time into an Epoch time.
+Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
 ??? note "Example query for `xsd:dateTime = xsd:dateTime` using `ql:toEpoch()`"
 
     The first two dates are equal. The times differ, but the represent the same point in time.
@@ -144,7 +160,7 @@ The following datatypes can be compared to each other using the less than:
     ```
 
 `xsd:time < xsd:time`<a id="timeLTtime"></a>:
-This operation does not handle different timezones correctly yet. For example `09:30:10Z` (UTC) will not be seen as earlier than `08:30:10-02:00` (UTC - 2).
+Returns `true`if the first time is earlier than the second time. (See also [current limitations](#current-limitations))
 ??? note "Example query for `xsd:time < xsd:time`"
 
     The first time is two hours and one minute earlier than the second time.
@@ -163,7 +179,7 @@ This operation does not handle different timezones correctly yet. For example `0
 
 `xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.   
-Returns `true` if the first date is earlier in time than the second date or if the dates are equal and the first time is earlier than the second time. 
+Returns `true` if the first date is earlier in time than the second date or if the dates are equal and the first time is earlier than the second time. (See also [current limitations](#current-limitations))
 ??? note "Example query for `xsd:dateTime < xsd:dateTime`"
 
     The dates are equal, but the first time is earlier than the second.
@@ -178,7 +194,7 @@ Returns `true` if the first date is earlier in time than the second date or if t
 		BIND(?date2 < ?date1 AS ?lt2)
     }
     ```
-Different timezones can be handled correctly by first converting the date and time into an Epoch time.
+Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
 ??? note "Example query for `xsd:dateTime < xsd:dateTime` using `ql:toEpoch()`"
 
     The dates are equal, but the first time is earlier than the second.
@@ -232,7 +248,7 @@ The following datatypes can be compared to each other using the greater than:
     ```
 
 `xsd:time > xsd:time`<a id="timeGTtime"></a>:
-This operation does not handle different timezones correctly yet. For example `10:30:10Z` (UTC) will not be seen as later than `12:30:10+04:00` (UTC + 4).
+Returns `true` if the first date is later than the second time. (See also [current limitations](#current-limitations)) 
 ??? note "Example query for `xsd:time > xsd:time`"
 
     The first time is four hours, one minute, and two seconds later than the second time.
@@ -251,7 +267,7 @@ This operation does not handle different timezones correctly yet. For example `1
 
 `xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>:
 This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
-Returns `true` if the first date is later in time than the second date or if the dates are equal and the first time is later than the second time. 
+Returns `true` if the first date is later in time than the second date or if the dates are equal and the first time is later than the second time. (See also [current limitations](#current-limitations)) 
 ??? note "Example query for `xsd:dateTime > xsd:dateTime`"
 
     The dates are equal, but the first time is later than the second.
@@ -266,7 +282,7 @@ Returns `true` if the first date is later in time than the second date or if the
 		BIND(?date2 > ?date1 AS ?gt2)
     }
     ```
-Different timezones can be handled correctly by first converting the date and time into an Epoch time.
+Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
 ??? note "Example query for `xsd:dateTime > xsd:dateTime` using `ql:toEpoch()`"
 
     The dates are equal, but the first time is later than the second.
@@ -381,3 +397,33 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
         BIND("P7DT3H44M30S"^^xsd:dayTimeDuration AS ?duration)
     }
     ```
+
+## Additional Functionality
+
+### toEpoch
+The built-in function `ql:toEpoch (xsd:dateTime)` / `ql:toEpoch (xsd:date)` can be used to extract the UTC Epoch time as a `xsd:integer`. This enables accurate comparisions between different dates as seen above. The function returns the amount of seconds passed since `"1970-01-01T00:00:00Z"^^xsd:dateTime` (UTC).
+
+??? note "Example query for `ql:toEpoch`"
+
+    The first date is exactly the start of the epoch time. The second is 120 seconds after and the third 120 seconds before
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?epoch1 ?epoch2 ?epoch3 WHERE {
+        BIND("1970-01-01T00:00:00Z"^^xsd:dateTime AS ?dateTime1)
+        BIND("1970-01-01T00:02:00Z"^^xsd:dateTime AS ?dateTime2)
+        BIND("1969-12-31T23:58:00Z"^^xsd:dateTime AS ?dateTime3)
+        BIND(ql:toEpoch(?dateTime1) AS ?epoch1)
+        BIND(ql:toEpoch(?dateTime2) AS ?epoch2)
+        BIND(ql:toEpoch(?dateTime3) AS ?epoch3)
+    }
+    ```
+
+## Current Limitations
+For many operations (`=`, `<`, `>`) with `xsd:time`, `xsd:dateTime` timezones are not handled correctly yet. Here are some examples:  
+- `09:30:10Z` (UTC) and `08:30:10-01:00` (UTC - 1) will not be seen as equal (`xsd:time`).  
+- `09:30:10Z` (UTC) will not be seen as earlier than `08:30:10-02:00` (UTC - 2) (`xsd:time`).  
+- `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2) (without using [`ql:toEpoch`](#toepoch)) (`xsd:dateTime`).   
+- `10:30:10Z` (UTC) will not be seen as later than `12:30:10+04:00` (UTC + 4) (`xsd:time`).
+
+
