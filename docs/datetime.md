@@ -1,0 +1,429 @@
+# Date and Time Support in QLever
+
+This page describes which features from the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md) are supported in QLever, and how to use them.
+
+## Standard SPARQL functions
+The following date or time functions are standard in SPARQL and therefore supported in QLever:
+
+| Function | Type of output | Description |
+|--|--|--|
+| `NOW ()` | `xsd:dateTime` | Returns the current date and time. |
+| `YEAR (xsd:dateTime arg)` | `xsd:integer` | Returns the year part of the `arg`. |
+| `MONTH (xsd:dateTime arg)` | `xsd:integer` | Returns the month part of the `arg`. |
+| `DAY (xsd:dateTime arg)` | `xsd:integer` | Returns the day part of the `arg`. |
+| `HOURS (xsd:dateTime arg)` | `xsd:integer` | Returns the hours of the time specified in `arg`. |
+| `MINUTES (xsd:dateTime arg)` | `xsd:integer` | Returns the minutes of the time specified in `arg`. |
+| `SECONDS (xsd:dateTime arg)` | `xsd:decimal` | Returns the seconds of the time specified in `arg`. |
+| `TIMEZONE (xsd:dateTime arg)` | `xsd:dayTimeDuration` | Returns the timezone specified in `arg` as part of a duration. |
+| `TZ (xsd:dateTime arg)` | `literal` | Returns the timezone specified in `arg`. |
+
+
+## Datatypes
+QLever supports the following `xsd` Date/Time datatypes:
+
+| Type | Example | Description |
+|--|--|--|
+|`xsd:date`|`"2025-12-24"^^xsd:date`|Simple date containing year, month and day. |
+|`xsd:dateTime`|`"2025-12-24T18:11:00Z"^^xsd:dateTime`|Date combined with time (hour, minute, second, and optional timezone).|
+|`xsd:duration`|`"P1Y2M1D"^^xsd:duration`|A time interval that may contain years, months, days and time components (hours, minutes, seconds).|
+|`xsd:dayTimeDuration`|`"P2DT4H5M6S"^^xsd:dayTimeDuration`|A time interval consisting of days and time components (hours, minutes, seconds).|
+|`xsd:gYear`|`"12000"^^xsd:gYear`|A (potentially large) year. Negative years are also allowed.|
+
+The datatypes `xsd:time` and `xsd:yearMonthDuration` are not supported.
+
+## Arithmetics
+
+### Equality  = 
+The following datatypes can be tested for equality:
+
+`xsd:duration = xsd:duration`<a id="durationEQduration"></a>: Two durations are equal if all their components (years, months, days, hours, minutes, seconds) are identical.
+??? note "Example query for `xsd:duration = xsd:duration`"
+
+    The first two durations are equal. The third duration has an additional year.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?duration3 ?eq ?neq
+    WHERE {
+        BIND("P1Y2M1D"^^xsd:duration AS ?duration1)
+	    BIND("P1Y2M1D"^^xsd:duration AS ?duration2)
+	    BIND("P2Y2M1D"^^xsd:duration AS ?duration3)
+		BIND(?duration1 = ?duration2 AS ?eq)
+		BIND(?duration1 = ?duration3 AS ?neq)
+    }
+    ```
+
+`xsd:date = xsd:date`<a id="dateEQdate"></a>: Two dates are equal if they represent the same year, month, and day.
+??? note "Example query for `xsd:date = xsd:date`"
+
+    The first two dates are equal. The third date is from another year.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?date3 ?eq ?neq
+    WHERE {
+        BIND("2025-12-24"^^xsd:date AS ?date1)
+	    BIND("2025-12-24"^^xsd:date AS ?date2)
+	    BIND("1925-12-24"^^xsd:date AS ?date3)
+		BIND(?date1 = ?date2 AS ?eq)
+		BIND(?date1 = ?date3 AS ?neq)
+    }
+    ```
+
+`xsd:time = xsd:time`<a id="timeEQtime"></a>:  
+Two times are equal if they describe the same timepoint. (See also [current limitations](#current-limitations))
+??? note "Example query for `xsd:time = xsd:time`"
+
+    The first two times are equal. The third time is two hours earlier.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?time1 ?time2 ?time3 ?eq ?neq
+    WHERE {
+        BIND("09:30:10Z"^^xsd:time AS ?time1)
+	    BIND("09:30:10Z"^^xsd:time AS ?time2)
+	    BIND("07:30:10Z"^^xsd:time AS ?time3)
+		BIND(?time1 = ?time2 AS ?eq)
+		BIND(?time1 = ?time3 AS ?neq)
+    }
+    ```
+
+`xsd:dateTime = xsd:dateTime`<a id="dateTimeEQdateTime"></a>:
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+Two `dateTime` objects are equal if the date parts are equal and the time parts are equal. (See also [current limitations](#current-limitations))
+??? note "Example query for `xsd:dateTime = xsd:dateTime`"
+
+    The first two dates and times are equal. The third date has another time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?date3 ?eq ?neq
+    WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date2)
+	    BIND("2025-12-24T18:20:30Z"^^xsd:dateTime AS ?date3)
+		BIND(?date1 = ?date2 AS ?eq)
+		BIND(?date1 = ?date3 AS ?neq)
+    }
+    ```
+Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
+??? note "Example query for `xsd:dateTime = xsd:dateTime` using `ql:toEpoch()`"
+
+    The first two dates are equal. The times differ, but the represent the same point in time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?neqWithoutEpoch ?eqWithEpoch 
+    WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T17:15:00-01:00"^^xsd:dateTime AS ?date2)
+		BIND(?date1 = ?date2 AS ?neqWithoutEpoch)
+		BIND(ql:toEpoch(?date1) = ql:toEpoch(?date2) AS ?eqWithEpoch)
+    }
+    ```
+
+### Less Than  <
+The following datatypes can be compared to each other using the less than:
+
+`xsd:dayTimeDuration < xsd:dayTimeDuration`<a id="dayTimeDurationLTdayTimeDuration"></a>: Returns `true` if the first duration is smaller than the second (first checking for days and then time).
+??? note "Example query for `xsd:dayTimeDuration < xsd:dayTimeDuration`"
+
+    The first duration is smaller than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?lt1 ?lt2
+    WHERE {
+        BIND("P2DT4H5M6S"^^xsd:dayTimeDuration AS ?duration1)
+        BIND("P4DT4H5M6S"^^xsd:dayTimeDuration AS ?duration2)
+
+        BIND(?duration1 < ?duration2 AS ?lt1)
+        BIND(?duration2 < ?duration1 AS ?lt2)
+    }
+    ```
+
+`xsd:date < xsd:date`<a id="dateLTdate"></a>: Returns `true` if the first date is earlier in time than the second date.
+??? note "Example query for `xsd:date < xsd:date`"
+
+    The first date is earlier than the second date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?lt1 ?lt2
+    WHERE {
+        BIND("2019-12-31"^^xsd:date AS ?date1)
+        BIND("2020-03-13"^^xsd:date AS ?date2)
+
+        BIND(?date1 < ?date2 AS ?lt1)
+        BIND(?date2 < ?date1 AS ?lt2)
+    }
+    ```
+
+`xsd:time < xsd:time`<a id="timeLTtime"></a>:
+Returns `true`if the first time is earlier than the second time. (See also [current limitations](#current-limitations))
+??? note "Example query for `xsd:time < xsd:time`"
+
+    The first time is two hours and one minute earlier than the second time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?time1 ?time2 ?lt1 ?lt2
+    WHERE {
+        BIND("09:30:10Z"^^xsd:time AS ?time1)
+        BIND("11:31:10Z"^^xsd:time AS ?time2)
+
+        BIND(?time1 < ?time2 AS ?lt1)
+        BIND(?time2 < ?time1 AS ?lt2)
+    }
+    ```
+
+`xsd:dateTime < xsd:dateTime`<a id="dateTimeLTdateTime"></a>:
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.   
+Returns `true` if the first date is earlier in time than the second date or if the dates are equal and the first time is earlier than the second time. (See also [current limitations](#current-limitations))
+??? note "Example query for `xsd:dateTime < xsd:dateTime`"
+
+    The dates are equal, but the first time is earlier than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?lt1 ?lt2
+    WHERE {
+        BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date2)
+		BIND(?date1 < ?date2 AS ?lt1)
+		BIND(?date2 < ?date1 AS ?lt2)
+    }
+    ```
+Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
+??? note "Example query for `xsd:dateTime < xsd:dateTime` using `ql:toEpoch()`"
+
+    The dates are equal, but the first time is earlier than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?lt1 ?lt2
+    WHERE {
+        BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T13:15:00-02:00"^^xsd:dateTime AS ?date2)
+		BIND(ql:toEpoch(?date1) < ql:toEpoch(?date2) AS ?lt1)
+		BIND(ql:toEpoch(?date2) < ql:toEpoch(?date1) AS ?lt2)
+    }
+    ```
+
+### Greater Than  >
+The following datatypes can be compared to each other using the greater than:
+
+`xsd:dayTimeDuration > xsd:dayTimeDuration`<a id="dayTimeDurationGTdayTimeDuration"></a>: Returns `true` if the first duration is larger than the second (first checking for days and then time).
+??? note "Example query for  `xsd:dayTimeDuration > xsd:dayTimeDuration`"
+
+    The first duration is larger than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?duration1 ?duration2 ?gt1 ?gt2
+    WHERE {
+        BIND("P4DT4H5M6S"^^xsd:dayTimeDuration AS ?duration1)
+        BIND("P2DT4H5M6S"^^xsd:dayTimeDuration AS ?duration2)
+
+        BIND(?duration1 > ?duration2 AS ?gt1)
+        BIND(?duration2 > ?duration1 AS ?gt2)
+    }
+    ```
+
+`xsd:date > xsd:date`<a id="dateGTdate"></a>: Returns `true` if the first date is later in time than the second date.
+??? note "Example query for  `xsd:date > xsd:date`"
+
+    The first date is later than the second date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?gt1 ?gt2
+    WHERE {
+        BIND("2020-03-13"^^xsd:date AS ?date1)
+        BIND("2019-12-31"^^xsd:date AS ?date2)
+
+        BIND(?date1 > ?date2 AS ?gt1)
+        BIND(?date2 > ?date1 AS ?gt2)
+    }
+    ```
+
+`xsd:time > xsd:time`<a id="timeGTtime"></a>:
+Returns `true` if the first date is later than the second time. (See also [current limitations](#current-limitations)) 
+??? note "Example query for `xsd:time > xsd:time`"
+
+    The first time is four hours, one minute, and two seconds later than the second time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?time1 ?time2 ?gt1 ?gt2
+    WHERE {
+        BIND("14:31:12Z"^^xsd:time AS ?time1)
+        BIND("10:30:10Z"^^xsd:time AS ?time2)
+
+        BIND(?time1 > ?time2 AS ?gt1)
+        BIND(?time2 > ?time1 AS ?gt2)
+    }
+    ```
+
+`xsd:dateTime > xsd:dateTime`<a id="dateTimeGTdateTime"></a>:
+This is **not part of the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md)**, but still supported.  
+Returns `true` if the first date is later in time than the second date or if the dates are equal and the first time is later than the second time. (See also [current limitations](#current-limitations)) 
+??? note "Example query for `xsd:dateTime > xsd:dateTime`"
+
+    The dates are equal, but the first time is later than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?gt1 ?gt2
+    WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T14:15:00Z"^^xsd:dateTime AS ?date2)
+		BIND(?date1 > ?date2 AS ?gt1)
+		BIND(?date2 > ?date1 AS ?gt2)
+    }
+    ```
+Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
+??? note "Example query for `xsd:dateTime > xsd:dateTime` using `ql:toEpoch()`"
+
+    The dates are equal, but the first time is later than the second.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2 ?gt1 ?gt2
+    WHERE {
+        BIND("2025-12-24T10:30:10Z"^^xsd:dateTime AS ?date1)
+	    BIND("2025-12-24T12:30:10+04:00"^^xsd:dateTime AS ?date2)
+		BIND(ql:toEpoch(?date1) > ql:toEpoch(?date2) AS ?gt1)
+		BIND(ql:toEpoch(?date2) > ql:toEpoch(?date1) AS ?gt2)
+    }
+    ```
+
+### Subtraction
+The following combinations of datatypes can be used in subtractions:
+
+`xsd:date - xsd:date`<a id="date-date"></a>:
+Returns the `xsd:dayTimeDuration` between the two dates. The arguments need to be valid dates (e.g. `"2025-02-30"^^xsd:date` is not allowed).
+
+??? note "Example query for `xsd:date - xsd:date`"
+
+    There are 73 days between the two dates.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2
+        ((?date1 - ?date2) AS ?differenceInDays)
+    WHERE {
+        BIND("2020-03-13"^^xsd:date AS ?date1)
+        BIND("2019-12-31"^^xsd:date AS ?date2)
+    }
+    ```
+
+`xsd:date - xsd:dayTimeDuration`<a id="date-dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration earlier than the given date. The first argument needs to be a valid date. If the duration only specifies days the time of the result date is set to `00:00:00`.
+
+??? note "Example query for `xsd:date - dayTimeDuration`"
+
+    The date 2025-05-05 at 23:10:30 is 10 days, 49 minutes and 30 seconds earlier than the start date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date ?duration ((?date - ?duration) AS ?difference)  WHERE {
+        BIND("2025-05-16"^^xsd:date AS ?date)
+        BIND("P10DT0H49M30S"^^xsd:dayTimeDuration AS ?duration)
+    }
+    ```
+
+`xsd:dateTime - xsd:dateTime`<a id="dateTime-dateTime"></a>:
+Returns the `xsd:dayTimeDuration` between the two date and their times. The arguments need to be valid dates.
+
+??? note "Example query for `xsd:dateTime - xsd:dateTime`"
+
+    There are 23 days, 6 hours, 14 minutes, and 30 seconds between the two dates and their times.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date1 ?date2
+        ((?date1 - ?date2) AS ?difference) WHERE {
+        BIND("2025-12-24T18:15:00Z"^^xsd:dateTime AS ?date1)
+        BIND("2025-12-01T12:00:30Z"^^xsd:dateTime AS ?date2)
+    }   
+    ```
+
+`xsd:dateTime - xsd:dayTimeDuration`<a id="dateTime-dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration earlier than the given date and time. The first argument needs to be a valid date.
+
+??? note "Example query for `xsd:dateTime - dayTimeDuration`"
+
+    The date 2000-01-01 is 2 days, 12 hours, 12 minutes and 12 seconds earlier than the start date and time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?dateTime ?duration ((?dateTime - ?duration) AS ?difference) WHERE {
+        BIND("2000-01-03T12:12:12Z"^^xsd:dateTime AS ?dateTime)
+        BIND("P2DT12H12M12S"^^xsd:dayTimeDuration AS ?duration)
+    }
+
+    ```
+
+### Addition
+The following combinations of datatypes can be used in additions:
+
+`xsd:date + xsd:dayTimeDuration`<a id="date+dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
+
+??? note "Example query for `xsd:date + dayTimeDuration`"
+
+    The date 2025-05-26 at 00:49:30 is 10 days, 49 minutes and 30 seconds later than the start date.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?date ?duration ((?date + ?duration) AS ?difference)  WHERE {
+        BIND("2025-05-16"^^xsd:date AS ?date)
+        BIND("P10DT0H49M30S"^^xsd:dayTimeDuration AS ?duration)
+    }
+    ```
+
+`xsd:dateTime + xsd:dayTimeDuration`<a id="dateTime+dayTimeDuration"></a>:
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
+
+??? note "Example query for `xsd:dateTime + dayTimeDuration`"
+
+    The date 2000-01-01 is 7 days, 3 hours, 44 minutes and 30 seconds later than the start date and time.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?dateTime ?duration ((?dateTime + ?duration) AS ?difference) WHERE {
+        BIND("1999-12-24T20:15:30Z"^^xsd:dateTime AS ?dateTime)
+        BIND("P7DT3H44M30S"^^xsd:dayTimeDuration AS ?duration)
+    }
+    ```
+
+## Additional Functionality
+
+### toEpoch
+The built-in function `ql:toEpoch (xsd:dateTime)` / `ql:toEpoch (xsd:date)` can be used to extract the UTC Epoch time as a `xsd:integer`. This enables accurate comparisions between different dates as seen above. The function returns the amount of seconds passed since `"1970-01-01T00:00:00Z"^^xsd:dateTime` (UTC).
+
+??? note "Example query for `ql:toEpoch`"
+
+    The first date is exactly the start of the epoch time. The second is 120 seconds after and the third 120 seconds before
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT ?epoch1 ?epoch2 ?epoch3 WHERE {
+        BIND("1970-01-01T00:00:00Z"^^xsd:dateTime AS ?dateTime1)
+        BIND("1970-01-01T00:02:00Z"^^xsd:dateTime AS ?dateTime2)
+        BIND("1969-12-31T23:58:00Z"^^xsd:dateTime AS ?dateTime3)
+        BIND(ql:toEpoch(?dateTime1) AS ?epoch1)
+        BIND(ql:toEpoch(?dateTime2) AS ?epoch2)
+        BIND(ql:toEpoch(?dateTime3) AS ?epoch3)
+    }
+    ```
+
+## Current Limitations
+For many operations (`=`, `<`, `>`) with `xsd:time`, `xsd:dateTime` timezones are not handled correctly yet. Here are some examples:  
+- `09:30:10Z` (UTC) and `08:30:10-01:00` (UTC - 1) will not be seen as equal (`xsd:time`).  
+- `09:30:10Z` (UTC) will not be seen as earlier than `08:30:10-02:00` (UTC - 2) (`xsd:time`).  
+- `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2) (without using [`ql:toEpoch`](#toepoch)) (`xsd:dateTime`).   
+- `10:30:10Z` (UTC) will not be seen as later than `12:30:10+04:00` (UTC + 4) (`xsd:time`).
+
+
