@@ -11,5 +11,5 @@ dependencies = [
     "mkdocs-material>=9.7.0",
     "mkdocs-material[imaging]",
     "mkdocs-git-revision-date-localized-plugin",
-    "mkdocs-git-committers-plugin-2"
+    "mkdocs-rss-plugin"
 ]

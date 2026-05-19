@@ -12,6 +12,7 @@ nav:
   - Use Cases: use-cases.md
   - FAQ: faq.md
   - Troubleshooting: troubleshooting.md
+  - Blog: blog/index.md
   - Reference:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
@@ -20,7 +21,6 @@ nav:
     - Rebuild index: rebuild-index.md
     - Text search: text-search.md
     - Path search: path-search.md
-    # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
 edit_uri: https://github.com/qlever-dev/qlever-docs/edit/master/docs
@@ -82,13 +82,12 @@ plugins:
   - git-revision-date-localized:
       enable_creation_date: false
       type: timeago
-  # - git-committers:
-  #     repository: qlever-dev/qlever-docs
-  #     branch: master
-
-# https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-contributors
-# or https://squidfunk.github.io/mkdocs-material/setup/adding-a-git-repository/#document-authors
-# https://squidfunk.github.io/mkdocs-material/reference/
+  - blog
+  - rss:
+      match_path: "blog/posts/.*"
+      date_from_meta:
+        as_creation: date.created
+        as_update: date.updated
 
 extra_javascript:
   - js/qlever-demo.js
