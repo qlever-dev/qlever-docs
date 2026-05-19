@@ -204,7 +204,7 @@ When using the `SERVICE` syntax, the user may freely select an arbitrary subset 
     }
     ```
 
-## Automatic usage of materailized views
+## Automatic usage of materialized views
 
 In addition to the [explicit query syntax](#querying-a-materialized-view), QLever can use materialized views in queries implicitly. This is possible if both the query used for writing the view as well as the user query contain certain query patterns and the applicable view is loaded (see [Preloading a materialized view](#preloading-a-materialized-view)). Currently, QLever supports the following query patterns:
 
