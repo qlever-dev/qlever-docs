@@ -154,6 +154,14 @@ id TAB always 1`. Default: `<NAME>.wordsfile.tsv`.
 records for the text index, one line per record with two tab-separated columns
 each, in the format `text record id TAB text`. Default: `<NAME>.docsfile.tsv`.
 
+`ADD_HAS_WORD_TRIPLES`, `--add-has-word-triples`: Whether to additionally store,
+for each triple with a literal object and for each word in that literal, an
+internal triple of the form `<literal> ql:has-word "word"`. The (named) graph
+of these internal triples is used to store the term frequency of the word in
+the literal. The triples can be used to implement custom full-text search
+queries, in particular in combination with [materialized
+views](materialized-views.md). Default: `false`.
+
 `INDEX_BINARY`, `--index-binary`: The binary for building the index, when
 using `SYSTEM = native`. The binary must either be in your `PATH` or you must
 specify the full path. Default: `IndexBuilderMain` (which is the default name
