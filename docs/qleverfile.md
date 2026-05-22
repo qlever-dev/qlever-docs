@@ -164,10 +164,10 @@ views](materialized-views.md). Default: `false`.
 
 `INDEX_BINARY`, `--index-binary`: The binary for building the index, when
 using `SYSTEM = native`. The binary must either be in your `PATH` or you must
-specify the full path. Default: `IndexBuilderMain` (which is the default name
+specify the full path. Default: `qlever-index` (which is the default name
 of the binary for index building when compiling QLever).
 
-TODO materialized view
+`MATERIALIZED_VIEWS`, `--materialized-views`: Materialized views to be written at indexing time, given as a JSON object. The keys in the JSON are used as view names and the string values as the SPARQL queries for writing the respective view. By default, no materialized views are written.
 
 ## Section `[server]`
 

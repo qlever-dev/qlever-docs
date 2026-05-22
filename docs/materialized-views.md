@@ -97,6 +97,15 @@ example `qlever settings materialized-view-writer-memory=4G`.
     ``` bash
     qlever materialized-view $VIEW_NAME "SELECT ... { ... }"
     ```
+=== "Qleverfile"
+    In the `[index]` section of your `Qleverfile` you can state materialized views to be written when executing `qlever index`.
+
+    ```ini
+    [index]
+    MATERIALIZED_VIEWS = {"view1": "SELECT ...", "view2": "SELECT ..."}
+    ```
+
+    See also: [Qleverfile reference](qleverfile.md#section-index)
 === "curl"
     ``` bash
     curl "http://$HOST:$PORT/?cmd=write-materialized-view&view-name=$VIEW_NAME&timeout=24h&access-token=$ACCESS_TOKEN" \
@@ -115,11 +124,12 @@ example `qlever settings materialized-view-writer-memory=4G`.
 
 ## Preloading a materialized view
 
-You can optionally preload materialized views. This is required for implicitly rewriting queries to use materialized views.
-If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first
-time. Preloading can be requested via a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
+You can optionally preload materialized views. This is required for implicitly rewriting queries to use materialized views. If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first time. Preloading can be requested via a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
 
-
+=== "qlever CLI"
+    ```bash
+    qlever materialized-view --load viewName
+    ```
 === "qlever-server"
     ```bash
     qlever-server --preload-materialized-views view1 view2 ...
@@ -208,7 +218,7 @@ When using the `SERVICE` syntax, the user may freely select an arbitrary subset 
 
 In addition to the [explicit query syntax](#querying-a-materialized-view), QLever can use materialized views in queries implicitly. This is possible if both the query used for writing the view as well as the user query contain certain query patterns and the applicable view is loaded (see [Preloading a materialized view](#preloading-a-materialized-view)). Currently, QLever supports the following query patterns:
 
-**Simple join chain**: The materialized view is written with a query of the form
+**Join chain**: The materialized view is written with a query of the form
 
 ```sparql
 SELECT * {
@@ -220,14 +230,26 @@ SELECT * {
 and the user query contains the same pattern, or `?s <p1>/<p2> ?o`. This is particularily useful for `geo:hasGeometry/geo:asWKT`.
 Note that, while the query using the view may contain any additional graph patterns, the query for writing the view may only contain additional `BIND` statements after the basic graph pattern.
 
+**Join star**: The materialized view is written with a query of the form
+
+```sparql
+SELECT * {
+  ?s <p1> ?o1 .
+  ?s <p2> ?o2 .
+  ?s <p3> ?o3 .
+  ...
+}
+```
+
+and the user query contains the entire graph pattern from the view. The user query may contain additional patterns, but the view may only contain `BIND` statements in addition to the triples of the join star.
+
 **Bind**: If a query uses a materialized view, either by automatic or explicit use, `BIND` statements can be rewritten to reading additional columns of the view under certain conditions.
 For this to work, the `BIND` statements must only define otherwise unused variables and their expressions may only use variables that can't contain `UNDEF` values.
-QLever can connect the materialized view and the `BIND` statement across other triples, spatial search and GeoSPARQL filters. Soon also `UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.
-Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This also reduces disk usage and improves performance.
+QLever can connect the materialized view and the `BIND` statement across other triples, spatial search and GeoSPARQL filters. 
+<!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
+Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This reduces disk usage and improves performance.
 
-Coming soon: Join stars.
-
-TODO runtime parameter
+**Disabling automatic usage of materialized views**: If you want to disable the automatic usage of materialized views, you can set `qlever settings enable-materialized-view-query-rewrite=false`. This is particularly relevant if you use SPARQL updates, which are not yet supported by materialized views.
 
 ## Sort order
 
