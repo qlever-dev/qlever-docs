@@ -420,8 +420,8 @@ The built-in function `ql:toEpoch (xsd:dateTime)` / `ql:toEpoch (xsd:date)` can 
     ```
 
 ## Current Limitations
-For many operations (`=`, `<`, `>`) with `xsd:time`, `xsd:dateTime` timezones are not handled correctly yet. Here are some examples:  
-  
+Comparison operators (`=`, `<`, `>`) on literals with `xsd:time`, `xsd:dateTime` datatype currently do not treat the same timepoint expressed in different timezones as equal. Here are some examples:  
+
 - `09:30:10Z` (UTC) and `08:30:10-01:00` (UTC - 1) will not be seen as equal (`xsd:time`).  
 - `09:30:10Z` (UTC) will not be seen as earlier than `08:30:10-02:00` (UTC - 2) (`xsd:time`).  
 - `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2) (without using [`ql:toEpoch`](#toepoch)) (`xsd:dateTime`).   
