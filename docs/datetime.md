@@ -1,6 +1,6 @@
 # Date and Time Support in QLever
 
-This page describes which features from the [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md) are supported in QLever, and how to use them.
+This page describes the date and time operations in QLever, and how to use them, including support for many operations defined in [SEP-0002](https://github.com/w3c/sparql-dev/blob/main/SEP/SEP-0002/sep-0002.md).
 
 ## Standard SPARQL functions
 The following date or time functions are standard in SPARQL and therefore supported in QLever:
@@ -29,7 +29,7 @@ QLever supports the following `xsd` Date/Time datatypes:
 |`xsd:dayTimeDuration`|`"P2DT4H5M6S"^^xsd:dayTimeDuration`|A time interval consisting of days and time components (hours, minutes, seconds).|
 |`xsd:gYear`|`"12000"^^xsd:gYear`|A (potentially large) year. Negative years are also allowed.|
 
-The datatypes `xsd:time` and `xsd:yearMonthDuration` are not supported.
+The datatypes `xsd:time` and `xsd:yearMonthDuration` are not supported yet.
 
 ## Arithmetics
 
@@ -421,6 +421,7 @@ The built-in function `ql:toEpoch (xsd:dateTime)` / `ql:toEpoch (xsd:date)` can 
 
 ## Current Limitations
 For many operations (`=`, `<`, `>`) with `xsd:time`, `xsd:dateTime` timezones are not handled correctly yet. Here are some examples:  
+  
 - `09:30:10Z` (UTC) and `08:30:10-01:00` (UTC - 1) will not be seen as equal (`xsd:time`).  
 - `09:30:10Z` (UTC) will not be seen as earlier than `08:30:10-02:00` (UTC - 2) (`xsd:time`).  
 - `2025-12-24T14:15:00Z` (UTC) will not be seen as earlier than `2025-12-24T13:15:00-02:00` (UTC - 2) (without using [`ql:toEpoch`](#toepoch)) (`xsd:dateTime`).   
