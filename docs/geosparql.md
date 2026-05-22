@@ -10,7 +10,38 @@ If this option is used, QLever will currently precompute centroid, bounding box,
 
 ## Faster GeoSPARQL Queries using Materialized Views
 
-TODO
+[Materialized Views](materialized-views.md) can be used to further improve spatial querying performance. Consider the following materialized view:
+
+```sparql
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE {
+  ?subject geo:hasGeometry ?intermediate .
+  ?intermediate geo:asWKT ?geometry .
+  BIND(geof:centroid(?geometry) AS ?centroid)
+  BIND(geof:metricArea(?geometry) AS ?area)
+  BIND(geof:metricLength(?geometry) AS ?length)
+  BIND(ql:envelopeLowerLeft(?geometry) AS ?lower_left)
+  BIND(ql:envelopeUpperRight(?geometry) AS ?upper_right)
+}
+```
+
+It will be used whenever `geo:hasGeometry/geo:asWKT` is present in the user query. If the user query additionally contains one of the `BIND`s they are also detected automatically.
+
+QLever's efficient spatial search operations (see [GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search), [GeoSPARQL Geometric Relations](#geosparql-geometric-relations) and [QLever Custom Spatial Search](#custom-spatial-search)) can leverage the bounding boxes given by `ql:envelopeLowerLeft` and `ql:envelopeUpperRight` automatically (see [Internal Geometry Functions](#internal-geometry-functions)). This means it is sufficient for the user to write a query like the following and QLever will use the materialized view and read the geometry bounding boxes for efficient prefiltering directly from the materialized view.
+
+```sparql {data-demo-engine="osm-planet"}
+PREFIX osmrel: <https://www.openstreetmap.org/relation/>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+PREFIX osmkey: <https://www.openstreetmap.org/wiki/Key:>
+SELECT * {
+  osmrel:62768 geo:hasGeometry/geo:asWKT ?freiburg_geom .
+  ?street osmkey:highway ?street_type .
+  ?street geo:hasGeometry/geo:asWKT ?street_geom .
+  FILTER geof:sfContains(?freiburg_geom, ?street_geom)
+}
+```
 
 ## GeoSPARQL Functions
 
@@ -524,3 +555,9 @@ outweigh the savings. Thus prefiltering is disabled at a certain bounding box
 size. This can be configured using `spatial-join-prefilter-max-size`. By
 default the limit is `2500` square coordinates. To deactivate prefiltering
 completely, set this to `0`.
+
+## Internal Geometry Functions
+
+`ql:isGeoPoint`: Detect whether the given literal is stored in QLever's efficient (lossy) WKT point encoding.
+
+`ql:envelopeLowerLeft` and `ql:envelopeUpperRight`: Returns the corners of the geometry's envelope (aka bounding box) as WKT points.

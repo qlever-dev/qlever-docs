@@ -212,8 +212,6 @@ stream, and can be replayed any time from an arbitrary point in time, and the
 date until which the dataset is up to date is stored in dedicated triples.
 Default: `false`.
 
-TODO load materialized views
-
 ## Section `[runtime]`
 
 `SYSTEM`, `--system`: Three options: `native` (run natively, assuming that the

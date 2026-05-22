@@ -55,8 +55,9 @@ which computes these attributes for **all** geometries in the dataset:
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX unit: <http://qudt.org/vocab/unit/>
-SELECT ?subject ?geometry ?centroid ?area ?length WHERE {
-  ?subject geo:hasGeometry/geo:asWKT ?geometry .
+SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE {
+  ?subject geo:hasGeometry ?intermediate .
+  ?intermediate geo:asWKT ?geometry .
   BIND(geof:centroid(?geometry) AS ?centroid) .
   BIND(geof:area(?geometry, unit:M2) AS ?area) .
   BIND(geof:length(?geometry, unit:M) AS ?length) .
@@ -94,8 +95,15 @@ example `qlever settings materialized-view-writer-memory=4G`.
 
 
 === "qlever CLI"
-    ``` bash
+    ```bash
+    # During indexing if specified in Qleverfile:
+    qlever index
+    # After indexing while the server is running:
     qlever materialized-view $VIEW_NAME "SELECT ... { ... }"
+    ```
+=== "qlever-index"
+    ```bash
+    qlever-index [...] --materialized-views '{"view1": "SELECT ...", "view2": "SELECT ..."}'
     ```
 === "Qleverfile"
     In the `[index]` section of your `Qleverfile` you can state materialized views to be written when executing `qlever index`.
