@@ -136,6 +136,9 @@ You can optionally preload materialized views. This is required for implicitly r
 
 === "qlever CLI"
     ```bash
+    # At server start:
+    qlever start --preload-materialized-views view1 view2 ...
+    # When the server is already running:
     qlever materialized-view --load viewName
     ```
 === "qlever-server"
@@ -144,6 +147,15 @@ You can optionally preload materialized views. This is required for implicitly r
     # or
     qlever-server -l view1 view2 ...
     ```
+=== "Qleverfile"
+    In the `[server]` section of your `Qleverfile` you can state materialized views to be loaded when executing `qlever start`.
+
+    ```ini
+    [server]
+    PRELOAD_MATERIALIZED_VIEWS = view1 view2 ... 
+    ```
+
+    See also: [Qleverfile reference](qleverfile.md#section-server)
 === "curl"
     ``` bash
     curl "http://$HOST:$PORT/?cmd=load-materialized-view&view-name=$VIEW_NAME&access-token=$ACCESS_TOKEN"

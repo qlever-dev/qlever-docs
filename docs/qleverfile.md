@@ -212,6 +212,8 @@ stream, and can be replayed any time from an arbitrary point in time, and the
 date until which the dataset is up to date is stored in dedicated triples.
 Default: `false`.
 
+`PRELOAD_MATERIALIZED_VIEWS`, `--preload-materialized-views`: Materialized views to be loaded upon server start. Takes an arbitrary number of arguments. By default, no views are loaded on server start.
+
 ## Section `[runtime]`
 
 `SYSTEM`, `--system`: Three options: `native` (run natively, assuming that the
