@@ -313,6 +313,6 @@ part. Use this for languages whose literals occur often in query results, to
 make those queries faster. Default: none.
 
 `"ignore-case"`: Removed. `qlever index` aborts with an error if this key is
-present. QLever no longer supports building a case-insensitive index;
-case-insensitive matching has to be done at query time (e.g. via `FILTER
-(LCASE(?x) = "...")`.
+present. QLever no longer supports building a case-insensitive index. If
+needed, case-insensitive matching has to be done at query time (e.g. via
+`FILTER (LCASE(?x) = "...")` or `FILTER REGEX(?x, "...", "i")`).
