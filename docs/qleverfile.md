@@ -288,7 +288,7 @@ queries return slightly different numeric results than expected. Default:
 `"ascii-prefixes-only"`: If `true`, the TTL parser assumes that all prefix
 declarations contain only ASCII characters, which is faster to parse but
 rejects datasets that use non-ASCII characters in their prefix declarations.
-Default: `false`. This is deprecated; there no longer is a noticeable
+Default: `false`. This is deprecated; there is no longer a noticeable
 performance difference.
 
 `"locale"`: A JSON object with the keys `"language"`, `"country"`, and
