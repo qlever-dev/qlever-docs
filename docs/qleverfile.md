@@ -88,17 +88,10 @@ have many files that belong to the same graph and have the same format.
 Default: none.
 
 `SETTINGS_JSON`, `--settings-json`: A JSON object (as a string) that can be
-used to pass additional settings for `qlever index`. This exists for historical
-reasons and will be deprecated soon. In the meantime, the most relevant key is
-`"num-triples-per-batch"`, which controls how many triples are parsed in one
-batch. All data from a batch is kept in memory until it has been fully
-processed, and when parsing input streams in parallel, multiple batches are
-kept in memory at the same time. Thus, choosing a large value for
-`"num-triples-per-batch"` can lead to high memory consumption or an
-out-of-memory crash. On the other hand, two files per batch are produced during
-`qlever index`, which might require increasing your `ULIMIT`, see below.
-The default value for `"num-triples-per-batch"` is `10000000` (ten
-million).
+used to pass additional settings for `qlever index`. The recognized keys are
+documented in [`SETTINGS_JSON` keys](#settings_json-keys) at the end of this
+page. This exists for historical reasons and will be deprecated soon, with the
+individual keys migrated to their own `Qleverfile` variables.
 
 `ULIMIT`, `--ulimit`: The maximum number of open files allowed during `qlever
 index`. If this number is too low, `qlever index` will fail with an error that
@@ -256,3 +249,70 @@ is that it is more efficient, but that is not a concern for the UI). Default:
 `UI_CONTAINER`, `--ui-container`: The name of the container used for `qlever
 ui`, when using `UI_SYSTEM = docker` or `UI_SYSTEM = podman`. Default:
 `qlever.ui.<NAME>`.
+
+## `SETTINGS_JSON` keys
+
+The following keys are recognized in the JSON object given to `SETTINGS_JSON`
+in the `[index]` section. As mentioned there, `SETTINGS_JSON` exists for
+historical reasons and will be deprecated soon, with the individual keys
+migrated to their own `Qleverfile` variables. The keys are listed in roughly
+decreasing order of relevance.
+
+`"num-triples-per-batch"`: How many triples are processed in one batch during
+`qlever index`. All data from a batch is kept in memory until it has been
+fully processed, and when parsing input streams in parallel, multiple batches
+are kept in memory at the same time. Thus, choosing a large value can lead to
+high memory consumption or an out-of-memory crash. On the other hand, two
+files per batch are produced during `qlever index`, so a small value can
+require increasing your `ULIMIT`. Default: `10000000` (ten million).
+
+`"parser-batch-size"`: The number of triples the parser hands off to the index
+builder in one batch through the parallel parsing pipeline, controlling the
+granularity of that pipeline. This is a triple count, not a memory size, and
+is unrelated to `PARSER_BUFFER_SIZE` (the byte size of the parser's I/O
+buffer) and to `"num-triples-per-batch"` (which controls the size of partial
+vocabularies). Usually there is no reason to change it. Default: `1000000`
+(one million).
+
+`"parser-integer-overflow-behavior"`: How the TTL parser handles integer
+literals that do not fit into a 64-bit integer. One of
+`overflowing-integers-throw` (abort `qlever index` with an error message
+identifying the offending literal), `overflowing-integers-become-doubles`
+(silently convert only the overflowing values to doubles), and
+`all-integers-become-doubles` (convert every integer literal to a double,
+regardless of its size). Note that any conversion to a double can lose
+precision, so silently converting overflowing integers may make subsequent
+queries return slightly different numeric results than expected. Default:
+`overflowing-integers-throw`.
+
+`"ascii-prefixes-only"`: If `true`, the TTL parser assumes that all prefix
+declarations contain only ASCII characters, which is faster to parse but
+rejects datasets that use non-ASCII characters in their prefix declarations.
+Default: `false`. This is deprecated; there is no longer a noticeable
+performance difference.
+
+`"locale"`: A JSON object with the keys `"language"`, `"country"`, and
+`"ignore-punctuation"` that determines the locale used by QLever for
+collation, which in turn influences the sort order of strings and the result
+of string comparisons in SPARQL queries. Note that changing the locale
+requires a complete rebuild of the index, and that any non-default value is
+currently untested by the QLever team, so be prepared to file bug reports.
+Default: `{"language": "en", "country": "US", "ignore-punctuation": false}`.
+
+`"prefixes-external"`: A list of IRI prefixes with the effect that all IRIs
+and literals starting with one of these prefixes are stored in the external
+(on-disk) part of the vocabulary instead of the internal (in-memory) part. To
+keep certain IRIs in memory for faster lookup, specify a more restrictive
+list. Default: `[""]`, that is, a list with the single empty string, which
+matches every IRI and every literal, so the entire vocabulary is external.
+
+`"languages-internal"`: A list of language tags with the effect that all
+language-tagged literals carrying one of these tags are stored in the
+internal (in-memory) part of the vocabulary instead of the external (on-disk)
+part. Use this for languages whose literals occur often in query results, to
+make those queries faster. Default: none.
+
+`"ignore-case"`: Removed. `qlever index` aborts with an error if this key is
+present. QLever no longer supports building a case-insensitive index. If
+needed, case-insensitive matching has to be done at query time (e.g. via
+`FILTER (LCASE(?x) = "...")` or `FILTER REGEX(?x, "...", "i")`).
