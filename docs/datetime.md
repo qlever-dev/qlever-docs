@@ -29,7 +29,7 @@ QLever supports the following `xsd` Date/Time datatypes:
 |`xsd:dayTimeDuration`|`"P2DT4H5M6S"^^xsd:dayTimeDuration`|A time interval consisting of days and time components (hours, minutes, seconds).|
 |`xsd:gYear`|`"12000"^^xsd:gYear`|A (potentially large) year. Negative years are also allowed.|
 
-The datatypes `xsd:time` and `xsd:yearMonthDuration` are not supported yet.
+The datatype `xsd:yearMonthDuration` is not supported yet. `xsd:time` is supported with caveats on timezone handling (see [Current Limitations](#current-limitations)).
 
 ## Arithmetics
 
@@ -109,7 +109,7 @@ Two `dateTime` objects are equal if the date parts are equal and the time parts 
 Different timezones can be handled correctly by first converting the date and time into an Epoch time. (See [`ql:toEpoch`](#toepoch))
 ??? note "Example query for `xsd:dateTime = xsd:dateTime` using `ql:toEpoch()`"
 
-    The first two dates are equal. The times differ, but the represent the same point in time.
+    The first two dates are equal. The times differ, but they represent the same point in time.
 
     ```sparql {data-demo-engine="wikidata"}
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
@@ -160,7 +160,7 @@ The following datatypes can be compared to each other using the less than:
     ```
 
 `xsd:time < xsd:time`<a id="timeLTtime"></a>:
-Returns `true`if the first time is earlier than the second time. (See also [current limitations](#current-limitations))
+Returns `true` if the first time is earlier than the second time. (See also [current limitations](#current-limitations))
 ??? note "Example query for `xsd:time < xsd:time`"
 
     The first time is two hours and one minute earlier than the second time.
@@ -248,7 +248,7 @@ The following datatypes can be compared to each other using the greater than:
     ```
 
 `xsd:time > xsd:time`<a id="timeGTtime"></a>:
-Returns `true` if the first date is later than the second time. (See also [current limitations](#current-limitations))
+Returns `true` if the first time is later than the second time. (See also [current limitations](#current-limitations))
 ??? note "Example query for `xsd:time > xsd:time`"
 
     The first time is four hours, one minute, and two seconds later than the second time.
@@ -334,7 +334,7 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
     ```
 
 `xsd:dateTime - xsd:dateTime`<a id="dateTime-dateTime"></a>:
-Returns the `xsd:dayTimeDuration` between the two date and their times. The arguments need to be valid dates.
+Returns the `xsd:dayTimeDuration` between the two dates and their times. The arguments need to be valid dates.
 
 ??? note "Example query for `xsd:dateTime - xsd:dateTime`"
 
@@ -384,7 +384,7 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
     ```
 
 `xsd:dateTime + xsd:dayTimeDuration`<a id="dateTime+dayTimeDuration"></a>:
-Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid date.
+Returns the `xsd:dateTime` that is the amount of days and the time of the duration later than the given date and time. The first argument needs to be a valid `xsd:dateTime`.
 
 ??? note "Example query for `xsd:dateTime + dayTimeDuration`"
 
@@ -401,11 +401,11 @@ Returns the `xsd:dateTime` that is the amount of days and the time of the durati
 ## Additional Functionality
 
 ### toEpoch
-The built-in function `ql:toEpoch (xsd:dateTime)` / `ql:toEpoch (xsd:date)` can be used to extract the UTC Epoch time as a `xsd:integer`. This enables accurate comparisions between different dates as seen above. The function returns the amount of seconds passed since `"1970-01-01T00:00:00Z"^^xsd:dateTime` (UTC).
+The built-in function `ql:toEpoch (xsd:dateTime)` / `ql:toEpoch (xsd:date)` can be used to extract the UTC Epoch time as a `xsd:integer`. This enables accurate comparisons between different dates as seen above. The function returns the amount of seconds passed since `"1970-01-01T00:00:00Z"^^xsd:dateTime` (UTC).
 
 ??? note "Example query for `ql:toEpoch`"
 
-    The first date is exactly the start of the epoch time. The second is 120 seconds after and the third 120 seconds before
+    The first date is exactly the start of the epoch time. The second is 120 seconds after and the third 120 seconds before.
 
     ```sparql {data-demo-engine="wikidata"}
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
