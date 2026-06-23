@@ -55,8 +55,9 @@ which computes these attributes for **all** geometries in the dataset:
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
 PREFIX unit: <http://qudt.org/vocab/unit/>
-SELECT ?subject ?geometry ?centroid ?area ?length WHERE {
-  ?subject geo:hasGeometry/geo:asWKT ?geometry .
+SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE {
+  ?subject geo:hasGeometry ?intermediate .
+  ?intermediate geo:asWKT ?geometry .
   BIND(geof:centroid(?geometry) AS ?centroid) .
   BIND(geof:area(?geometry, unit:M2) AS ?area) .
   BIND(geof:length(?geometry, unit:M) AS ?length) .
@@ -94,9 +95,25 @@ example `qlever settings materialized-view-writer-memory=4G`.
 
 
 === "qlever CLI"
-    ``` bash
+    ```bash
+    # During indexing if specified in Qleverfile:
+    qlever index
+    # After indexing while the server is running:
     qlever materialized-view $VIEW_NAME "SELECT ... { ... }"
     ```
+=== "qlever-index"
+    ```bash
+    qlever-index [...] --materialized-views '{"view1": "SELECT ...", "view2": "SELECT ..."}'
+    ```
+=== "Qleverfile"
+    In the `[index]` section of your `Qleverfile` you can state materialized views to be written when executing `qlever index`.
+
+    ```ini
+    [index]
+    MATERIALIZED_VIEWS = {"view1": "SELECT ...", "view2": "SELECT ..."}
+    ```
+
+    See also: [Qleverfile reference](qleverfile.md#section-index)
 === "curl"
     ``` bash
     curl "http://$HOST:$PORT/?cmd=write-materialized-view&view-name=$VIEW_NAME&timeout=24h&access-token=$ACCESS_TOKEN" \
@@ -115,11 +132,30 @@ example `qlever settings materialized-view-writer-memory=4G`.
 
 ## Preloading a materialized view
 
-You can optionally preload materialized views. If you do not apply preloading,
-views get loaded automatically when they are used in a query for the first
-time. Preloading can be requested via HTTP and `libqlever`.
+You can optionally preload materialized views. This is required for implicitly rewriting queries to use materialized views. If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first time. Preloading can be requested via a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
 
+=== "qlever CLI"
+    ```bash
+    # At server start:
+    qlever start --preload-materialized-views view1 view2 ...
+    # When the server is already running:
+    qlever materialized-view --load viewName
+    ```
+=== "qlever-server"
+    ```bash
+    qlever-server --preload-materialized-views view1 view2 ...
+    # or
+    qlever-server -l view1 view2 ...
+    ```
+=== "Qleverfile"
+    In the `[server]` section of your `Qleverfile` you can state materialized views to be loaded when executing `qlever start`.
 
+    ```ini
+    [server]
+    PRELOAD_MATERIALIZED_VIEWS = view1 view2 ... 
+    ```
+
+    See also: [Qleverfile reference](qleverfile.md#section-server)
 === "curl"
     ``` bash
     curl "http://$HOST:$PORT/?cmd=load-materialized-view&view-name=$VIEW_NAME&access-token=$ACCESS_TOKEN"
@@ -198,6 +234,43 @@ When using the `SERVICE` syntax, the user may freely select an arbitrary subset 
     }
     ```
 
+## Automatic usage of materialized views
+
+In addition to the [explicit query syntax](#querying-a-materialized-view), QLever can use materialized views in queries implicitly. This is possible if both the query used for writing the view as well as the user query contain certain query patterns and the applicable view is loaded (see [Preloading a materialized view](#preloading-a-materialized-view)). Currently, QLever supports the following query patterns:
+
+**Join chain**: The materialized view is written with a query of the form
+
+```sparql
+SELECT * {
+   ?s <p1> ?m .
+   ?m <p2> ?o
+}
+```
+
+and the user query contains the same pattern, or `?s <p1>/<p2> ?o`. This is particularily useful for `geo:hasGeometry/geo:asWKT`.
+Note that, while the query using the view may contain any additional graph patterns, the query for writing the view may only contain additional `BIND` statements after the basic graph pattern.
+
+**Join star**: The materialized view is written with a query of the form
+
+```sparql
+SELECT * {
+  ?s <p1> ?o1 .
+  ?s <p2> ?o2 .
+  ?s <p3> ?o3 .
+  ...
+}
+```
+
+and the user query contains the entire graph pattern from the view. The user query may contain additional patterns, but the view may only contain `BIND` statements in addition to the triples of the join star.
+
+**Bind**: If a query uses a materialized view, either by automatic or explicit use, `BIND` statements can be rewritten to reading additional columns of the view under certain conditions.
+For this to work, the `BIND` statements must only define otherwise unused variables and their expressions may only use variables that can't contain `UNDEF` values.
+QLever can connect the materialized view and the `BIND` statement across other triples, spatial search and GeoSPARQL filters. 
+<!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
+Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This reduces disk usage and improves performance.
+
+**Disabling automatic usage of materialized views**: If you want to disable the automatic usage of materialized views, you can set `qlever settings enable-materialized-view-query-rewrite=false`. This is particularly relevant if you use SPARQL updates, which are not yet supported by materialized views.
+
 ## Sort order
 
 Materialized views are sorted by the first column, then the second column, and
@@ -220,25 +293,16 @@ The materialized views feature is still in beta. It works, but there are some
 limitations regarding its use. These limitations will be lifted in future
 releases of QLever.
 
-1. The query result must have at least four columns; if the result for which
-   you want to create a materialized view has fewer columns, you currently
-   need to add dummy columns (e.g., using `BIND` statements).
-2. The query result may not contain so-called local vocabulary entries, that
+1. The query result may not contain so-called local vocabulary entries, that
    is, IRIs or literals that were added by update operations or created by
    functions during query processing, except for integers, floating points,
    booleans, dates, WKT `POINT` literals or encoded numeric IRIs (these are all
    fine).
-3. The query to build a view must be a `SELECT` query; we will eventually
+2. The query to build a view must be a `SELECT` query; we will eventually
    support `CONSTRUCT` queries as well.
-4. Materialized views are currently read-only; that is, update operation do
+3. Materialized views are currently read-only; that is, update operation do
    not modify materialized views. If you need to update a materialized view,
    you must currently recreate it from scratch (you can simply overwrite an
    existing view).
-5. To use a materialized view in a query, you must currently use the special syntax
-   described above; eventually, materialized views will be detected and used
-   automatically by the query planner (to a certain extent).
-6. Materialized views can be preloaded one-by-one or are loaded automatically
-   upon first use. In the future, the configuration will allow loading a list or
-   all at server start.
-7. Reading from a materialized view always reads the first three columns even
+4. Reading from a materialized view always reads the first three columns even
    if they are not requested; the unused ones are discarded immediately.
