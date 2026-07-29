@@ -175,6 +175,10 @@ A materialized view that is no longer needed can be deleted. This unloads the
 view (if it is currently loaded) and permanently removes all of its files from
 disk. Deleting a view that does not exist results in an error.
 
+=== "qlever CLI"
+    ```bash
+    qlever materialized-view $VIEW_NAME --delete
+    ```
 === "curl"
     ``` bash
     curl "http://$HOST:$PORT/?cmd=delete-materialized-view&view-name=$VIEW_NAME&access-token=$ACCESS_TOKEN"
@@ -187,9 +191,6 @@ disk. Deleting a view that does not exist results in an error.
     qlever::Qlever qlv{config};
     qlv.deleteMaterializedView("nameOfTheView");
     ```
-
-*NOTE: There is currently no `qlever` CLI subcommand for deleting a
-materialized view; use `curl` or `libqlever` directly as shown above.*
 
 ## Querying a materialized view
 
