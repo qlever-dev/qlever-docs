@@ -51,4 +51,14 @@ There may also be cases where you want to monitor something specific to a datase
 !!! example
     We run a [Wikidata endpoint](https://qlever.dev/wikidata) which we keep up to date. The data usually is less than 1 minute old. The timestamp of the data is contained as a triple in the data itself.
 
+    ```sparql {data-demo-engine="wikidata"}
+    PREFIX wikibase: <http://wikiba.se/ontology#>
+    PREFIX schema: <http://schema.org/>
+    SELECT ?updates_complete_until {
+      wikibase:Dump wikibase:updatesCompleteUntil ?updates_complete_until
+    }
+    ORDER BY DESC(?updates_complete_until)
+    LIMIT 1
+    ```
+
 In such cases it is not fitting to expose these metrics, that are specific to individual datasets, through QLever. For these use cases you can use [sparql-prometheus-exporter](https://github.com/Qup42/sparql-prometheus-exporter). It is an adapter that is configured with SPARQL queries and re-formats the results for Prometheus.
