@@ -21,7 +21,7 @@ nav:
     - Rebuild index: rebuild-index.md
     - Text search: text-search.md
     - Path search: path-search.md
-    - Metrics: metrics.md
+    - Observability: observability.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
@@ -137,3 +137,6 @@ markdown_extensions:
     - attr_list
     - footnotes
     - md_in_html
+    - pymdownx.caret
+    - pymdownx.mark
+    - pymdownx.tilde

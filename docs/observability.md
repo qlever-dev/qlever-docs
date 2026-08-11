@@ -1,9 +1,10 @@
-# Metrics
+# Monitoring
 
 !!! info "History"
-    - Added in QLever 0.5.51
+    - Added in QLever 0.6.0
 
-QLever provides metrics in the [Prometheus Text Format](https://prometheus.io/docs/instrumenting/exposition_formats/#prometheus-text-format) at the standard path `/metrics` on the main server port. The metrics endpoint is disabled by default and has to be enabled with `--enable-metrics`. Accessing it requires the access token.
+QLever provides ^^metrics^^ in the [Prometheus Text Format](https://prometheus.io/docs/instrumenting/exposition_formats/#prometheus-text-format) at the standard path `/metrics` on the main server port. The metrics endpoint is disabled by default and has to be enabled with `--enable-metrics`. Accessing it requires the access token.  
+`/ping` can be used as a ^^healthcheck^^ endpoint. It returns `200` whenever QLever is up and running. A dedicated healthcheck endpoint is not available.
 
 ## Available metrics
 
@@ -24,6 +25,7 @@ See also the integrated documentation in the metrics response for the available 
 - `qlever_io_context_max_handlers` number of worker threads specified with `--num-simultaneous-queries`.
 - `qlever_io_context_running_handlers` number of worker threads that are currently running.
 - `qlever_io_context_handler_latency` histogram of the worker thread latency (time between work being available and started).
+- `qlever_build_info` Node exporter style metadata. Contains metadata on the binary like version, compile time and used compiler.
 
 ## Usage
 
@@ -40,7 +42,7 @@ Collecting metrics for QLever is very easy if you already have a monitoring stac
       credentials: my_access_token
 ```
 
-For visualization of the metrics you can start with our [Grafana Dashboard template](https://grafana.com/grafana/dashboards/).
+For visualization of the metrics you can start with our [Grafana Dashboard template](https://grafana.com/grafana/dashboards/25577-qlever-metrics/).
 
 ## Monitoring the dataset
 
