@@ -4,7 +4,7 @@
     - Added in QLever 0.6.0
 
 QLever provides ^^metrics^^ in the [Prometheus Text Format](https://prometheus.io/docs/instrumenting/exposition_formats/#prometheus-text-format) at the standard path `/metrics` on the main server port. The metrics endpoint is disabled by default and has to be enabled with `--enable-metrics`. Accessing it requires the access token.  
-`/ping` can be used as a ^^healthcheck^^ endpoint. It returns `200` whenever QLever is up and running. A dedicated healthcheck endpoint is not available.
+A dedicated ^^healthcheck^^ endpoint is not available, but `/ping` can be used for that purpose: it returns `200` whenever QLever is up and running.
 
 ## Available metrics
 
@@ -12,9 +12,9 @@ QLever provides ^^metrics^^ in the [Prometheus Text Format](https://prometheus.i
 
 See also the integrated documentation in the metrics response for the available metrics.
 
-- `qlever_memory_cache_limit_bytes` and `qlever_memory_query_limit_bytes` the memory limits defined for the cache and query processing with `--cache-max-size` and `--memory-max-size`.
-- `qlever_memory_cache_used_bytes` and `qlever_memory_query_available_bytes` how much of the respective memory limit is available.
-- `qlever_http_errors_total` number of errors processing HTTP requests. These are errors if the request isn't SPARQL or it hasn't been identified as SPARQL at the time of the error.
+- `qlever_memory_cache_limit_bytes` and `qlever_memory_query_limit_bytes` the memory limits for the cache and for query processing, as defined with `--cache-max-size` and `--memory-max-size`.
+- `qlever_memory_cache_used_bytes` and `qlever_memory_query_available_bytes` how much of the cache memory limit is used and how much of the query processing memory limit is still available.
+- `qlever_http_errors_total` number of errors processing HTTP requests. These are errors for requests that are not SPARQL, or that had not yet been identified as SPARQL when the error occurred.
 - `qlever_sparql_operation_errors_total` number of errors processing a SPARQL operation. The label `type` indicates the type of error (syntax, timeout, etc.).
 - `qlever_sparql_operation_duration_milliseconds_*` histogram for the execution time of SPARQL operations. Label `operation` indicates query or update.
 - `qlever_sparql_operation_started_total`, `qlever_sparql_operation_running` and `qlever_sparql_operation_finished_total` number of started, running and finished SPARQL operations. Label `operation` indicates query or update.
@@ -25,7 +25,7 @@ See also the integrated documentation in the metrics response for the available 
 - `qlever_io_context_max_handlers` number of worker threads specified with `--num-simultaneous-queries`.
 - `qlever_io_context_running_handlers` number of worker threads that are currently running.
 - `qlever_io_context_handler_latency` histogram of the worker thread latency (time between work being available and started).
-- `qlever_build_info` Node exporter style metadata. Contains metadata on the binary like version, compile time and used compiler.
+- `qlever_build_info` Node-exporter-style metadata about the binary, such as version, compile time, and the compiler used.
 
 ## Usage
 
@@ -53,7 +53,6 @@ There may also be cases where you want to monitor something specific to a datase
 
     ```sparql {data-demo-engine="wikidata"}
     PREFIX wikibase: <http://wikiba.se/ontology#>
-    PREFIX schema: <http://schema.org/>
     SELECT ?updates_complete_until {
       wikibase:Dump wikibase:updatesCompleteUntil ?updates_complete_until
     }
@@ -61,4 +60,4 @@ There may also be cases where you want to monitor something specific to a datase
     LIMIT 1
     ```
 
-In such cases it is not fitting to expose these metrics, that are specific to individual datasets, through QLever. For these use cases you can use [sparql-prometheus-exporter](https://github.com/Qup42/sparql-prometheus-exporter). It is an adapter that is configured with SPARQL queries and re-formats the results for Prometheus.
+Such metrics are specific to an individual dataset, so it does not make sense to expose them through QLever itself. For these use cases you can use [sparql-prometheus-exporter](https://github.com/Qup42/sparql-prometheus-exporter), an adapter that is configured with SPARQL queries and re-formats the results for Prometheus.
