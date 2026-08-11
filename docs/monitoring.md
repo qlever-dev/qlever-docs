@@ -1,7 +1,7 @@
 # Monitoring
 
 !!! info "History"
-    - Added in QLever 0.6.0
+    - Added by [qlever#2817](https://github.com/ad-freiburg/qlever/pull/2817), with further metrics added by [qlever#3108](https://github.com/ad-freiburg/qlever/pull/3108), [qlever#3111](https://github.com/ad-freiburg/qlever/pull/3111), [qlever#3127](https://github.com/ad-freiburg/qlever/pull/3127), and [qlever#3160](https://github.com/ad-freiburg/qlever/pull/3160)
 
 QLever provides metrics in the [Prometheus Text Format](https://prometheus.io/docs/instrumenting/exposition_formats/#prometheus-text-format) at the standard path `/metrics` on the main server port. The metrics endpoint is disabled by default and has to be enabled with `--enable-metrics`. Accessing it requires the access token.
 
