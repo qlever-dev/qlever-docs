@@ -137,6 +137,3 @@ markdown_extensions:
     - attr_list
     - footnotes
     - md_in_html
-    - pymdownx.caret
-    - pymdownx.mark
-    - pymdownx.tilde

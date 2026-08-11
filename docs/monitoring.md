@@ -3,8 +3,9 @@
 !!! info "History"
     - Added in QLever 0.6.0
 
-QLever provides ^^metrics^^ in the [Prometheus Text Format](https://prometheus.io/docs/instrumenting/exposition_formats/#prometheus-text-format) at the standard path `/metrics` on the main server port. The metrics endpoint is disabled by default and has to be enabled with `--enable-metrics`. Accessing it requires the access token.  
-A dedicated ^^healthcheck^^ endpoint is not available, but `/ping` can be used for that purpose: it returns `200` whenever QLever is up and running.
+QLever provides metrics in the [Prometheus Text Format](https://prometheus.io/docs/instrumenting/exposition_formats/#prometheus-text-format) at the standard path `/metrics` on the main server port. The metrics endpoint is disabled by default and has to be enabled with `--enable-metrics`. Accessing it requires the access token.
+
+A dedicated healthcheck endpoint is not available, but `/ping` can be used for that purpose: it returns `200` whenever QLever is up and running.
 
 ## Available metrics
 
