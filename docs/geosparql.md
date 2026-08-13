@@ -4,7 +4,7 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
 
 ## Geometry Preprocessing
 
-QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of `IndexBuilderMain`.
+QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of the `qlever-index` binary.
 
 If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
 
@@ -444,7 +444,7 @@ The following configuration parameters are provided in the `SERVICE` as triples 
 | `maxDistance` | integer | The maximum distance in meters between points from `left` and `right` to be included in the result. |
 | `bindDistance` | variable | An otherwise unbound variable name which will be used to give the distance in kilometers between the result point pairs. |
 | `payload` | variable or IRI `<all>` | Variable from the group graph pattern inside the `SERVICE` to be included in the result. `right` is automatically included. This parameter may be repeated to include multiple variables. For all variables use `<all>`. If `right` is given outside of the `SERVICE` do not use this parameter. |
-| `joinType` | `<intersects>`, `<covers>`, `<contains>`, `<touches>`, `<crosses>`, `<overlaps>`, `<equals>`, `<within-dist>` | The geometric relation to compute between the `left` and `right` geometries. If `within-dist` is chosen, the `maxDistance` parameter is required. Mandatory when using the `libspatialjoin` algorithm and illegal for all other algorithms.  |
+| `joinType` | `<intersects>`, `<covers>`, `<contains>`, `<touches>`, `<crosses>`, `<overlaps>`, `<equals>`, `<within>`, `<within-dist>` | The geometric relation to compute between the `left` and `right` geometries. If `within-dist` is chosen, the `maxDistance` parameter is required. Mandatory when using the `libspatialjoin` algorithm and illegal for all other algorithms.  |
 
 NOTE: The individual algorithms support different subsets of all valid literals of `geo:wktLiteral` datatype. The `libspatialjoin` algorithm supports `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`. The `baseline` and `boundingBox` algorithms support the same literals except `GEOMETRYCOLLECTION`. The `s2` algorithm currently only works with `POINT` literals.
 
@@ -561,3 +561,5 @@ completely, set this to `0`.
 `ql:isGeoPoint`: Detect whether the given literal is stored in QLever's efficient (lossy) WKT point encoding.
 
 `ql:envelopeLowerLeft` and `ql:envelopeUpperRight`: Returns the corners of the geometry's envelope (aka bounding box) as WKT points.
+
+`ql:simplifyGeometry`: Given a WKT geometry as a first argument and a tolerance in coordinate units as a second argument, apply the Douglas-Peucker algorithm to simplify the geometry.
