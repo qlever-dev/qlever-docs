@@ -4,13 +4,27 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
 
 ## Geometry Preprocessing
 
+!!! note "TL;DR: Recommended Qleverfile settings"
+    For the best GeoSPARQL performance, assuming your dataset contains geometries as `?subject geo:hasGeometry/geo:asWKT ?wkt`, add this to your `Qleverfile` before running `qlever index` and `qlever start`.
+
+    ```ini
+    [index]
+    # ...
+    VOCABULARY_TYPE = on-disk-compressed-geo-split
+    MATERIALIZED_VIEWS = {"geometries": "PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX geof: <http://www.opengis.net/def/function/geosparql/> SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE { ?subject geo:hasGeometry ?intermediate . ?intermediate geo:asWKT ?geometry . BIND(geof:centroid(?geometry) AS ?centroid) BIND(geof:metricArea(?geometry) AS ?area) BIND(geof:metricLength(?geometry) AS ?length) BIND(ql:envelopeLowerLeft(?geometry) AS ?lower_left) BIND(ql:envelopeUpperRight(?geometry) AS ?upper_right) }"}
+
+    [server]
+    # ...
+    PRELOAD_MATERIALIZED_VIEWS = geometries
+    ```
+
 QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of the `qlever-index` binary. Together with an appropriate [materialized view](#geo-matview) preprocessing may provide a drastic performance improvement.
 
 If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
 
 ## Faster GeoSPARQL Queries using Materialized Views
 
-[Materialized Views](materialized-views.md)<a id="geo-matview"></a>  can be used to further improve spatial querying performance. Consider the following materialized view:
+[Materialized Views](materialized-views.md)<a id="geo-matview"></a>  can be used to further improve spatial querying performance. Consider the following materialized view `geometries`:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -26,7 +40,7 @@ SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE {
 }
 ```
 
-It will be used whenever `geo:hasGeometry/geo:asWKT` is present in the user query. If the user query additionally contains one of the `BIND`s they are also detected and read from the view automatically.
+Using the `Qleverfile` argument `PRELOAD_MATERIALIZED_VIEWS=geometries` in `[server]` or the CLI `qlever-server --preload-materialized-views geometries` argument, it will be used whenever `geo:hasGeometry/geo:asWKT` is present in the user query. If the user query additionally contains one of the `BIND`s they are also detected and read from the view automatically.
 
 QLever's efficient spatial search operations (see [GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search), [GeoSPARQL Geometric Relations](#geosparql-geometric-relations) and [QLever Custom Spatial Search](#custom-spatial-search)) can leverage the bounding boxes given by `ql:envelopeLowerLeft` and `ql:envelopeUpperRight` automatically (see [Internal Geometry Functions](#internal-geometry-functions)). The same holds for the respective [GeoSPARQL Functions](#geosparql-functions). This means it is sufficient for the user to write a query like the following and QLever will use the materialized view and read the geometry bounding boxes for efficient prefiltering directly from the materialized view.
 
