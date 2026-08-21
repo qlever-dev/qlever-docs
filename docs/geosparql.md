@@ -4,13 +4,27 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
 
 ## Geometry Preprocessing
 
-QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of `IndexBuilderMain`.
+!!! note "TL;DR: Recommended Qleverfile settings"
+    For the best GeoSPARQL performance, assuming your dataset contains geometries as `?subject geo:hasGeometry/geo:asWKT ?wkt`, add this to your `Qleverfile` before running `qlever index` and `qlever start`.
+
+    ```ini
+    [index]
+    # ...
+    VOCABULARY_TYPE = on-disk-compressed-geo-split
+    MATERIALIZED_VIEWS = {"geometries": "PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX geof: <http://www.opengis.net/def/function/geosparql/> SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE { ?subject geo:hasGeometry ?intermediate . ?intermediate geo:asWKT ?geometry . BIND(geof:centroid(?geometry) AS ?centroid) BIND(geof:metricArea(?geometry) AS ?area) BIND(geof:metricLength(?geometry) AS ?length) BIND(ql:envelopeLowerLeft(?geometry) AS ?lower_left) BIND(ql:envelopeUpperRight(?geometry) AS ?upper_right) }"}
+
+    [server]
+    # ...
+    PRELOAD_MATERIALIZED_VIEWS = geometries
+    ```
+
+QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of the `qlever-index` binary. Together with an appropriate [materialized view](#geo-matview) preprocessing may provide a drastic performance improvement.
 
 If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
 
 ## Faster GeoSPARQL Queries using Materialized Views
 
-[Materialized Views](materialized-views.md) can be used to further improve spatial querying performance. Consider the following materialized view:
+[Materialized Views](materialized-views.md)<a id="geo-matview"></a>  can be used to further improve spatial querying performance. Consider the following materialized view `geometries`:
 
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -26,9 +40,9 @@ SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE {
 }
 ```
 
-It will be used whenever `geo:hasGeometry/geo:asWKT` is present in the user query. If the user query additionally contains one of the `BIND`s they are also detected automatically.
+Using the `Qleverfile` argument `PRELOAD_MATERIALIZED_VIEWS=geometries` in `[server]` or the CLI `qlever-server --preload-materialized-views geometries` argument, it will be used whenever `geo:hasGeometry/geo:asWKT` is present in the user query. If the user query additionally contains one of the `BIND`s they are also detected and read from the view automatically.
 
-QLever's efficient spatial search operations (see [GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search), [GeoSPARQL Geometric Relations](#geosparql-geometric-relations) and [QLever Custom Spatial Search](#custom-spatial-search)) can leverage the bounding boxes given by `ql:envelopeLowerLeft` and `ql:envelopeUpperRight` automatically (see [Internal Geometry Functions](#internal-geometry-functions)). This means it is sufficient for the user to write a query like the following and QLever will use the materialized view and read the geometry bounding boxes for efficient prefiltering directly from the materialized view.
+QLever's efficient spatial search operations (see [GeoSPARQL Maximum Distance Search](#geosparql-maximum-distance-search), [GeoSPARQL Geometric Relations](#geosparql-geometric-relations) and [QLever Custom Spatial Search](#custom-spatial-search)) can leverage the bounding boxes given by `ql:envelopeLowerLeft` and `ql:envelopeUpperRight` automatically (see [Internal Geometry Functions](#internal-geometry-functions)). The same holds for the respective [GeoSPARQL Functions](#geosparql-functions). This means it is sufficient for the user to write a query like the following and QLever will use the materialized view and read the geometry bounding boxes for efficient prefiltering directly from the materialized view.
 
 ```sparql {data-demo-engine="osm-planet"}
 PREFIX osmrel: <https://www.openstreetmap.org/relation/>
@@ -315,7 +329,10 @@ FILTER(geof:distance(?geom1, ?geom2, "some-supported-unit-iri"^^xsd:anyURI) <= c
 
 In the *Analysis* view of the QLever UI you can see *Spatial Join* instead of *Cartesian Product Join*, when the optimization is in effect. The GeoSPARQL maximum distance search is a standard syntax method for using the [QLever Spatial Search](#custom-spatial-search). The custom feature provides more options, for example nearest neighbor search.
 
-The implementation currently has to parse WKT geometries for all geometry types except points. This is being worked on, so you may expect a performance improvement in the future.
+!!! warning "Performance recommendations"
+    For the best performance, we strongly recommend using [geometry preprocessing](#geometry-preprocessing) and a [materialized view with the geometries' bounding boxes](#geo-matview).
+
+    The implementation currently has to parse WKT geometries for all geometry types except points. This is being worked on, so you may expect a performance improvement in the future.
 
 ??? note "Example query"
 
@@ -347,20 +364,25 @@ FILTER geof:sfTouches(?geom1, ?geom2)
 FILTER geof:sfEquals(?geom1, ?geom2)
 FILTER geof:sfOverlaps(?geom1, ?geom2)
 FILTER geof:sfWithin(?geom1, ?geom2)
+FILTER geof:relate(?geom1, ?geom2, "de9im-filter")
 ```
 
 These GeoSPARQL-compliant filters are a standard syntax method for using the
 [QLever Spatial Search](#custom-spatial-search) with `qlss:algorithm` set to
 `qlss:libspatialjoin` and `qlss:joinType` set appropriately.
 
+!!! warning "Performance recommendations"
+    For the best performance, we strongly recommend using [geometry preprocessing](#geometry-preprocessing) and a [materialized view with the geometries' bounding boxes](#geo-matview).
+
+    The implementation currently has to parse WKT geometries for all geometry types except points. This is being worked on, so you may expect a performance improvement in the future.
+
+For `FILTER geof:relate(?geom1, ?geom2, "de9im-filter")`, the third argument must be a valid DE-9IM filter as a string literal with exactly 9 characters. Each character must be one of `0`-`2`, `T`/`F` (or lowercase), or `*`, for example `"T*****FF*"` to test containment. The filter must not match disjoint geometries.
+
 *NOTE*: Currently, the functions stated above are only supported in `FILTER`s
 between two different variables. Also there may not be multiple filters on the
-same pair of variables. Otherwise the query processing will return an error.
-This will be fixed in the near future. Also, the implementation currently has
-to parse WKT geometries for all geometry types except points. This is being
-worked on, so you may expect a performance improvement in the future.
+same pair of variables.
 
-??? note "Example query"
+??? note "Example query using `geof:sfIntersects`"
 
     [All railway lines crossing rivers](https://qlever.dev/osm-planet/oU2Uqb):
 
@@ -373,7 +395,7 @@ worked on, so you may expect a performance improvement in the future.
              geo:hasGeometry/geo:asWKT ?river_geometry .
       ?rail osmkey:railway "rail" ;
             geo:hasGeometry/geo:asWKT ?rail_geometry .
-      FILTER (geof:sfIntersects(?rail_geometry,?river_geometry))
+      FILTER geof:sfIntersects(?rail_geometry,?river_geometry)
     }
     ```
 
@@ -433,7 +455,7 @@ The `SERVICE` must include the configuration triples and exactly one group graph
 
 ## Configuration parameters
 
-The following configuration parameters are provided in the `SERVICE` as triples with arbitrary subject. The predicate must be an IRI of the form `<parameter>` or `qlss:parameter`. The parameters `left` and `right` are mandatory. Additionally you must provide search instructions, either `numNearestNeighbors` or `maxDistance` or `joinType`. The remaining parameters are optional.
+The following configuration parameters are provided in the `SERVICE` as triples with arbitrary subject. The predicate must be an IRI of the form `<parameter>` or `qlss:parameter`. The parameters `algorithm`, `left` and `right` are mandatory. Additionally you must provide search instructions, either `numNearestNeighbors` or `maxDistance` or `joinType`. The remaining parameters are optional.
 
 | Parameter | Domain | Description |
 |--|--|--|
@@ -442,13 +464,17 @@ The following configuration parameters are provided in the `SERVICE` as triples 
 | `right` | variable | The right join table: *"... find the closest/all intersecting/... [right] geometries"*.  Must refer to a column with literals of `geo:wktLiteral` datatype. |
 | `numNearestNeighbors` | integer | The maximum number of nearest neighbor points from `right` for every point from `left`. Only supported by the `baseline` and `s2` algorithms. |
 | `maxDistance` | integer | The maximum distance in meters between points from `left` and `right` to be included in the result. |
+| `de9imFilter` | string | A valid DE-9IM filter as a literal with exactly 9 characters, each of which must be one of `0`-`2`, `T`/`F` (or lowercase), or `*`. For example `"T*****FF*"` to test containment. The filter must not match disjoint geometries. Requires `algorithm` to be `libspatialjoin` and `joinType` to be `de9im`. |
 | `bindDistance` | variable | An otherwise unbound variable name which will be used to give the distance in kilometers between the result point pairs. |
 | `payload` | variable or IRI `<all>` | Variable from the group graph pattern inside the `SERVICE` to be included in the result. `right` is automatically included. This parameter may be repeated to include multiple variables. For all variables use `<all>`. If `right` is given outside of the `SERVICE` do not use this parameter. |
-| `joinType` | `<intersects>`, `<covers>`, `<contains>`, `<touches>`, `<crosses>`, `<overlaps>`, `<equals>`, `<within-dist>` | The geometric relation to compute between the `left` and `right` geometries. If `within-dist` is chosen, the `maxDistance` parameter is required. Mandatory when using the `libspatialjoin` algorithm and illegal for all other algorithms.  |
+| `joinType` | `<intersects>`, `<covers>`, `<contains>`, `<touches>`, `<crosses>`, `<overlaps>`, `<equals>`, `<within>`, `<within-dist>`, `<de9im>` | The geometric relation to compute between the `left` and `right` geometries. Iff `within-dist` is chosen, the `maxDistance` parameter is required. Iff `de9im` is chosen, the `de9imFilter` parameter is required. Mandatory when using the `libspatialjoin` algorithm and illegal for all other algorithms.  |
 
 NOTE: The individual algorithms support different subsets of all valid literals of `geo:wktLiteral` datatype. The `libspatialjoin` algorithm supports `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` and `GEOMETRYCOLLECTION`. The `baseline` and `boundingBox` algorithms support the same literals except `GEOMETRYCOLLECTION`. The `s2` algorithm currently only works with `POINT` literals.
 
-NOTE: Geometries except for points currently need to be parsed for every query leading to longer running times. We are working on it.
+!!! warning "Performance recommendations"
+    For the best performance when using the `libspatialjoin` algorithm, we strongly recommend using [geometry preprocessing](#geometry-preprocessing) and a [materialized view with the geometries' bounding boxes](#geo-matview).
+
+    The implementation currently has to parse WKT geometries for all geometry types except points. This is being worked on, so you may expect a performance improvement in the future.
 
 ??? note "Example queries"
 
@@ -463,7 +489,8 @@ NOTE: Geometries except for points currently need to be parsed for every query l
                osmkey:name ?name ;
                geo:hasCentroid/geo:asWKT ?station_geometry .
       SERVICE qlss: {
-        _:config qlss:left ?station_geometry ;
+        _:config qlss:algorithm qlss:s2 ;
+                 qlss:left ?station_geometry ;
                  qlss:right ?supermarket_geometry ;
                  qlss:numNearestNeighbors 3 .
         {
@@ -501,8 +528,7 @@ NOTE: Geometries except for points currently need to be parsed for every query l
     }
     ```
 
-Special predicate `<max-distance-in-meters:m>`: As a shortcut, a special
-predicate `<max-distance-in-meters:m>` is also supported. The parameter `m`
+Special predicate `<max-distance-in-meters:m>`: As a shortcut for the `s2` algorithm, a special predicate `<max-distance-in-meters:m>` is also supported. The parameter `m`
 refers to the maximum search radius in meters. It may be used as a triple with
 the left join variable as subject and the right join variable as object.
 
@@ -520,7 +546,7 @@ the left join variable as subject and the right join variable as object.
 Deprecated special predicate `<nearest-neighbors:k>` or
 `<nearest-neighbors:k:m>`: *This feature is deprecated and will produce a
 warning, due to confusing semantics. Please use the `SERVICE` syntax instead.*
-A spatial search for nearest neighbors can be realized using `?left
+A spatial search for nearest neighbors using the `s2` algorithm can be realized using `?left
 <nearest-neighbors:k:m> ?right`. Please replace `k` and `m` with integers as
 follows: For each point `?left` QLever will output the `k` nearest points from
 `?right`. Of course, the sets `?left` and `?right` can each be limited using
@@ -560,4 +586,37 @@ completely, set this to `0`.
 
 `ql:isGeoPoint`: Detect whether the given literal is stored in QLever's efficient (lossy) WKT point encoding.
 
+??? note "Example query for `ql:isGeoPoint`"
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * {
+      BIND(ql:isGeoPoint("POINT(1 2)"^^geo:wktLiteral) AS ?p1) # true
+      BIND(ql:isGeoPoint("LINESTRING(1 2, 3 4)"^^geo:wktLiteral) AS ?p2) # false
+    }
+    ```
+
 `ql:envelopeLowerLeft` and `ql:envelopeUpperRight`: Returns the corners of the geometry's envelope (aka bounding box) as WKT points.
+
+??? note "Example query for `ql:envelopeLowerLeft` and `ql:envelopeUpperRight`"
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * {
+      BIND("LINESTRING(1 2, 3 4)"^^geo:wktLiteral AS ?geom)
+      BIND(ql:envelopeLowerLeft(?geom) AS ?ll) # POINT(1 2)
+      BIND(ql:envelopeUpperRight(?geom) AS ?ur) # POINT(3 4)
+    }
+    ```
+
+`ql:simplifyGeometry`: Given a WKT geometry as a first argument and a tolerance in coordinate units as a second argument, apply the Douglas-Peucker algorithm to simplify the geometry.
+
+??? note "Example query for `ql:simplifyGeometry`"
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * {
+      BIND("LINESTRING(7.8412948 47.9977308, 7.8450491 47.9946000, 7.8466262 47.9933540)"^^geo:wktLiteral AS ?geom)
+      BIND(ql:simplifyGeometry(?geom, 0.001) AS ?simple) # LINESTRING(7.841295 47.997731,7.846626 47.993354)
+    }
+    ```
