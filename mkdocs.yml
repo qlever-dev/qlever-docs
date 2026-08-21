@@ -18,6 +18,7 @@ nav:
     - Date and Time: datetime.md
     - Update: update.md
     - Materialized Views: materialized-views.md
+    - Named subqueries: named-subqueries.md
     - Rebuild index: rebuild-index.md
     - Text search: text-search.md
     - Path search: path-search.md
