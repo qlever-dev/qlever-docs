@@ -98,7 +98,9 @@ example `qlever settings materialized-view-writer-memory=4G`.
     ```bash
     # During indexing if specified in Qleverfile:
     qlever index
-    # After indexing while the server is running:
+    # After indexing if specified in Qleverfile, while the server is running:
+    qlever materialized-view $VIEW_NAME
+    # After indexing if NOT specified in Qleverfile, while the server is running:
     qlever materialized-view $VIEW_NAME "SELECT ... { ... }"
     ```
 === "qlever-index"
