@@ -132,7 +132,7 @@ example `qlever settings materialized-view-writer-memory=4G`.
 
 ## Preloading a materialized view
 
-You can optionally preload materialized views. This is required for implicitly rewriting queries to use materialized views. If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first time. Preloading can be requested via a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
+You can optionally preload materialized views. This is required for automatically rewriting queries to use materialized views (see [here](#automatic-usage-of-materialized-views) for details). If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first time. Preloading can be requested via a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
 
 === "qlever CLI"
     ```bash
@@ -236,38 +236,63 @@ When using the `SERVICE` syntax, the user may freely select an arbitrary subset 
 
 ## Automatic usage of materialized views
 
-In addition to the [explicit query syntax](#querying-a-materialized-view), QLever can use materialized views in queries implicitly. This is possible if both the query used for writing the view as well as the user query contain certain query patterns and the applicable view is loaded (see [Preloading a materialized view](#preloading-a-materialized-view)). Currently, QLever supports the following query patterns:
+In addition to the [explicit query syntax](#querying-a-materialized-view), QLever can use materialized views in queries automatically. This is possible if an applicable view is loaded (see [Preloading a materialized view](#preloading-a-materialized-view)) and the query to write the view is contained in the user query. What this means is described in detail below.
 
-**Join chain**: The materialized view is written with a query of the form
+**Join pattern matching**: Given a view written from a query containing only a basic graph pattern (short BGP, a set of triples with variables) of arbitrary shape, QLever can match the BGP to a given user query automatically. Additionally, more complex queries containing not only basic graph patterns are supported in some cases. In particular, `BIND` statements following the basic graph pattern are always allowed (see [here](#rewrite-bind) for details).
 
-```sparql
-SELECT * {
-   ?s <p1> ?m .
-   ?m <p2> ?o
-}
-```
+??? note "Restrictions when writing a view for automatic usage"
 
-and the user query contains the same pattern, or `?s <p1>/<p2> ?o`. This is particularily useful for `geo:hasGeometry/geo:asWKT`.
-Note that, while the query using the view may contain any additional graph patterns, the query for writing the view may only contain additional `BIND` statements after the basic graph pattern.
+    When writing a materialized view that you would like to use automatically, please consider the following hints **for the query to write the materialized view**. A view not adhering to these restrictions may not be applicable for automatic usage. Note that the restrictions do *NOT* apply to the query that uses an already written view.
 
-**Join star**: The materialized view is written with a query of the form
+    1. Write a query with a single basic graph pattern, optionally followed by `BIND`
+       statements. Do not use other syntax constructs like `OPTIONAL`, `UNION`, `SERVICE`, `GRAPH`, etc. For example, this view is suitable:
 
-```sparql
-SELECT * {
-  ?s <p1> ?o1 .
-  ?s <p2> ?o2 .
-  ?s <p3> ?o3 .
-  ...
-}
-```
+        ```sparql
+        SELECT ?subject ?intermediate ?geometry ?centroid {
+            ?subject geo:hasGeometry ?intermediate .
+            ?intermediate geo:asWKT ?geometry .
+            BIND(geof:centroid(?geometry) AS ?centroid) .
+        }
+        ```
 
-and the user query contains the entire graph pattern from the view. The user query may contain additional patterns, but the view may only contain `BIND` statements in addition to the triples of the join star.
+    2. All triples in the basic graph pattern should be connected by variables (that is, the basic graph pattern should not require building a carthesian product).
+    3. Do not use syntactic shortcuts, property paths or blank nodes. These should NOT appear in your view query:
+        
+        ```sparql
+        ?s <p1>/<p2> ?o.
+        # or
+        ?s <p1> [ <p2> ?o ] .
+        # or
+        ?s ^<p1> ?o .
+        # or
+        ?s <p1> _:b . _:b <p2> ?o .
+        ```
 
-**Bind**: If a query uses a materialized view, either by automatic or explicit use, `BIND` statements can be rewritten to reading additional columns of the view under certain conditions.
+        The examples given here should be rewritten to ordinary triple patterns instead.
+
+    4. Do not use predicate variables, like `<a> ?p ?o`.
+    5. Select all variables appearing in your query.
+    6. Do not use query modifiers like `DISTINCT`, `FROM`, `LIMIT`, `OFFSET`, `GROUP BY`, etc.
+
+The join pattern matching works for almost all kinds of basic graph patterns independent of different variable naming in the user query, a different order of the triple patterns or where they appear in the user query (even inside subqueries or blocks like `OPTIONAL`, `UNION`, etc.). For example, the view `SELECT ?s ?o1 ?o2 { ?s <p1> ?o1 ; <p2> ?o2 }` is detected inside `SELECT * { ?a <p2> ?b . ?b <p3> ?c . ?a <p1> ?d }` or even `SELECT * { ?a <p3> ?b . OPTIONAL { ?a <p1> ?c . ?a <p2> ?d } }`.
+
+Additionally, syntactic shortcuts can be used in the user query without hindering automatic rewrite, for example if your view is written as `SELECT ?s ?m ?o { ?s <p1> ?m . ?m <p2> ?o }`, a user query of the form `SELECT * { ?s <p1>/<p2> ?o }` or `SELECT * { ?a <p1> [ <p2> ?b ] }` will use the view.
+
+**Bind**: <a id="rewrite-bind"></a> If a query uses a materialized view, either by automatic or explicit use, `BIND` statements can be rewritten to reading additional columns of the view under certain conditions.
 For this to work, the `BIND` statements must only define otherwise unused variables and their expressions may only use variables that can't contain `UNDEF` values.
 QLever can connect the materialized view and the `BIND` statement across other triples, spatial search and GeoSPARQL filters. 
 <!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
-Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This reduces disk usage and improves performance.
+Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This also reduces disk usage and improves performance.
+
+**Limiting the search**: Since the number of candidates in the pattern matching algorithm can grow exponentially in the size of the query, its search is bounded by two runtime parameters (change via `qlever settings`):
+
+- `materialized-view-pattern-match-num-assignments` (default: `100000`): the
+  maximum number of candidate variable assignments tried by the backtracking
+  algorithm, across all views considered for a given query. Setting this to
+  `0` disables pattern-based rewriting entirely.
+- `materialized-view-pattern-match-num-replacement-plans` (default: `500`):
+  the maximum number of matches (and thus alternative query plans using a
+  view) collected for a given query.
 
 **Disabling automatic usage of materialized views**: If you want to disable the automatic usage of materialized views, you can set `qlever settings enable-materialized-view-query-rewrite=false`. This is particularly relevant if you use SPARQL updates, which are not yet supported by materialized views.
 
