@@ -171,9 +171,10 @@ You can optionally preload materialized views. This is required for implicitly r
 
 ## Unloading a materialized view
 
-A loaded materialized view can be unloaded to free the memory and file handles
-it holds, without deleting it from disk; it can be loaded again later (see
-above). Unloading a view that is not currently loaded is a no-op.
+Loaded materialized views can be unloaded to free memory, file handles and to
+remove them from automatic query rewriting, without deleting them from disk;
+they can be loaded again later (see above). Unloading a view that is not
+currently loaded is a no-op.
 
 === "qlever CLI"
     ```bash
