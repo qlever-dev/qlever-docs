@@ -164,6 +164,14 @@ of the binary for index building when compiling QLever).
 
 ## Section `[server]`
 
+`HOST_NAME`, `--host-name`: The host name used by the `qlever` CLI to reach
+the server, for example in `qlever start`, `qlever query`, and `qlever ui`. For
+`qlever ui`, this is also the SPARQL endpoint to which the UI sends its
+queries. If DNS resolves the host name to an address that is not reachable,
+`qlever start` can take very long, see
+[Troubleshooting](troubleshooting.md#qlever-start-takes-a-long-time-although-the-server-is-ready).
+Default: the host name of the machine.
+
 `PORT`, `--port`: The port of the SPARQL endpoint created by `qlever start`.
 Default: none.
 
