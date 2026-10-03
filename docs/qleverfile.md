@@ -165,11 +165,12 @@ of the binary for index building when compiling QLever).
 ## Section `[server]`
 
 `HOST_NAME`, `--host-name`: The host name used by the `qlever` CLI to reach
-the server, for example for the alive check in `qlever start`, for `qlever
-query`, and as the SPARQL endpoint configured by `qlever ui`. Default: the
-result of `socket.gethostname()`, that is, the machine's own host name. If
-resolving that name is slow or returns stale addresses, `qlever start` can
-hang for a long time, see [Troubleshooting](troubleshooting.md#qlever-start-takes-a-long-time-although-the-server-is-ready).
+the server, for example in `qlever start`, `qlever query`, and `qlever ui`. For
+`qlever ui`, this is also the SPARQL endpoint to which the UI sends its
+queries. If DNS resolves the host name to an address that is not reachable,
+`qlever start` can take very long, see
+[Troubleshooting](troubleshooting.md#qlever-start-takes-a-long-time-although-the-server-is-ready).
+Default: the host name of the machine.
 
 `PORT`, `--port`: The port of the SPARQL endpoint created by `qlever start`.
 Default: none.
