@@ -245,7 +245,7 @@ In addition to the [explicit query syntax](#querying-a-materialized-view), QLeve
     When writing a materialized view that you would like to use automatically, please consider the following hints **for the query to write the materialized view**. A view not adhering to these restrictions may not be applicable for automatic usage. Note that the restrictions do *NOT* apply to the query that uses an already written view.
 
     1. Write a query with a single basic graph pattern, optionally followed by `BIND`
-       statements. Do not use other syntax constructs like `OPTIONAL`, `UNION`, `SERVICE`, `GRAPH`, etc. For example, this view is suitable:
+       statements. Do not use other syntax constructs like `OPTIONAL`, `UNION`, `SERVICE`, `GRAPH`, `FILTER`, etc. For example, this view is suitable:
 
         ```sparql
         SELECT ?subject ?intermediate ?geometry ?centroid {
@@ -255,7 +255,7 @@ In addition to the [explicit query syntax](#querying-a-materialized-view), QLeve
         }
         ```
 
-    2. All triples in the basic graph pattern should be connected by variables (that is, the basic graph pattern should not require building a carthesian product).
+    2. All triples in the basic graph pattern should be connected by variables (that is, the basic graph pattern should not require building a cartesian product). The basic graph pattern must contain at least two triples.
     3. Do not use syntactic shortcuts, property paths or blank nodes. These should NOT appear in your view query:
         
         ```sparql
@@ -271,10 +271,11 @@ In addition to the [explicit query syntax](#querying-a-materialized-view), QLeve
         The examples given here should be rewritten to ordinary triple patterns instead.
 
     4. Do not use predicate variables, like `<a> ?p ?o`.
-    5. Select all variables appearing in your query.
+    5. Select all variables appearing in your query. The first selected variable must appear in a triple (it must not be the target of a `BIND`).
     6. Do not use query modifiers like `DISTINCT`, `FROM`, `LIMIT`, `OFFSET`, `GROUP BY`, etc.
+    7. Do not use the text search predicates `ql:contains-word` and `ql:contains-entity`.
 
-The join pattern matching works for almost all kinds of basic graph patterns independent of different variable naming in the user query, a different order of the triple patterns or where they appear in the user query (even inside subqueries or blocks like `OPTIONAL`, `UNION`, etc.). For example, the view `SELECT ?s ?o1 ?o2 { ?s <p1> ?o1 ; <p2> ?o2 }` is detected inside `SELECT * { ?a <p2> ?b . ?b <p3> ?c . ?a <p1> ?d }` or even `SELECT * { ?a <p3> ?b . OPTIONAL { ?a <p1> ?c . ?a <p2> ?d } }`.
+The join pattern matching works for almost all kinds of basic graph patterns independent of different variable naming in the user query, a different order of the triple patterns or where they appear in the user query (even inside subqueries or blocks like `OPTIONAL`, `UNION`, etc.). For example, the view `SELECT ?s ?o1 ?o2 { ?s <p1> ?o1 ; <p2> ?o2 }` is detected inside `SELECT * { ?a <p2> ?b . ?b <p3> ?c . ?a <p1> ?d }` or even `SELECT * { ?a <p3> ?b . OPTIONAL { ?a <p1> ?c . ?a <p2> ?d } }`. Patterns inside a `GRAPH` block or in a query with a `FROM` or `FROM NAMED` clause are never rewritten, because views do not store graph information.
 
 Additionally, syntactic shortcuts can be used in the user query without hindering automatic rewrite, for example if your view is written as `SELECT ?s ?m ?o { ?s <p1> ?m . ?m <p2> ?o }`, a user query of the form `SELECT * { ?s <p1>/<p2> ?o }` or `SELECT * { ?a <p1> [ <p2> ?b ] }` will use the view.
 
