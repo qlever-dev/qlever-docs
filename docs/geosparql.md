@@ -384,7 +384,8 @@ For `FILTER geof:relate(?geom1, ?geom2, "de9im-filter")`, the third argument mus
 
 *NOTE*: Currently, the functions stated above are only supported in `FILTER`s
 between two different variables or between a variable and an inline literal.
-Also there may not be multiple filters on the same pair of variables.
+Also there may not be multiple filters on the same pair of variables. Otherwise
+the query processing will return an error.
 
 ??? note "Example query using `geof:sfIntersects`"
 
