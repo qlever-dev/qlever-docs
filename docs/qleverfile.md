@@ -95,9 +95,9 @@ individual keys migrated to their own `Qleverfile` variables.
 
 `ULIMIT`, `--ulimit`: The maximum number of open files allowed during `qlever
 index`. If this number is too low, `qlever index` will fail with an error that
-will make it clear that you need to increase this value. Default: depends on
-your system, but is often as low as `1024` (which is too low for large
-datasets).
+will make it clear that you need to increase this value. Default: `500000`
+if the total size of the input files is larger than 10 GB, otherwise the limit
+of your system (which is often as low as `1024`).
 
 `STXXL_MEMORY`, `--stxxl-memory`: The amount of memory that can be used by
 `qlever index`, specified with standard suffixes like `k`, `M`, `G`, and `T`.
@@ -106,7 +106,8 @@ higher. When too low, `qlever index` might fail with an error message (which usu
 makes it clear that you need to increase this value). The strange name of the
 variable / option is an artifact from when QLever used the [STXXL
 library](http://stxxl.org/) for external memory sorting, which it
-no longer does. The name will be changed soon. Defaut: `1G`.
+no longer does. The name will be changed soon. Default: `5G` (the default of
+`qlever-index`).
 
 `PARSER_BUFFER_SIZE`, `--parser-buffer-size`: The size of the buffer used by
 `qlever index` when parsing an input stream, specified with standard suffixes
@@ -124,7 +125,7 @@ idea if your dataset contains geometry data). The options are
 `in-memory-uncompressed`, and `on-disk-compressed-geo-split`. Default:
 `on-disk-compressed`.
 
-`ENCODE_AS_IDS`, `--encode-as-ids`: List of IRI prefixes (separated by spaces)
+`ENCODE_AS_ID`, `--encode-as-id`: List of IRI prefixes (separated by spaces)
 with the effect that all IRIs starting with one of these prefixes and followed
 by a sequence of at most 12 digits will not be stored as strings in the
 vocabulary, but stored directly in one of QLever's internal 64-bit identifiers.
@@ -133,9 +134,9 @@ See
 
 `TEXT_INDEX`, `--text-index`: Four options: `none` (no text index),
 `from_literals` (create a text index from all literals in the dataset),
-`from_text_records` (create a text index from the givens "words" and "docs"
+`from_text_records` (create a text index from the given "words" and "docs"
 file, see `TEXT_WORDS_FILE` and `TEXT_DOCS_FILE` below), and
-`from_literals_and_text_records` (create a text index from both literals and
+`from_text_records_and_literals` (create a text index from both literals and
 the given "words" and "docs" file). Default: `none`.
 
 `TEXT_WORDS_FILE`, `--text-words-file`: The name of the file containing the
@@ -224,13 +225,15 @@ QLever binaries `qlever-server` and `qlever-index` are in your `PATH`),
 instead of `Docker`). Default: `docker`.
 
 `IMAGE`, `--image`: The name of the image when using `SYSTEM = docker` or
-`SYSTEM = podman`. Default: `docker.io/adfreiburg/qlever:latest`.
+`SYSTEM = podman`. Default: `docker.io/adfreiburg/qlever`.
 
 `INDEX_CONTAINER`, `--index-container`: The name of the container used by
-`qlever index`, when using `SYSTEM = docker` or `SYSTEM = podman`.
+`qlever index`, when using `SYSTEM = docker` or `SYSTEM = podman`. Default:
+`qlever.index.<NAME>`.
 
 `SERVER_CONTAINER`, `--server-container`: The name of the container used by
-`qlever start`, when using `SYSTEM = docker` or `SYSTEM = podman`.
+`qlever start`, when using `SYSTEM = docker` or `SYSTEM = podman`. Default:
+`qlever.server.<NAME>`.
 
 ## Section `[ui]`
 
