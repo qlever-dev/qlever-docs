@@ -48,3 +48,36 @@ this phase.
 Regarding 4: The index can crash here if `STXLL_MEMORY` is too low or the
 number of triples is very large. Increase `STXXL_MEMORY` or make us of
 <https://github.com/ad-freiburg/qlever/pull/2443>.
+
+## `qlever start` takes a long time although the server is ready
+
+The server log shows `The server is ready, listening for requests on port
+...`, but `qlever start` returns only after a long delay. The first `Alive
+check` in the server log appears only after this delay.
+
+The reason is that the `qlever` CLI contacts the server via `HOST_NAME`, which
+by default is the host name of the machine. If DNS resolves this name to an
+address that is no longer reachable, each request waits for the TCP connect
+timeout before it tries the next address. A typical cause is a stale DNS record
+on the local router, left over from an old DHCP lease of another network
+interface of the same machine, for example Wi-Fi when the machine is now
+connected via Ethernet. This is why the problem may occur in one network but
+not in another.
+
+To check whether this is the case, run `dig +short $(hostname)` and compare the
+result with the addresses of the network interfaces of the machine, as shown by
+`ip addr` or `ifconfig`. On macOS, use `dscacheutil -q host -a name
+$(hostname)` instead of `dig`. Any address that does not belong to the machine
+is stale.
+
+To fix the problem, set `HOST_NAME = localhost` in the `[server]` section of
+the Qleverfile, see [Qleverfile settings](qleverfile.md#section-server):
+
+```
+[server]
+HOST_NAME = localhost
+```
+
+If the SPARQL endpoint or the QLever UI must be reachable from other machines,
+use a host name or IP address that resolves correctly instead, or remove the
+stale DNS record from the router.
