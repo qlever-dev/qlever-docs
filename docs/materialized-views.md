@@ -132,7 +132,7 @@ example `qlever settings materialized-view-writer-memory=4G`.
 
 ## Preloading a materialized view
 
-You can optionally preload materialized views. This is required for automatically rewriting queries to use materialized views (see [here](#automatic-usage-of-materialized-views) for details). If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first time. Preloading can be requested via a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
+You can optionally preload materialized views. This is required for automatically rewriting queries to use materialized views (see [here](#automatic-usage-of-materialized-views) for details). If you do not apply preloading, views get loaded automatically when they are explicitly used in a query for the first time. A view written while the server is running (for example via `qlever materialized-view`) is loaded automatically right after writing it, also when an existing view is overwritten. Views written during `qlever index`, however, are not loaded when the server is started, unless they are preloaded. Preloading can be requested via the `Qleverfile`, the `qlever` CLI, a CLI argument to `qlever-server`, an HTTP request and `libqlever`.
 
 === "qlever CLI"
     ```bash
