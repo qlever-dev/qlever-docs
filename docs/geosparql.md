@@ -556,6 +556,12 @@ size. This can be configured using `spatial-join-prefilter-max-size`. By
 default the limit is `2500` square coordinates. To deactivate prefiltering
 completely, set this to `0`.
 
+`spatial-join-tmp-dir`: The directory in which the `libspatialjoin` algorithm
+(used for the GeoSPARQL geometric relation and maximum distance filters, and
+for a spatial search with `qlss:algorithm qlss:libspatialjoin`) writes its
+temporary files. By default (empty value), the index directory is
+used. Set this if the index directory is read-only.
+
 ## Internal Geometry Functions
 
 `ql:isGeoPoint`: Detect whether the given literal is stored in QLever's efficient (lossy) WKT point encoding.
