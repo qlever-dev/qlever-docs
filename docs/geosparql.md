@@ -11,7 +11,7 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
     [index]
     # ...
     VOCABULARY_TYPE = on-disk-compressed-geo-split
-    MATERIALIZED_VIEWS = {"geometries": "PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX geof: <http://www.opengis.net/def/function/geosparql/> SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE { ?subject geo:hasGeometry ?intermediate . ?intermediate geo:asWKT ?geometry . BIND(geof:centroid(?geometry) AS ?centroid) BIND(geof:metricArea(?geometry) AS ?area) BIND(geof:metricLength(?geometry) AS ?length) BIND(ql:envelopeLowerLeft(?geometry) AS ?lower_left) BIND(ql:envelopeUpperRight(?geometry) AS ?upper_right) }"}
+    MATERIALIZED_VIEWS = {"geometries": "PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX geof: <http://www.opengis.net/def/function/geosparql/> SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length ?lower_left ?upper_right WHERE { ?subject geo:hasGeometry ?intermediate . ?intermediate geo:asWKT ?geometry . BIND(geof:centroid(?geometry) AS ?centroid) BIND(geof:metricArea(?geometry) AS ?area) BIND(geof:metricLength(?geometry) AS ?length) BIND(ql:envelopeLowerLeft(?geometry) AS ?lower_left) BIND(ql:envelopeUpperRight(?geometry) AS ?upper_right) }"}
 
     [server]
     # ...
@@ -29,7 +29,7 @@ If this option is used, QLever will currently precompute centroid, bounding box,
 ```sparql
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
 PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length WHERE {
+SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length ?lower_left ?upper_right WHERE {
   ?subject geo:hasGeometry ?intermediate .
   ?intermediate geo:asWKT ?geometry .
   BIND(geof:centroid(?geometry) AS ?centroid)
@@ -383,8 +383,8 @@ These GeoSPARQL-compliant filters are a standard syntax method for using the
 For `FILTER geof:relate(?geom1, ?geom2, "de9im-filter")`, the third argument must be a valid DE-9IM filter as a string literal with exactly 9 characters. Each character must be one of `0`-`2`, `T`/`F` (or lowercase), or `*`, for example `"T*****FF*"` to test containment. The filter must not match disjoint geometries.
 
 *NOTE*: Currently, the functions stated above are only supported in `FILTER`s
-between two different variables. Also there may not be multiple filters on the
-same pair of variables.
+between two different variables or between a variable and an inline literal.
+Also there may not be multiple filters on the same pair of variables.
 
 ??? note "Example query using `geof:sfIntersects`"
 
