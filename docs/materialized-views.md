@@ -173,17 +173,18 @@ You can optionally preload materialized views. This is required for implicitly r
 
 Loaded materialized views can be unloaded to free memory, file handles and to
 remove them from automatic query rewriting, without deleting them from disk;
-they can be loaded again later (see above). Unloading a view that is not
-currently loaded is a no-op.
+they can be loaded again later (see above). Note that a query explicitly using
+the view loads it again automatically. Unloading a view that is not currently
+loaded is a no-op (the response then contains `"was-loaded":false`).
 
 === "qlever CLI"
     ```bash
-    qlever materialized-view --unload viewName
+    qlever materialized-view $VIEW_NAME --unload
     ```
 === "curl"
     ``` bash
     curl "http://$HOST:$PORT/?cmd=unload-materialized-view&view-name=$VIEW_NAME&access-token=$ACCESS_TOKEN"
-    # Returns: {"materialized-view-unloaded":"nameOfTheView"}
+    # Returns: {"materialized-view-unloaded":"nameOfTheView","was-loaded":true}
     ```
 === "libqlever"
     ```cpp
