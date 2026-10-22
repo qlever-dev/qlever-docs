@@ -442,7 +442,7 @@ The following configuration parameters are provided in the `SERVICE` as triples 
 | `right` | variable | The right join table: *"... find the closest/all intersecting/... [right] geometries"*.  Must refer to a column with literals of `geo:wktLiteral` datatype. |
 | `numNearestNeighbors` | integer | The maximum number of nearest neighbor points from `right` for every point from `left`. Only supported by the `baseline` and `s2` algorithms. |
 | `maxDistance` | integer | The maximum distance in meters between points from `left` and `right` to be included in the result. |
-| `bindDistance` | variable | An otherwise unbound variable name which will be used to give the distance in kilometers between the result point pairs. |
+| `bindDistance` | variable | An otherwise unbound variable name which will be used to give the distance between the result pairs. The distance is given in meters for the `libspatialjoin` algorithm and in kilometers for all other algorithms. |
 | `payload` | variable or IRI `<all>` | Variable from the group graph pattern inside the `SERVICE` to be included in the result. `right` is automatically included. This parameter may be repeated to include multiple variables. For all variables use `<all>`. If `right` is given outside of the `SERVICE` do not use this parameter. |
 | `joinType` | `<intersects>`, `<covers>`, `<contains>`, `<touches>`, `<crosses>`, `<overlaps>`, `<equals>`, `<within-dist>` | The geometric relation to compute between the `left` and `right` geometries. If `within-dist` is chosen, the `maxDistance` parameter is required. Mandatory when using the `libspatialjoin` algorithm and illegal for all other algorithms.  |
 
