@@ -265,7 +265,7 @@ and the user query contains the entire graph pattern from the view. The user que
 
 **Bind**: If a query uses a materialized view, either by automatic or explicit use, `BIND` statements can be rewritten to reading additional columns of the view under certain conditions.
 For this to work, the `BIND` statements must only define otherwise unused variables and their expressions may only use variables that can't contain `UNDEF` values.
-QLever can connect the materialized view and the `BIND` statement across other triples, spatial search and GeoSPARQL filters. 
+QLever can connect the materialized view and the `BIND` statement across other triples, spatial search, GeoSPARQL filters, `FILTER`, other `BIND`s, `UNION` (if the view can provide the column in all of its branches), and the left side of `OPTIONAL`, `MINUS`, and `FILTER EXISTS`.
 <!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
 Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This reduces disk usage and improves performance.
 
