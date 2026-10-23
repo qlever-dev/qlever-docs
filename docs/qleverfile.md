@@ -137,27 +137,10 @@ vocabulary, but stored directly in one of QLever's internal 64-bit identifiers.
 See
 [Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/blob/main/src/qlever/Qleverfiles/Qleverfile.osm-planet) for an example. Default: none.
 
-`GEO_CELL_GRID_LEVEL`, `--geo-cell-grid-level`: The level of the geo cell grid
-for WKT literals. The grid cell of each literal is encoded into its ID, which
-enables the geo cell prefilter for spatial joins. Requires `VOCABULARY_TYPE =
-on-disk-compressed-geo-split`. Default: none (no grid).
-
-`GEO_CELL_GRID_SCHEME`, `--geo-cell-grid-scheme`: The cell assignment scheme of
-the geo cell grid, one of `flat`, `flat-4-shifts`, `hierarchical`, and
-`hierarchical-3-shifts`. Only relevant if `GEO_CELL_GRID_LEVEL` is greater than
-`0`. Default: `flat`.
-
 `GEO_POINT_ENCODING`, `--geo-point-encoding`: How geo points are encoded in the
 IDs of the index, either `z-order` or `lat-major`. The latter is how points
 were encoded before 2026-09-26; it is deprecated and only meant for software
 that decodes the IDs of an index. Default: `z-order`.
-
-`PARSED_GEOMETRIES_MIN_LENGTH`, `--parsed-geometries-min-length`: Store all WKT
-literals with at least this many bytes in the form needed by the
-`libspatialjoin` algorithm, so that spatial joins do not have to parse them at
-query time (which can take seconds for a huge geometry like a country
-boundary). Requires `VOCABULARY_TYPE = on-disk-compressed-geo-split`. A value
-like `100000` covers the geometries that matter. Default: none.
 
 `ONLY_PSO_AND_POS_PERMUTATIONS`, `--only-pso-and-pos-permutations`: Only build
 the PSO and POS permutations. This makes the index smaller, but then each
