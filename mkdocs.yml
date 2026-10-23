@@ -23,7 +23,6 @@ nav:
     - Text search: text-search.md
     - Path search: path-search.md
     - Monitoring: monitoring.md
-    - Runtime parameters: runtime-parameters.md
     # - Datasets: qlever-control/datasets.md
 
 repo_url: https://github.com/ad-freiburg/qlever
