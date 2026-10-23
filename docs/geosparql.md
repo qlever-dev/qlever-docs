@@ -52,7 +52,7 @@ SELECT * {
     never matches in a [geometric relation](#geosparql-geometric-relations) or
     [maximum distance search](#geosparql-maximum-distance-search). The number of
     invalid literals skipped by a spatial search is shown as `num-geoms-invalid`
-    in its runtime information. If you want an invalid WKT literal given directly
+    in its runtime information, and the query result contains a warning. If you want an invalid WKT literal given directly
     in the query (or via `VALUES`) as an argument of a GeoSPARQL function to
     produce an error instead, set the [runtime
     parameter](qleverfile.md#runtime-parameters) `throw-on-invalid-wkt`,
