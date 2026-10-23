@@ -630,9 +630,8 @@ WKT literals are parsed strictly, as required by GeoSPARQL 1.1. A malformed
 literal, for example `"LINESTRING(1 1, 2 a, 3 3)"^^geo:wktLiteral`, has no
 geometry: a [GeoSPARQL function](#geosparql-functions) applied to it yields an unbound value, and it
 never matches in a [geometric relation](#geosparql-geometric-relations) or
-[maximum distance search](#geosparql-maximum-distance-search). The number of
-invalid literals skipped by a spatial search is shown as `num-geoms-invalid`
-in its runtime information, and the query result contains a warning.
+[maximum distance search](#geosparql-maximum-distance-search). If a spatial
+search skips invalid literals, the query result contains a warning.
 
 If you want an invalid WKT literal given in the query as an argument of a
 GeoSPARQL function to produce an error instead, set the [runtime
