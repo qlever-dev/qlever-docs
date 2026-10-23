@@ -522,10 +522,6 @@ result of the `SERVICE` request. Default: `10000`.
 smaller than a single block, its size is estimated as the size of the block
 divided by this value. Default: `5`.
 
-`sort-estimate-cancellation-factor`: If the estimated time of a sort exceeds the
-remaining time of the query by more than this factor, the query is cancelled
-right away instead of when the timeout is reached. Default: `3.0`.
-
 `sort-in-memory-threshold`: Sorting an intermediate result larger than this
 uses external sorting instead of sorting in memory. Default: `5G`.
 
