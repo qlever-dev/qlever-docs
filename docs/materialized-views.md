@@ -194,6 +194,29 @@ loaded is a no-op (the response then contains `"was-loaded":false`).
     qlv.unloadMaterializedView("nameOfTheView");
     ```
 
+## Deleting a materialized view
+
+A materialized view that is no longer needed can be deleted. This unloads the
+view (if it is currently loaded) and permanently removes all of its files from
+disk. Deleting a view that does not exist results in an error.
+
+=== "qlever CLI"
+    ```bash
+    qlever materialized-view $VIEW_NAME --delete
+    ```
+=== "curl"
+    ``` bash
+    curl "http://$HOST:$PORT/?cmd=delete-materialized-view&view-name=$VIEW_NAME&access-token=$ACCESS_TOKEN"
+    # Returns: {"materialized-view-deleted":"nameOfTheView"}
+    ```
+=== "libqlever"
+    ```cpp
+    qlever::EngineConfig config;
+    config.baseName_ = "my-dataset";
+    qlever::Qlever qlv{config};
+    qlv.deleteMaterializedView("nameOfTheView");
+    ```
+
 ## Querying a materialized view
 
 Materialized views can be queried using the special predicate
@@ -328,6 +351,6 @@ releases of QLever.
 3. Materialized views are currently read-only; that is, update operation do
    not modify materialized views. If you need to update a materialized view,
    you must currently recreate it from scratch (you can simply overwrite an
-   existing view).
+   existing view, or [delete](#deleting-a-materialized-view) it first).
 4. Reading from a materialized view always reads the first three columns even
    if they are not requested; the unused ones are discarded immediately.
