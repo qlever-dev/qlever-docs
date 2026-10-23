@@ -45,22 +45,6 @@ SELECT * {
 
 ## GeoSPARQL Functions
 
-!!! note "Invalid WKT literals"
-    WKT literals are parsed strictly, as required by GeoSPARQL 1.1. A malformed
-    literal, for example `"LINESTRING(1 1, 2 a, 3 3)"^^geo:wktLiteral`, has no
-    geometry: a GeoSPARQL function applied to it yields an unbound value, and it
-    never matches in a [geometric relation](#geosparql-geometric-relations) or
-    [maximum distance search](#geosparql-maximum-distance-search). The number of
-    invalid literals skipped by a spatial search is shown as `num-geoms-invalid`
-    in its runtime information, and the query result contains a warning. If you want an invalid WKT literal given directly
-    in the query (or via `VALUES`) as an argument of a GeoSPARQL function to
-    produce an error instead, set the [runtime
-    parameter](qleverfile.md#runtime-parameters) `throw-on-invalid-wkt`,
-    for example via `qlever settings throw-on-invalid-wkt=true`. Note that an
-    index with [geometry preprocessing](#geometry-preprocessing) that was built
-    before QLever switched to strict parsing (October 2026) keeps the lenient
-    handling of malformed literals until the index is rebuilt.
-
 `geof:distance(?geom_1, ?geom_2, ?unit)`<a id="geof-distance"></a>:
 Returns the geodesic distance between two geometries on the WGS84 ellipsoid.
 The first two arguments must be literals
@@ -639,3 +623,21 @@ completely, set this to `0`.
       BIND(ql:simplifyGeometry(?geom, 0.001) AS ?simple) # LINESTRING(7.841295 47.997731,7.846626 47.993354)
     }
     ```
+
+## Invalid WKT literals
+
+WKT literals are parsed strictly, as required by GeoSPARQL 1.1. A malformed
+literal, for example `"LINESTRING(1 1, 2 a, 3 3)"^^geo:wktLiteral`, has no
+geometry: a GeoSPARQL function applied to it yields an unbound value, and it
+never matches in a [geometric relation](#geosparql-geometric-relations) or
+[maximum distance search](#geosparql-maximum-distance-search). The number of
+invalid literals skipped by a spatial search is shown as `num-geoms-invalid`
+in its runtime information, and the query result contains a warning. If you
+want an invalid WKT literal given directly
+in the query (or via `VALUES`) as an argument of a GeoSPARQL function to
+produce an error instead, set the [runtime
+parameter](qleverfile.md#runtime-parameters) `throw-on-invalid-wkt`,
+for example via `qlever settings throw-on-invalid-wkt=true`. Note that an
+index with [geometry preprocessing](#geometry-preprocessing) that was built
+before QLever switched to strict parsing (October 2026) keeps the lenient
+handling of malformed literals until the index is rebuilt.
