@@ -285,15 +285,7 @@ QLever can connect the materialized view and the `BIND` statement across other t
 <!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
 Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This also reduces disk usage and improves performance.
 
-**Limiting the search**: Since the number of candidates in the pattern matching algorithm can grow exponentially in the size of the query, its search is bounded by two runtime parameters (change via `qlever settings`):
-
-- `materialized-view-pattern-match-num-assignments` (default: `100000`): the
-  maximum number of candidate variable assignments tried by the backtracking
-  algorithm, across all views considered for a given query. Setting this to
-  `0` disables pattern-based rewriting entirely.
-- `materialized-view-pattern-match-num-replacement-plans` (default: `500`):
-  the maximum number of matches (and thus alternative query plans using a
-  view) collected for a given query.
+**Limiting the search**: Since the number of candidates in the pattern matching algorithm can grow exponentially in the size of the query, its search is bounded by the [runtime parameters](qleverfile.md#runtime-parameters) `materialized-view-pattern-match-num-assignments` and `materialized-view-pattern-match-num-replacement-plans`.
 
 **Disabling automatic usage of materialized views**: If you want to disable the automatic usage of materialized views, you can set `qlever settings enable-materialized-view-query-rewrite=false`. This is particularly relevant if you use SPARQL updates, which are not yet supported by materialized views.
 
