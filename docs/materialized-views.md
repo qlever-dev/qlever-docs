@@ -169,6 +169,31 @@ You can optionally preload materialized views. This is required for implicitly r
     qlv.loadMaterializedView("nameOfTheView");
     ```
 
+## Unloading a materialized view
+
+Loaded materialized views can be unloaded to free memory, file handles and to
+remove them from automatic query rewriting, without deleting them from disk;
+they can be loaded again later (see above). Note that a query explicitly using
+the view loads it again automatically. Unloading a view that is not currently
+loaded is a no-op (the response then contains `"was-loaded":false`).
+
+=== "qlever CLI"
+    ```bash
+    qlever materialized-view $VIEW_NAME --unload
+    ```
+=== "curl"
+    ``` bash
+    curl "http://$HOST:$PORT/?cmd=unload-materialized-view&view-name=$VIEW_NAME&access-token=$ACCESS_TOKEN"
+    # Returns: {"materialized-view-unloaded":"nameOfTheView","was-loaded":true}
+    ```
+=== "libqlever"
+    ```cpp
+    qlever::EngineConfig config;
+    config.baseName_ = "my-dataset";
+    qlever::Qlever qlv{config};
+    qlv.unloadMaterializedView("nameOfTheView");
+    ```
+
 ## Deleting a materialized view
 
 A materialized view that is no longer needed can be deleted. This unloads the
