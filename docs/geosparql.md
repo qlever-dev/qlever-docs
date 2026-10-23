@@ -462,7 +462,7 @@ The following configuration parameters are provided in the `SERVICE` as triples 
 
 | Parameter | Domain | Description |
 |--|--|--|
-| `algorithm` | `<baseline>`, `<s2>`, `<boundingBox>`, `<libspatialjoin>` | The algorithm to use. |
+| `algorithm` | `<baseline>`, `<s2>`, `<boundingBox>`, `<libspatialjoin>` | The algorithm to use. The `boundingBox` algorithm is deprecated and will be removed in a future version of QLever; please use `libspatialjoin` or `s2` instead. |
 | `left` | variable | The left join table: *"for every [left] geometry ..."*. Must refer to a column with literals of `geo:wktLiteral` datatype. |
 | `right` | variable | The right join table: *"... find the closest/all intersecting/... [right] geometries"*.  Must refer to a column with literals of `geo:wktLiteral` datatype. |
 | `numNearestNeighbors` | integer | The maximum number of nearest neighbor points from `right` for every point from `left`. Only supported by the `baseline` and `s2` algorithms. |
