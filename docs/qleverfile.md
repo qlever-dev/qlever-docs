@@ -374,17 +374,22 @@ like `30s` or `50ms`, and booleans as `true` or `false`.
 
 `cache-max-num-entries`: The maximum number of cache entries. If exceeded, the
 least recently used entries that are not pinned are removed. Default: `1000`.
+Also set by `CACHE_MAX_NUM_ENTRIES` (see [above](#section-server)), so with
+`qlever start`, the default is `200`.
 
 `cache-max-size`: The maximum total size of all cache entries (pinned and not
 pinned). The cache counts toward the memory available for queries. Default:
-`30G`.
+`30G`. Also set by `CACHE_MAX_SIZE` (see [above](#section-server)), so with
+`qlever start`, the default is `2G`.
 
 `cache-max-size-lazy-result`: The maximum size up to which results that are
 computed lazily (in chunks) are cached, because caching them causes
 significant overhead. Default: `5M`.
 
 `cache-max-size-single-entry`: The maximum size of a single cache entry.
-Larger results are not cached, unless they are pinned. Default: `5G`.
+Larger results are not cached, unless they are pinned. Default: `5G`. Also
+set by `CACHE_MAX_SIZE_SINGLE_ENTRY` (see [above](#section-server)), so with
+`qlever start`, the default is `1G`.
 
 `cache-service-results`: If `true`, the results of `SERVICE` requests are
 cached. By default, they are not, because a remote endpoint may change at any
@@ -399,7 +404,8 @@ emitted again if it is among the `N` most recently emitted distinct triples;
 this needs bounded memory, but removes only some duplicates). Default: `none`.
 
 `default-query-timeout`: The time after which a query is cancelled, unless a
-different timeout is requested for the query. Default: `30s`.
+different timeout is requested for the query. Default: `30s`. Also set by
+`TIMEOUT` (see [above](#section-server)).
 
 `disable-caching`: If `true`, all queries started afterwards neither read from
 nor write to the cache. This avoids the overhead of caching when it is not
@@ -535,11 +541,13 @@ the query time and result size. Default: `true`.
 search](geosparql.md) (also for GeoSPARQL `FILTER`s that are evaluated as a spatial search).
 `0` means the number of CPU threads. Default: `8`.
 
-`spatial-join-prefilter-max-size`: With geometry preprocessing, the inputs of
-the larger side of a spatial search are prefiltered using the aggregated
-bounding box of the smaller side. This is the maximum size of that bounding
-box (in square coordinates) for which prefiltering is used. `0` disables
-prefiltering. Default: `2500`.
+`spatial-join-prefilter-max-size`: With [geometry
+preprocessing](geosparql.md#geometry-preprocessing), the inputs of the larger
+side of a spatial search are prefiltered using the aggregated bounding box of
+the smaller side. If this bounding box is very large, the cost of prefiltering
+can outweigh its savings. Therefore, prefiltering is only used up to this size
+of the bounding box (in square coordinates). `0` disables prefiltering.
+Default: `2500`.
 
 `spatial-join-tmp-dir`: The directory in which the `libspatialjoin` algorithm
 writes its temporary files. If empty, the index directory is used. Default:

@@ -90,7 +90,8 @@ You can write a materialized view using the `qlever` command-line interface
 (this is the easiest way), via an HTTP request or via `libqlever`, as shown
 below. Simply substitute the relevant placeholders as needed. If needed, the
 memory available for sorting the rows of the materialized view can be
-configured using the `materialized-view-writer-memory` runtime parameter, for
+configured using the `materialized-view-writer-memory` [runtime
+parameter](qleverfile.md#runtime-parameters), for
 example `qlever settings materialized-view-writer-memory=4G`.
 
 
@@ -269,7 +270,7 @@ QLever can connect the materialized view and the `BIND` statement across other t
 <!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
 Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This reduces disk usage and improves performance.
 
-**Disabling automatic usage of materialized views**: If you want to disable the automatic usage of materialized views, you can set `qlever settings enable-materialized-view-query-rewrite=false`. This is particularly relevant if you use SPARQL updates, which are not yet supported by materialized views.
+**Disabling automatic usage of materialized views**: If you want to disable the automatic usage of materialized views, you can set the [runtime parameter](qleverfile.md#runtime-parameters) `enable-materialized-view-query-rewrite=false`, for example via `qlever settings enable-materialized-view-query-rewrite=false`. This is particularly relevant if you use SPARQL updates, which are not yet supported by materialized views.
 
 ## Sort order
 
