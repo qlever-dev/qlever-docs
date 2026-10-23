@@ -331,8 +331,7 @@ Additionally, syntactic shortcuts can be used in the user query without hinderin
 
 **Bind**: <a id="rewrite-bind"></a> If a query uses a materialized view, either by automatic or explicit use, `BIND` statements can be rewritten to reading additional columns of the view under certain conditions.
 For this to work, the `BIND` statements must only define otherwise unused variables and their expressions may only use variables that can't contain `UNDEF` values.
-QLever can connect the materialized view and the `BIND` statement across other triples, spatial search and GeoSPARQL filters. 
-<!--`UNION`, `FILTER EXISTS`, `MINUS`, other `BIND`s and more will be supported.-->
+QLever can connect the materialized view and the `BIND` statement across other triples, spatial search, GeoSPARQL filters, `FILTER`, other `BIND`s, `UNION`, and the left side of `OPTIONAL`, `MINUS`, and `FILTER EXISTS`, as long as it can be guaranteed that this does not change the query result.
 Note that during query planning a suitable view is selected independently of its ability to rewrite `BIND`s. Therefore if you would like to rewrite different `BIND` statements, it is recommended to define a single view with all the `BIND`s instead of individual views for each `BIND`. This also reduces disk usage and improves performance.
 
 **Limiting the search**: Since the number of candidates in the pattern matching algorithm can grow exponentially in the size of the query, its search is bounded by the [runtime parameters](qleverfile.md#runtime-parameters) `materialized-view-pattern-match-num-assignments` and `materialized-view-pattern-match-num-replacement-plans`.
