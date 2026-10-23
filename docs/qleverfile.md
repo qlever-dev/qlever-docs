@@ -116,6 +116,12 @@ predicate-object list in your dataset (everything from a subject until the next
 `.`). Predicate-object lists are usually short, but can be long for `TTL`
 datasets with many long literals, see [Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/tree/main/src/qlever/Qleverfiles/Qleverfile.osm-planet). Default: `10M`.
 
+`INDEX_ROWS_PER_BLOCK`, `--index-rows-per-block`: The number of rows of one
+block of the permutations (and of the other sorted lists of the index, like
+materialized views). Smaller blocks make selective index scans read fewer
+rows, at the price of more block metadata (which is held in RAM) and a slightly
+larger index. Default: `31250` (which is 250 kB per column).
+
 `VOCABULARY_TYPE`, `--vocabulary-type`: Whether the vocabulary is stored
 compressed or not (trade-off between index size and query speed), whether to
 store it on disk or in memory (trade-off between memory consumption and query
@@ -131,6 +137,20 @@ by a sequence of at most 12 digits will not be stored as strings in the
 vocabulary, but stored directly in one of QLever's internal 64-bit identifiers.
 See
 [Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/blob/main/src/qlever/Qleverfiles/Qleverfile.osm-planet) for an example. Default: none.
+
+`GEO_POINT_ENCODING`, `--geo-point-encoding`: How WKT points are encoded in the
+internal IDs of the index, either `z-order` or `lat-major`. Default: `z-order`.
+
+`ONLY_PSO_AND_POS_PERMUTATIONS`, `--only-pso-and-pos-permutations`: Only build
+the PSO and POS permutations. This makes the index smaller, but then each
+triple pattern in a query must have a fixed predicate. Implies `USE_PATTERNS =
+no`. Default: `false`.
+
+`USE_PATTERNS`, `--use-patterns`: Whether to precompute the so-called patterns,
+which are used for fast processing of queries like `SELECT ?p (COUNT(DISTINCT
+?s) AS ?c) WHERE { ?s ?p [] ... } GROUP BY ?p`. Either `yes` or `no`. If `no`,
+the `USE_PATTERNS` option in the `[server]` section is also set to `no`.
+Default: `yes`.
 
 `TEXT_INDEX`, `--text-index`: Four options: `none` (no text index),
 `from_literals` (create a text index from all literals in the dataset),
@@ -162,6 +182,19 @@ specify the full path. Default: `qlever-index` (which is the default name
 of the binary for index building when compiling QLever).
 
 `MATERIALIZED_VIEWS`, `--materialized-views`: Materialized views to be written at indexing time, given as a JSON object. The keys in the JSON are used as view names and the string values as the SPARQL queries for writing the respective view. By default, no materialized views are written.
+
+`RESOURCE_USAGE_LOG`, `--resource-usage-log`: Whether `qlever index` writes a
+TSV log of its memory (RSS) and CPU usage to
+`<NAME>.index.resource-usage-log.tsv`. Either `yes` or `no`. Default: `yes`.
+
+`RESOURCE_USAGE_INTERVAL`, `--resource-usage-interval`: The number of seconds
+between two samples in the resource usage log of `qlever index`. Default: `1`.
+
+`RESOURCE_USAGE_PLOT_MAX_POINTS`, `--resource-usage-plot-max-points`: The
+maximum number of points per line (RSS and CPU) in the resource usage plot
+created by `qlever index`. This does not affect the sampling: the samples are
+grouped into buckets, and the maximum of each bucket is plotted. Default:
+`500`.
 
 ## Section `[server]`
 
@@ -216,6 +249,78 @@ Default: `false`.
 
 `PRELOAD_MATERIALIZED_VIEWS`, `--preload-materialized-views`: Materialized views to be loaded upon server start. Takes an arbitrary number of arguments. By default, no views are loaded on server start.
 
+`SERVER_BINARY`, `--server-binary`: The binary for starting the server, when
+using `SYSTEM = native`. The binary must either be in your `PATH` or you must
+specify the full path. Default: `qlever-server` (which is the default name of
+the server binary when compiling QLever).
+
+`NUM_THREADS`, `--num-threads`: The number of threads used for query
+processing. Default: `8`.
+
+`SET_RUNTIME_PARAMETERS`, `--set-runtime-parameters`: A space-separated list of
+runtime parameters to set when starting the server, each of the form
+`name=value`. Runtime parameters can also be changed while the server is
+running, via `qlever settings`. Options given on the command line are merged
+with those from the `Qleverfile` and take precedence for the same name. See
+[Runtime parameters](#runtime-parameters) below for the list of runtime
+parameters and their default values. Default: none.
+
+`WARMUP_CMD`, `--warmup-cmd`: A command that is executed after the server has
+started, as part of `qlever start` (unless `--no-warmup` is given), or via
+`qlever warmup`. Default: none.
+
+`REBUILD_INDEX_STRATEGY`, `--rebuild-index-strategy`: When to rebuild the index
+from the current data (including updates), see [Rebuild
+index](rebuild-index.md). Either `manual` (only when explicitly requested via
+`qlever rebuild-index`) or `automatic:min:max:fraction` (additionally rebuild
+automatically in the background once the number of delta triples reaches the
+given `fraction` of the number of index triples, but never below `min` and
+always at `max`, for example `automatic:10000:1000000:0.1`). Default: `manual`.
+
+`REBUILD_KEEP_PREVIOUS_INDEX_DIRS`, `--rebuild-keep-previous-index-dirs`: Each
+rebuild of the index (manual or automatic) moves the index served so far into
+a `previous.*` directory. This option determines which of these directories
+are kept after a successful rebuild: `all`, `none`, `original-only` (only the
+very first), `most-recent-only` (only the most recently created), or
+`original-and-most-recent` (both). Default: `original-and-most-recent`.
+
+`ONLY_PSO_AND_POS_PERMUTATIONS`, `--only-pso-and-pos-permutations`: Only use the
+PSO and POS permutations (then each triple pattern must have a fixed
+predicate). Use this if the index was built with the same option. Default:
+`false`.
+
+`USE_PATTERNS`, `--use-patterns`: Whether to use the patterns precomputed when
+building the index, see `USE_PATTERNS` in the `[index]` section. Either `yes`
+or `no`. Default: `yes` (or `no` if `USE_PATTERNS = no` in the `[index]`
+section).
+
+`USE_TEXT_INDEX`, `--use-text-index`: Whether to use the text index (which
+requires that one was built, see `TEXT_INDEX` above and [Text
+search](text-search.md)). Either `yes` or `no`. Default: `yes` if `TEXT_INDEX`
+is not `none`, otherwise `no`.
+
+`ENABLE_METRICS`, `--enable-metrics`: Whether to enable the metrics endpoint
+at `/metrics` (only available with the access token), see
+[Monitoring](monitoring.md). Default: `false`.
+
+`METRICS_LOG`, `--metrics-log`: Whether the server writes the per-query
+metrics log, a JSONL log of query start and end events, to
+`<NAME>.metrics-log.jsonl`. Either `yes` or `no`. Default: `yes`.
+
+`SERVER_LOG_MODE`, `--server-log-mode`: What to do with the server log of a
+previous run when starting the server: `append` (keep it and append to it),
+`overwrite` (remove it), `rotate` (move it to `<log>.1`, shifting older
+generations up, all of which are kept), or `no-log` (write no server log at
+all; when running in the foreground, the server output goes to the terminal).
+Default: `rotate`.
+
+`RESOURCE_USAGE_LOG`, `--resource-usage-log`: Whether the server writes a TSV
+log of its memory (RSS) and CPU usage to
+`<NAME>.server.resource-usage-log.tsv`. Either `yes` or `no`. Default: `yes`.
+
+`RESOURCE_USAGE_INTERVAL`, `--resource-usage-interval`: The number of seconds
+between two samples in the resource usage log of the server. Default: `2`.
+
 ## Section `[runtime]`
 
 `SYSTEM`, `--system`: Three options: `native` (run natively, assuming that the
@@ -223,6 +328,34 @@ QLever binaries `qlever-server` and `qlever-index` are in your `PATH`),
 `docker` (pull `Docker` image if none is present locally, and run in a
 `Docker` container), and `podman` (same as `docker`, but using `Podman`
 instead of `Docker`). Default: `docker`.
+
+`RESTART_POLICY`, `--restart-policy`: Whether the server is restarted
+automatically after a crash, one of `no`, `always`, `unless-stopped`, and
+`on-failure`. This applies to a server running in a container and, on Linux,
+to a native server, which then runs as a systemd user service (where
+`unless-stopped` means `always`). On a system without systemd, `qlever start`
+fails if the policy was set explicitly, and starts the server without
+automatic restarts otherwise. Default: `unless-stopped`.
+
+`RESTART_DELAY`, `--restart-delay`: How long to wait before a crashed server is
+restarted, in systemd time syntax (like `5s` or `1min`). Only for a native
+server that runs as a systemd user service (see `RESTART_POLICY`). Default:
+`0`.
+
+`RESTART_LIMIT`, `--restart-limit`: How many starts of the server are allowed
+within `RESTART_LIMIT_INTERVAL`. A server that crashes right after each start
+is no longer restarted once this limit is reached. Only for a native server
+that runs as a systemd user service. Default: `10`.
+
+`RESTART_LIMIT_INTERVAL`, `--restart-limit-interval`: The interval for
+`RESTART_LIMIT`, in systemd time syntax (like `1h` or `30min`). Only for a
+native server that runs as a systemd user service. Default: `1h`.
+
+`SECCOMP_PROFILE`, `--seccomp-profile`: Path to a seccomp profile (a JSON file)
+for the server container, which is passed to the container engine as
+`--security-opt seccomp=<path>`. For example, this can be used to allow the
+`io_uring` system calls, which are blocked by the default profile. Default:
+none (that is, the default profile of the container engine is used).
 
 `IMAGE`, `--image`: The name of the image when using `SYSTEM = docker` or
 `SYSTEM = podman`. Default: `docker.io/adfreiburg/qlever`.
