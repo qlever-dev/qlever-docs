@@ -147,10 +147,8 @@ the geo cell grid, one of `flat`, `flat-4-shifts`, `hierarchical`, and
 `hierarchical-3-shifts`. Only relevant if `GEO_CELL_GRID_LEVEL` is greater than
 `0`. Default: `flat`.
 
-`GEO_POINT_ENCODING`, `--geo-point-encoding`: How geo points are encoded in the
-IDs of the index, either `z-order` or `lat-major`. The latter is how points
-were encoded before 2026-09-26; it is deprecated and only meant for software
-that decodes the IDs of an index. Default: `z-order`.
+`GEO_POINT_ENCODING`, `--geo-point-encoding`: How WKT points are encoded in the
+internal IDs of the index, either `z-order` or `lat-major`. Default: `z-order`.
 
 `PARSED_GEOMETRIES_MIN_LENGTH`, `--parsed-geometries-min-length`: Store all WKT
 literals with at least this many bytes in the form needed by the
