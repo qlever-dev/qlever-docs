@@ -624,3 +624,17 @@ completely, set this to `0`.
       BIND(ql:simplifyGeometry(?geom, 0.001) AS ?simple) # LINESTRING(7.841295 47.997731,7.846626 47.993354)
     }
     ```
+
+## Invalid WKT literals
+
+WKT literals are parsed strictly, as required by GeoSPARQL 1.1. A malformed
+literal, for example `"LINESTRING(1 1, 2 a, 3 3)"^^geo:wktLiteral`, has no
+geometry: a [GeoSPARQL function](#geosparql-functions) applied to it yields an unbound value, and it
+never matches in a [geometric relation](#geosparql-geometric-relations) or
+[maximum distance search](#geosparql-maximum-distance-search). If a spatial
+search skips invalid literals, the query result contains a warning.
+
+If you want an invalid WKT literal given inline in the query (e.g. as an
+argument of a GeoSPARQL function) to produce an error instead, set the [runtime
+parameter](qleverfile.md#runtime-parameters) `throw-on-invalid-wkt`, for
+example via `qlever settings throw-on-invalid-wkt=true`.
