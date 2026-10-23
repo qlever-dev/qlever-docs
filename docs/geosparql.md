@@ -570,21 +570,11 @@ meters can be given that restricts the search radius. Example query:
 
 ## Runtime parameters
 
-`spatial-join-max-num-threads`: the number of threads for a spatial search
-operation (also GeoSPARQL `FILTER` on maximum distance or geometric relations)
-can be limited. Setting the option to `0` amounts to taking the number of CPU
-threads. The default value is `8`, since further threads seem to provide little
-additional performance gain.
-
-`spatial-join-prefilter-max-size`: If the special `VOCABULARY_TYPE` for
-geometries is used (see [Geometry Preprocessing](#geometry-preprocessing)), the
-inputs from the larger side of a spatial search are automatically prefiltered
-based on the aggregated bounding box of the inputs from the smaller side. If
-the aggregated bounding box is very large, the cost for prefiltering can
-outweigh the savings. Thus prefiltering is disabled at a certain bounding box
-size. This can be configured using `spatial-join-prefilter-max-size`. By
-default the limit is `2500` square coordinates. To deactivate prefiltering
-completely, set this to `0`.
+The spatial search can be configured with the [runtime
+parameters](qleverfile.md#runtime-parameters) `spatial-join-max-num-threads`
+(the number of threads), `spatial-join-prefilter-max-size` (when to use
+prefiltering with [geometry preprocessing](#geometry-preprocessing)), and
+`spatial-join-tmp-dir` (the directory for temporary files).
 
 ## Internal Geometry Functions
 
