@@ -15,7 +15,37 @@ command-line option `--persist-updates`.
 
 ## SPARQL 1.1 Update
 
-### Via HTTP
+### Programatically
+
+#### Sending the update
+
+The [standard defines 2 options](https://www.w3.org/TR/2013/REC-sparql11-protocol-20130321/#update-operation) for sending queries wich QLever both supports. The path is the same as for queries: `/`. The examples assume that the QLever instance is running at `http://localhost:7019` and the access token is `dont-use-this-access-token`.
+
+=== "qlever"
+    ```bash
+    # In the folder with the QLeverfile
+    qlever update "INSERT DATA { <a> <b> <c> }"
+    ```
+=== "qlever from file"
+    ```bash
+    # In the folder with the QLeverfile
+    qlever update --update-file large_update.ru
+    ```
+=== "Option 1 (URL-encoded POST)"
+    ```bash
+    curl -X "POST"
+         -d "update=INSERT DATA { <a> <b> <c> }"
+         "http://localhost:7019?access-token=dont-use-this-access-token"
+    ```
+=== "Option 2 (POST directly)"
+    ```bash
+    curl -X "POST"
+         -H "Content-Type: application/sparql-update"
+         -d "INSERT DATA { <a> <b> <c> }"
+         "http://localhost:7019?access-token=dont-use-this-access-token"
+    ```
+
+#### Providing the access token
 
 The access token can be provided either via the query parameter
 `access-token=...` or via the HTTP header `Authorization: Bearer ...`. Here is
