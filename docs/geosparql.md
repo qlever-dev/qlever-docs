@@ -634,7 +634,7 @@ never matches in a [geometric relation](#geosparql-geometric-relations) or
 invalid literals skipped by a spatial search is shown as `num-geoms-invalid`
 in its runtime information.
 
-If you want an invalid WKT literal given in the query as an argument of a
-GeoSPARQL function to produce an error instead, set the [runtime
+If you want an invalid WKT literal given inline in the query (e.g. as an
+argument of a GeoSPARQL function) to produce an error instead, set the [runtime
 parameter](qleverfile.md#runtime-parameters) `throw-on-invalid-wkt`, for
 example via `qlever settings throw-on-invalid-wkt=true`.
