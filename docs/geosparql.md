@@ -4,20 +4,6 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
 
 ## Geometry Preprocessing
 
-!!! note "TL;DR: Recommended Qleverfile settings"
-    For the best GeoSPARQL performance, assuming your dataset contains geometries as `?subject geo:hasGeometry/geo:asWKT ?wkt`, add this to your `Qleverfile` before running `qlever index` and `qlever start`.
-
-    ```ini
-    [index]
-    # ...
-    VOCABULARY_TYPE = on-disk-compressed-geo-split
-    MATERIALIZED_VIEWS = {"geometries": "PREFIX geo: <http://www.opengis.net/ont/geosparql#> PREFIX geof: <http://www.opengis.net/def/function/geosparql/> SELECT ?subject ?intermediate ?geometry ?centroid ?area ?length ?lower_left ?upper_right WHERE { ?subject geo:hasGeometry ?intermediate . ?intermediate geo:asWKT ?geometry . BIND(geof:centroid(?geometry) AS ?centroid) BIND(geof:metricArea(?geometry) AS ?area) BIND(geof:metricLength(?geometry) AS ?length) BIND(ql:envelopeLowerLeft(?geometry) AS ?lower_left) BIND(ql:envelopeUpperRight(?geometry) AS ?upper_right) }"}
-
-    [server]
-    # ...
-    PRELOAD_MATERIALIZED_VIEWS = geometries
-    ```
-
 QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of the `qlever-index` binary. Together with an appropriate [materialized view](#geo-matview) preprocessing may provide a drastic performance improvement.
 
 If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
