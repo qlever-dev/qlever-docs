@@ -301,6 +301,18 @@ literals with datatype `xsd:decimal`.
     }
     ```
 
+`geof:asGeoJSON(?geom)`<a id="geof-asgeojson"></a>: Converts a geometry given as `geo:wktLiteral` to GeoJSON. The result is a literal with datatype `geo:geoJSONLiteral`.
+
+??? note "Example query for `geof:asGeoJSON`"
+
+    ```sparql
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    SELECT * WHERE {
+      BIND (geof:asGeoJSON("POINT(1 2)"^^geo:wktLiteral) AS ?geo_json) # {"type":"Point","coordinates":[1.0,2.0]}
+    }
+    ```
+
 
 ## GeoSPARQL Maximum Distance Search
 
