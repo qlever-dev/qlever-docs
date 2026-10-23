@@ -354,6 +354,13 @@ view, for the following reasons:
    You can either fix the first column, or the first and second column, or the
    first, second, and third column.
 
+The order of the columns is the order of the variables in the `SELECT` clause
+of the query used for writing the view. Since the rows of the view are always
+sorted by its columns, the following are rejected with an error when writing a
+view: `ORDER BY` and `INTERNAL SORT BY` (the order would be lost), `LIMIT` and
+`OFFSET` (they would be applied before sorting and thus select an arbitrary
+subset of the rows), and an empty query like `SELECT * {}`.
+
 ## Current limitations
 
 The materialized views feature is still in beta. It works, but there are some
