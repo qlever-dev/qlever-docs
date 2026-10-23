@@ -137,10 +137,8 @@ vocabulary, but stored directly in one of QLever's internal 64-bit identifiers.
 See
 [Qleverfile.osm-planet](https://github.com/qlever-dev/qlever-control/blob/main/src/qlever/Qleverfiles/Qleverfile.osm-planet) for an example. Default: none.
 
-`GEO_POINT_ENCODING`, `--geo-point-encoding`: How geo points are encoded in the
-IDs of the index, either `z-order` or `lat-major`. The latter is how points
-were encoded before 2026-09-26; it is deprecated and only meant for software
-that decodes the IDs of an index. Default: `z-order`.
+`GEO_POINT_ENCODING`, `--geo-point-encoding`: How WKT points are encoded in the
+internal IDs of the index, either `z-order` or `lat-major`. Default: `z-order`.
 
 `ONLY_PSO_AND_POS_PERMUTATIONS`, `--only-pso-and-pos-permutations`: Only build
 the PSO and POS permutations. This makes the index smaller, but then each
