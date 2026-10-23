@@ -279,9 +279,9 @@ processing. Default: `8`.
 runtime parameters to set when starting the server, each of the form
 `name=value`. Runtime parameters can also be changed while the server is
 running, via `qlever settings`. Options given on the command line are merged
-with those from the `Qleverfile` and take precedence for the same name. For the
-list of runtime parameters and their default values, run `qlever-server
---set-runtime-parameter help`. Default: none.
+with those from the `Qleverfile` and take precedence for the same name. See
+[Runtime parameters](#runtime-parameters) below for the list of runtime
+parameters and their default values. Default: none.
 
 `WARMUP_CMD`, `--warmup-cmd`: A command that is executed after the server has
 started, as part of `qlever start` (unless `--no-warmup` is given), or via
