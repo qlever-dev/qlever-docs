@@ -176,6 +176,15 @@ the literal. The triples can be used to implement custom full-text search
 queries, in particular in combination with [materialized
 views](materialized-views.md). Default: `false`.
 
+`HAS_WORD_NORMALIZATION`, `--has-word-normalization`: How to normalize the
+words of the `ql:has-word` triples. With `lowercase`, the words are converted
+to lowercase. With `lowercase-no-accents`, the words are additionally stripped
+of their accents, so that for example the literal `"Café"` gets the triple
+`"Café" ql:has-word "cafe"`. This is meant for data in Latin, Greek or
+Cyrillic scripts: for scripts like Thai, Devanagari or Japanese kana, it also
+removes vowel signs, the virama or the dakuten. Note that the words in a query
+are not normalized automatically. Default: `lowercase`.
+
 `INDEX_BINARY`, `--index-binary`: The binary for building the index, when
 using `SYSTEM = native`. The binary must either be in your `PATH` or you must
 specify the full path. Default: `qlever-index` (which is the default name
