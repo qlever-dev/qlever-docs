@@ -10,6 +10,11 @@ SPARQL+Text query can then specify co-occurrence of words from the text with
 entities from the RDF data. This is a powerful concept. See below for the input
 format and an example query.
 
+Alternatively, you can build your own keyword search on the words of the
+literals, using `ql:has-word` triples and materialized views. See [Custom text
+search with `ql:has-word` and materialized
+views](#custom-text-search-with-qlhas-word-and-materialized-views).
+
 ## Building a combined RDF and text index
 
 The `qlever` script makes it very easy to build a text index and to start a
@@ -238,3 +243,95 @@ The Text Search feature will throw errors in the following scenarios:
 - **Word and Entity Search in one Configuration**: If one configuration contains both predicates `textSearch:word` and `textSearch:entity` , an error will be raised.
 - **Entity Search on a Text without Word Search**: If a configuration with `textSearch:entity` is connected to a text variable that is not connected to a configuration with `textSearch:word`, an error will be raised.
 - **Empty Word Search**: If the object of `textSearch:word` is an empty literal, an error will be raised.
+
+## Custom text search with `ql:has-word` and materialized views
+
+As an alternative to the text index, QLever can store the words of the
+literals as ordinary (internal) triples. Together with a [materialized
+view](materialized-views.md), this gives a fast keyword search where you
+decide yourself which literals are searched and how the results are scored.
+No text index is needed for this.
+
+### The `ql:has-word` triples
+
+When building the index with `ADD_HAS_WORD_TRIPLES = true` in the `[index]`
+section of the Qleverfile (see [Qleverfile
+settings](qleverfile.md#section-index)), QLever adds, for each triple with a
+literal object and for each distinct word in that literal, an internal triple
+
+```
+<literal> ql:has-word "word"
+```
+
+where `ql:` is the prefix `<http://qlever.cs.uni-freiburg.de/builtin-functions/>`.
+The words are obtained by splitting the literal at non-word characters and
+converting them to lowercase. With `HAS_WORD_NORMALIZATION =
+lowercase-no-accents`, accents are removed as well, so that the literal
+`"Café"` gets the word `"cafe"`. The number of occurrences of the word in the
+literal (the term frequency) is stored as the graph of the triple, so it can
+be retrieved with `GRAPH ?tf { ?text ql:has-word ?word }`.
+
+For example, all literals that contain the word `"penicillin"` can be found as
+follows:
+
+```sparql
+PREFIX ql: <http://qlever.cs.uni-freiburg.de/builtin-functions/>
+SELECT ?text ?tf WHERE {
+  GRAPH ?tf { ?text ql:has-word "penicillin" }
+}
+```
+
+### Building a materialized view for keyword search
+
+To search for subjects instead of literals, and to rank them, write a
+materialized view with one row per word and subject. The following view
+enables keyword search in the `rdfs:label` and `skos:altLabel` literals of all
+subjects, where a word in a label counts five times and a word in an
+alternative label two times:
+
+```sparql
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX ql: <http://qlever.cs.uni-freiburg.de/builtin-functions/>
+SELECT ?word ?subject ?score WHERE {
+  { ?subject rdfs:label ?text BIND (5 AS ?weight) }
+  UNION
+  { ?subject skos:altLabel ?text BIND (2 AS ?weight) }
+  GRAPH ?tf { ?text ql:has-word ?word }
+  BIND (?tf * ?weight AS ?score)
+}
+```
+
+Note that `?word` is the first column: a materialized view is sorted by its
+first column, so that rows for a given word can be looked up efficiently (see
+[sort order](materialized-views.md#sort-order)). Assuming the view is called
+`words`, it can be written with `qlever materialized-view words "SELECT ..."`,
+or at indexing time via `MATERIALIZED_VIEWS` in the Qleverfile (see [writing a
+materialized view](materialized-views.md#writing-a-materialized-view)).
+
+### Querying the view
+
+A keyword query uses the view once per keyword and joins on the subject. The
+following query returns all subjects that match all three keywords, ranked by
+the sum of the scores:
+
+```sparql
+PREFIX view: <https://qlever.cs.uni-freiburg.de/materializedView/>
+SELECT ?subject (?s1 + ?s2 + ?s3 AS ?score) WHERE {
+  SERVICE view:words { [ view:column-word "keyword1" ; view:column-subject ?subject ; view:column-score ?s1 ] }
+  SERVICE view:words { [ view:column-word "keyword2" ; view:column-subject ?subject ; view:column-score ?s2 ] }
+  SERVICE view:words { [ view:column-word "keyword3" ; view:column-subject ?subject ; view:column-score ?s3 ] }
+}
+ORDER BY DESC(?score)
+```
+
+The keywords in the query must be normalized in the same way as the words in
+the `ql:has-word` triples, that is, they must be lowercase (and without
+accents for `HAS_WORD_NORMALIZATION = lowercase-no-accents`).
+
+!!! note "Limitations"
+    - The `ql:has-word` triples are only created when building the index.
+      Literals that are added by a SPARQL update do not get `ql:has-word`
+      triples.
+    - Like all materialized views, the view is not changed by SPARQL updates
+      and must be rewritten to reflect them.
