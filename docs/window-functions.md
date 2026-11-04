@@ -280,8 +280,8 @@ ORDER BY ?countryLabel DESC(?sitelinks)
 The result of the row number service is sorted by the row number, so the joins
 above need no further sorting.
 
-If the two subqueries are the same except for the names of their variables,
-QLever computes their result only once. This is why the second subquery in the
+If the two subqueries are the same, QLever computes their result only once.
+This also holds if some or all of their variables have different names. This is why the second subquery in the
 examples is a copy of the first one in which the variables that are not joined
 on are renamed (for example `?d` to `?previous`), instead of a subquery that
 selects fewer variables.
