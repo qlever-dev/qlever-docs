@@ -13,9 +13,9 @@ need any extra sorting and are very efficient.
 
 ## Row numbers
 
-The row numbers are added by a `SERVICE` to the IRI
-`<https://qlever.cs.uni-freiburg.de/rowNumber/>`. Note that this address is not
-contacted but only used to activate the feature locally.
+The row numbers are added by a `SERVICE` with the IRI
+`<https://qlever.cs.uni-freiburg.de/rowNumber/>`. QLever does not contact this
+address, the IRI only activates the feature.
 
 ```sparql
 PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -28,41 +28,46 @@ SELECT ?n ?e ?d WHERE {
 }
 ```
 
-The configuration parameters are given as triples with arbitrary subject. The
-predicate must be an IRI of the form `<parameter>` or `rn:parameter`.
+The parameters are given as triples with an arbitrary subject, for example
+`[]`. The predicate is the name of the parameter, written as `<bind>` or
+`rn:bind`.
 
 | Parameter | Domain | Description |
 |--|--|--|
-| `bind` | variable | Mandatory. An otherwise unbound variable, to which the row numbers are bound as `xsd:integer` values. |
+| `bind` | variable | Mandatory. The variable to which the row numbers are bound as `xsd:integer` values. It must not be selected by the subquery. |
 | `offset` | non-negative integer | The row number of the first row. Defaults to `0`. |
 
-The `SERVICE` must contain exactly one subquery with an `ORDER BY` or `INTERNAL
-SORT BY` clause, whose variables must all be bound. Apart from that, the
+Apart from the parameters, the `SERVICE` must contain exactly one subquery. This
+subquery must have an `ORDER BY` or `INTERNAL SORT BY` clause, and every
+variable of this clause must be bound in the subquery. Apart from that, the
 subquery may use all features of SPARQL.
 
 ## SQL window functions
 
-The row numbers are not restarted for each partition. Instead, the partition
-variables (here `?e`) come first in the `ORDER BY` clause, so that the rows of
-each partition are consecutive. A window function is then a join of two row
-number services with **different offsets** on the row number **and** the
-partition variables.
+The examples below use entities `?e` with values `?d` (given by the predicate
+`<value>`) and partition by `?e`. The row numbers count through the whole
+result and do not restart for each partition. Therefore, the partition
+variables must come first in the `ORDER BY` clause (here `ORDER BY ?e ?d`), so
+that the rows of each partition are consecutive. A window function is then a
+join of two row number services with **different offsets**, on the row number
+**and** the partition variables. This way, each row is only joined with a row
+of the same partition.
 
 | SQL | QLever |
 |--|--|
 | `LAG(?d, k) OVER (PARTITION BY ?e ORDER BY ?d)` | `OPTIONAL` join with a second service with `offset` k |
-| `LEAD(?d, k) OVER (PARTITION BY ?e ORDER BY ?d)` | `offset` k on the outer service, `OPTIONAL` join with a second service |
-| `LAST_VALUE`, argmax per group | `MINUS` of the rows that have a successor |
-| `FIRST_VALUE`, argmin per group | `MINUS` of the rows that have a predecessor |
-| Top-k per group | `MINUS` of the rows that have a predecessor k rows before them |
+| `LEAD(?d, k) OVER (PARTITION BY ?e ORDER BY ?d)` | `offset` k on the first service, `OPTIONAL` join with a second service |
+| `LAST_VALUE`, argmax per partition | `MINUS` of the rows that have a successor in the same partition |
+| `FIRST_VALUE`, argmin per partition | `MINUS` of the rows that have a predecessor in the same partition |
+| Top-k per partition | `MINUS` of the rows that have a row of the same partition k rows before them |
 | `ROW_NUMBER() OVER (PARTITION BY ?e ORDER BY ?d)` | Subtract the smallest row number of the partition |
 
 ??? note "Example for `LAG`"
 
     For each value of an entity, the previous (that is, next smaller) value of
-    the same entity. The second service numbers the rows from 1, so its row `i`
-    is joined with row `i + 1` of the first service, if both belong to the same
-    entity `?e`.
+    the same entity. The second service starts numbering at 1 instead of 0, so
+    each row of the first service is joined with the row before it, if both
+    belong to the same entity `?e`.
 
     ```sparql
     PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -83,8 +88,8 @@ partition variables.
 ??? note "Example for `LEAD`"
 
     For each value of an entity, the next larger value of the same entity. Like
-    `LAG`, but with the offset on the outer service, such that each row is
-    joined with its successor.
+    `LAG`, but with the offset on the first service, so that each row is joined
+    with the row after it.
 
     ```sparql
     PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -105,9 +110,9 @@ partition variables.
 ??? note "Example for `LAST_VALUE` and argmax"
 
     For each entity, its largest value (together with all other variables of
-    that row). Remove the rows that have a successor with the same entity, which
-    leaves exactly one row per entity. For the argmin, move the offset into the
-    `MINUS`.
+    that row). The `MINUS` removes each row that is followed by a row of the
+    same entity, which leaves exactly one row per entity. For the argmin, move
+    the offset from the first service into the `MINUS`.
 
     ```sparql
     PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -129,7 +134,7 @@ partition variables.
 
     For each value of an entity, the smallest value of the same entity. The
     subquery computes the first row of each entity (like the argmin above),
-    which is then joined with all rows.
+    which is then joined with all values of the same entity.
 
     ```sparql
     PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -154,8 +159,9 @@ partition variables.
 
 ??? note "Example for top-k per group"
 
-    For each entity, its two largest values. A row is among the first `k` rows
-    of its entity if the row `k` rows before it belongs to another entity.
+    For each entity, its two largest values (k = 2). The `MINUS` with offset k
+    removes each row that has a row of the same entity k rows before it, so
+    exactly the first k rows of each entity remain.
 
     ```sparql
     PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -176,8 +182,8 @@ partition variables.
 ??? note "Example for `ROW_NUMBER` per partition"
 
     For each value of an entity, its rank among the values of the same entity
-    (starting at 1). The row number within the partition is the global row
-    number minus the smallest row number of the partition.
+    (starting at 1). The rank is the row number minus the smallest row number
+    of the same entity, plus 1.
 
     ```sparql
     PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
@@ -205,7 +211,7 @@ The following query computes, for each sovereign state, the three citizens with
 the most sitelinks (articles in the different Wikipedias etc.). Its cost is
 essentially sorting the 5.3 million citizens once. In standard SPARQL, the same
 result requires comparing each citizen with all citizens of the same country,
-which are about 1.2 trillion pairs.
+which is about 1.2 trillion pairs.
 
 ```sparql
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -264,13 +270,13 @@ ORDER BY ?countryLabel DESC(?sitelinks)
 
 ## Performance
 
-The result of the row number service is sorted by the row number followed by
-any other variables, so the joins above need no further sorting. If the two
-subqueries are identical up to renaming their variables, their result is only
-computed once. This is why the examples rename the variables of the second
-subquery instead of selecting fewer of them. If several rows have the same
-values for all `ORDER BY` variables, their row numbers are arbitrary, so add
-further variables to the `ORDER BY` for a deterministic result.
+The result of the row number service is sorted by the row number, so the joins
+above need no further sorting. If the two subqueries are identical up to the
+names of their variables, their result is only computed once. This is why the
+second subquery in the examples selects the same pattern with renamed
+variables, instead of selecting fewer variables. If several rows have the same
+values for all `ORDER BY` variables, their order and thus their row numbers are
+arbitrary. For a deterministic result, add further variables to the `ORDER BY`.
 
 ## Current limitations
 
