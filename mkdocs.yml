@@ -19,6 +19,7 @@ nav:
     - Update: update.md
     - Materialized Views: materialized-views.md
     - Named subqueries: named-subqueries.md
+    - Window functions: window-functions.md
     - Rebuild index: rebuild-index.md
     - Text search: text-search.md
     - Path search: path-search.md
