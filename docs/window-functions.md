@@ -37,21 +37,29 @@ The parameters are given as triples with an arbitrary subject, for example
 | `bind` | variable | Mandatory. The variable to which the row numbers are bound as `xsd:integer` values. It must not be selected by the subquery. |
 | `offset` | non-negative integer | The row number of the first row. Defaults to `0`. |
 
-Apart from the parameters, the `SERVICE` must contain exactly one subquery. This
+Besides the parameters, the `SERVICE` must contain exactly one subquery. This
 subquery must have an `ORDER BY` or `INTERNAL SORT BY` clause, and every
 variable of this clause must be bound in the subquery. Apart from that, the
 subquery may use all features of SPARQL.
 
+!!! note
+    If several rows have the same values for all `ORDER BY` variables, their
+    order and thus their row numbers are arbitrary. For a deterministic result,
+    add further variables to the `ORDER BY`.
+
 ## SQL window functions
 
+A window function is a join of two row number services with **different
+offsets**, on the row number **and** the partition variables. This way, each
+row is only joined with a row of the same partition.
+
+The row numbers count through the whole result and do not restart for each
+partition. Therefore, the partition variables must come first in the `ORDER BY`
+clause, so that the rows of each partition are consecutive.
+
 The examples below use entities `?e` with values `?d` (given by the predicate
-`<value>`) and partition by `?e`. The row numbers count through the whole
-result and do not restart for each partition. Therefore, the partition
-variables must come first in the `ORDER BY` clause (here `ORDER BY ?e ?d`), so
-that the rows of each partition are consecutive. A window function is then a
-join of two row number services with **different offsets**, on the row number
-**and** the partition variables. This way, each row is only joined with a row
-of the same partition.
+`<value>`). They partition by `?e` and sort by `?d`, so their subqueries use
+`ORDER BY ?e ?d`.
 
 | SQL | QLever |
 |--|--|
@@ -271,12 +279,12 @@ ORDER BY ?countryLabel DESC(?sitelinks)
 ## Performance
 
 The result of the row number service is sorted by the row number, so the joins
-above need no further sorting. If the two subqueries are identical up to the
-names of their variables, their result is only computed once. This is why the
-second subquery in the examples selects the same pattern with renamed
-variables, instead of selecting fewer variables. If several rows have the same
-values for all `ORDER BY` variables, their order and thus their row numbers are
-arbitrary. For a deterministic result, add further variables to the `ORDER BY`.
+above need no further sorting.
+
+If the two subqueries are identical up to the names of their variables, their
+result is only computed once. This is why the second subquery in the examples
+selects the same pattern with renamed variables, instead of selecting fewer
+variables.
 
 ## Current limitations
 
