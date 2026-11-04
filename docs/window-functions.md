@@ -34,7 +34,7 @@ The parameters are given as triples with an arbitrary subject, for example
 
 | Parameter | Domain | Description |
 |--|--|--|
-| `bind` | variable | Mandatory. The variable to which the row numbers are bound as `xsd:integer` values. It must not be selected by the subquery. |
+| `bind` | variable | Mandatory. The variable to which the row numbers are bound as `xsd:int` values. It must not be selected by the subquery. |
 | `offset` | non-negative integer | The row number of the first row. Defaults to `0`. |
 
 Besides the parameters, the `SERVICE` must contain exactly one subquery. This
