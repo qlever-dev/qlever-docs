@@ -288,8 +288,8 @@ selects fewer variables.
 
 ## Current limitations
 
-1. The row numbers are not restarted for each partition (see the `ROW_NUMBER`
-   example above for a workaround).
+1. The row numbers are not restarted for each partition. The `ROW_NUMBER`
+   example above shows how to compute row numbers per partition.
 2. `RANK`, `DENSE_RANK`, `NTILE`, and aggregates over window frames (like
    running sums) are not directly supported.
 3. The `offset` must not be negative. Instead of a negative offset on one
