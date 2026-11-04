@@ -3,12 +3,13 @@
 !!! info "History"
     - Added by [qlever#3848](https://github.com/ad-freiburg/qlever/pull/3848)
 
-QLever allows adding a column with **row numbers** to the result of a sorted
-subquery. Joining such results with each other on the row number corresponds
-to SQL window functions like `LAG`, `LEAD`, `FIRST_VALUE`, `LAST_VALUE`, and
-`ROW_NUMBER`, for example `LEAD(?d) OVER (PARTITION BY ?e ORDER BY ?d)`. This
-is not supported in standard SPARQL. Because the result is sorted by the row
-number, these joins are very efficient.
+QLever can add a column with **row numbers** to the result of a sorted
+subquery. Joining such results with each other on the row number gives the
+effect of SQL window functions like `LAG`, `LEAD`, `FIRST_VALUE`, `LAST_VALUE`,
+and `ROW_NUMBER`, for example `LEAD(?d) OVER (PARTITION BY ?e ORDER BY ?d)`.
+Standard SPARQL has neither window functions nor row numbers. Each result with
+row numbers is already sorted by its row number column, so these joins don't
+need any extra sorting and are very efficient.
 
 ## Row numbers
 
