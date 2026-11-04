@@ -42,10 +42,9 @@ subquery must have an `ORDER BY` or `INTERNAL SORT BY` clause, and every
 variable of this clause must be bound in the subquery. Apart from that, the
 subquery may use all features of SPARQL.
 
-!!! note
-    If several rows have the same values for all `ORDER BY` variables, their
-    order and thus their row numbers are arbitrary. For a deterministic result,
-    add further variables to the `ORDER BY`.
+*NOTE:* If several rows have the same values for all `ORDER BY` variables,
+their order and thus their row numbers are arbitrary. For a deterministic
+result, add further variables to the `ORDER BY`.
 
 ## SQL window functions
 
