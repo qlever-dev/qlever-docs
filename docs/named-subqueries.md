@@ -45,6 +45,11 @@ sure that identical occurrences are only evaluated once.
 
 Named subqueries are currently only available for queries, not for updates.
 
+An `INCLUDE` may also be used inside a magic `SERVICE` that QLever evaluates
+itself, for example the [row number service](window-functions.md). It is not
+allowed inside a `SERVICE` to a remote endpoint, because the endpoint receives
+the text of the `SERVICE` body and does not know the named subquery.
+
 ## Differences to Blazegraph
 
 QLever's named subqueries deliberately deviate from Blazegraph's, in the
