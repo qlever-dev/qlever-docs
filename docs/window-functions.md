@@ -286,6 +286,26 @@ examples is a copy of the first one in which the variables that are not joined
 on are renamed (for example `?d` to `?previous`), instead of a subquery that
 selects fewer variables.
 
+With a [named subquery](named-subqueries.md), the pattern has to be written only
+once. For example, the `LAG` example above becomes:
+
+```sparql
+PREFIX rn: <https://qlever.cs.uni-freiburg.de/rowNumber/>
+WITH %values AS { ?e <value> ?d }
+SELECT ?e ?d ?previous WHERE {
+  SERVICE rn: {
+    [] rn:bind ?n .
+    { SELECT ?e ?d WHERE { INCLUDE %values } ORDER BY ?e ?d }
+  }
+  OPTIONAL {
+    SERVICE rn: {
+      [] rn:bind ?n ; rn:offset 1 .
+      { SELECT ?e (?d AS ?previous) WHERE { INCLUDE %values } ORDER BY ?e ?d }
+    }
+  }
+}
+```
+
 ## Current limitations
 
 1. The row numbers are not restarted for each partition. The `ROW_NUMBER`
