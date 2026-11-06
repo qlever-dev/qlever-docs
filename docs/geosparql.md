@@ -194,7 +194,7 @@ from [geometry preprocessing](#geometry-preprocessing).
     }
     ```
 
-`geof:getSRID(?geom)`<a id="geof-geometrytype"></a>: Returns the spatial reference system IRI of the given geometry if supported by QLever (see [CRS](#coordinate-reference-systems)).
+`geof:getSRID(?geom)`<a id="geof-getsrid"></a>: Returns the spatial reference system IRI of the given geometry if supported by QLever (see [CRS](#coordinate-reference-systems)).
 The geometry must be given as literal with datatype `geo:wktLiteral`. The
 return value is a literal with datatype `xsd:anyURI`, where the value is one of
 the CRS type IRIs:
@@ -215,6 +215,34 @@ from [geometry preprocessing](#geometry-preprocessing).
       BIND(geof:getSRID("<http://www.opengis.net/def/crs/EPSG/0/4326> LINESTRING(4 2, 6 8)"^^geo:wktLiteral) AS ?wgs84)
     }
     ```
+
+`geof:transform(?geom, ?srsIri)`<a id="geof-transform"></a>:
+Returns the geometry projected into the coordinate reference system specified by `?srsIri`.
+The first argument must be a literal
+with datatype `geo:wktLiteral`, representing a geometry in WKT format. The
+second argument specifies the wanted CRS type, and must be supported by QLever (see [CRS](#coordinate-reference-systems)). Alternatively, the CRS IRI can
+be given as an `xsd:anyURI` literal. The function only works for transformations that are mathematically possible. The result will be a literal with datatype `geo:wktLiteral`.  
+
+??? note "Example query for `geof:transform`"
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT * WHERE {
+      BIND ("POINT(7 47)"^^geo:wktLiteral AS ?a) # Point in CRS84
+      BIND ("<http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47 7)"^^geo:wktLiteral AS ?b) # Point in WGS84
+
+      # Using xsd:anyURI for CRS IRIs
+      # These should return POINT(7 47) (a).
+      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS a_crs84)
+      BIND (geof:transform(?b, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS ?b_crs84)
+
+      # These should return <http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47 7) (b).
+      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS a_wgs84)
+      BIND (geof:transform(?b, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS ?b_wgs84)
+    }
+    ```
+TODO: check examples work
 
 `geof:minX(?geom)`, `geof:minY(?geom)`, `geof:maxX(?geom)`, `geof:maxY(?geom)`<a id="geof-minmaxXY"></a>:
 Return the minimum and maximum X (longitude) and Y (latitude) coordinates of the
