@@ -354,7 +354,7 @@ literals with datatype `xsd:decimal`.
     LIMIT 100
     ```
 
-`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`. The result literal will be in the same [CRS](#coordinate-reference-systems) as the input literal.
+`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`. The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal.
 
 ??? note "Example query for `geof:geometryN`"
 
