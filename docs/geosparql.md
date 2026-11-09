@@ -53,7 +53,7 @@ As described in the GeoSPARQL standard, WKT literals can be specified in differe
 | `WGS84` | `http://www.opengis.net/def/crs/EPSG/0/4326` | Coordinates are specified in latitude/longitude. |
 | `WEB_MERCATOR` | `http://www.opengis.net/def/crs/EPSG/0/3857` | Coordinates are projected into meters. |  
 
-NOTE: Queries using any other CRS IRI result in an error. Geometries in CRS84 do not need the CRS IRI.
+*NOTE:* Queries using any other CRS IRI result in `UNDEF`. Geometries in CRS84 do not need the CRS IRI. Currently QLevers efficient encoding of WKT `POINT` geometries only works if they are given in CRS84 without a CRS IRI.
 
 ## GeoSPARQL Functions
 
@@ -129,7 +129,7 @@ datatype `xsd:decimal`.
 
 `geof:centroid(?geom)`<a id="geof-centroid"></a>: Returns the centroid of the
 given geometry, which must be a literal with datatype `geo:wktLiteral`. The
-return value is a literal with datatype `geo:wktLiteral`, representing a `POINT`. The result literal will be in the same [CRS](#coordinate-reference-systems) as the input literal.
+return value is a literal with datatype `geo:wktLiteral`, representing a `POINT`. The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal.
 This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:centroid`"
@@ -220,7 +220,7 @@ from [geometry preprocessing](#geometry-preprocessing).
 Returns the geometry projected into the coordinate reference system specified by `?srsIri`.
 The first argument must be a literal
 with datatype `geo:wktLiteral`, representing a geometry in WKT format. The
-second argument specifies the wanted CRS type, and must be supported by QLever (see [CRS](#coordinate-reference-systems)). Alternatively, the CRS IRI can
+second argument specifies the IRI of the desired CRS, which must be supported by QLever (see [CRS](#coordinate-reference-systems)). Alternatively, the CRS IRI can
 be given as an `xsd:anyURI` literal. The function only works for transformations that are mathematically possible. The result will be a literal with datatype `geo:wktLiteral`.  
 
 ??? note "Example query for `geof:transform`"
