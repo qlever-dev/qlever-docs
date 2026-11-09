@@ -149,7 +149,7 @@ This function benefits from [geometry preprocessing](#geometry-preprocessing).
 `geof:envelope(?geom)`<a id="geof-envelope"></a>: Returns the bounding box of a geometry. The geometry
 must be given as a literal with datatype `geo:wktLiteral`. The return value is
 a literal with datatype `geo:wktLiteral`, representing a `POLYGON` with exactly
-five points (the first and last point are identical). The result literal will be in the same [CRS](#coordinate-reference-systems) as the input literal. This function benefits
+five points (the first and last point are identical). The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal. This function benefits
 from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:envelope`"
