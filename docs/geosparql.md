@@ -6,7 +6,7 @@ This page describes which features from the [OGC GeoSPARQL standard](https://doc
 
 QLever can preprocess geometries to accelerate various queries. This can be requested via the option `VOCABULARY_TYPE = on-disk-compressed-geo-split` in the `[index]` section of your `Qleverfile` for use with `qlever index` or the `--vocabulary-type on-disk-compressed-geo-split` argument of the `qlever-index` binary. Together with an appropriate [materialized view](#geo-matview) preprocessing may provide a drastic performance improvement.
 
-If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
+If this option is used, QLever will currently precompute centroid, bounding box, geometry type, number of child geometries, source [CRS](#coordinate-reference-systems) type, length and area for all WKT literals in the input dataset. These can be used for the respective [GeoSPARQL functions](#geosparql-functions), but also for further optimizations (for example, automatic prefiltering of geometries for more efficient [geometric relation filters](#geosparql-geometric-relations)).
 
 ## Faster GeoSPARQL Queries using Materialized Views
 
@@ -42,6 +42,18 @@ SELECT * {
   FILTER geof:sfContains(?freiburg_geom, ?street_geom)
 }
 ```
+
+## Coordinate Reference Systems
+
+As described in the GeoSPARQL standard, WKT literals can be specified in different coordinate reference systems (CRS). The CRS is given as an IRI at the beginning of the WKT literal. If the WKT literal contains no CRS IRI, CRS84 (`<http://www.opengis.net/def/crs/OGC/1.3/CRS84>`) is assumed. QLever also uses CRS84 internally. `geo:wktLiteral` results in CRS84 are returned without a CRS IRI. `geo:wktLiteral` results in any other supported CRS are returned with their CRS IRI. The following coordinate reference systems are currently supported in QLever: 
+
+| CRS name | CRS IRI | Description |
+|--|--|--|
+| `CRS84` | `http://www.opengis.net/def/crs/OGC/1.3/CRS84` | Coordinates are specified in longitude/latitude. |
+| `WGS84` | `http://www.opengis.net/def/crs/EPSG/0/4326` | Coordinates are specified in latitude/longitude. |
+| `WEB_MERCATOR` | `http://www.opengis.net/def/crs/EPSG/0/3857` | Coordinates are projected into meters. |  
+
+*NOTE:* Queries using any other CRS IRI result in `UNDEF`. Geometries in CRS84 do not need the CRS IRI. Currently QLevers efficient encoding of WKT `POINT` geometries only works if they are given in CRS84 without a CRS IRI.
 
 ## GeoSPARQL Functions
 
@@ -117,37 +129,42 @@ datatype `xsd:decimal`.
 
 `geof:centroid(?geom)`<a id="geof-centroid"></a>: Returns the centroid of the
 given geometry, which must be a literal with datatype `geo:wktLiteral`. The
-return value is a literal with datatype `geo:wktLiteral`, representing a `POINT`.
+return value is a literal with datatype `geo:wktLiteral`, representing a `POINT`. The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal.
 This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:centroid`"
 
-    The centroid should be 3,3.
+    The centroid should be 3,3 for all three. `?centroidWGS84` should have the `WGS84` IRI. All inputs describe the same polygon.
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT * WHERE {
       BIND(geof:centroid("POLYGON((2 4, 4 4, 4 2, 2 2, 2 4))"^^geo:wktLiteral) AS ?centroid)
+      BIND(geof:centroid("<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POLYGON((2 4, 4 4, 4 2, 2 2, 2 4))"^^geo:wktLiteral) AS ?centroidCRS84)
+      BIND(geof:centroid("<http://www.opengis.net/def/crs/EPSG/0/4326> POLYGON((4 2, 4 4, 2 4, 2 2, 4 2))"^^geo:wktLiteral) AS ?centroidWGS84)
     }
     ```
 
 `geof:envelope(?geom)`<a id="geof-envelope"></a>: Returns the bounding box of a geometry. The geometry
 must be given as a literal with datatype `geo:wktLiteral`. The return value is
 a literal with datatype `geo:wktLiteral`, representing a `POLYGON` with exactly
-five points (the first and last point are identical). This function benefits
+five points (the first and last point are identical). The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal. This function benefits
 from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:envelope`"
 
-    The envelope of the given `LINESTRING` should be the rectangle with corners (2,4),
-    (8,4), (8,6), (2,6), (2,4).
+    The envelope of first two given `LINESTRING` should be the rectangle with corners (2,4),
+    (8,4), (8,6), (2,6), (2,4). The third one should have the WGS84 IRI and the corners (4,2),
+    (4,8), (6,8), (6,2), (4,2). All inputs describe the same line. TODO: check for correctness
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
     SELECT * {
       BIND(geof:envelope("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?envelope)
+      BIND(geof:envelope("<http://www.opengis.net/def/crs/OGC/1.3/CRS84> LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?envelopeCRS84)
+      BIND(geof:envelope("<http://www.opengis.net/def/crs/EPSG/0/4326> LINESTRING(4 2, 6 8)"^^geo:wktLiteral) AS ?envelopeWGS84)
     }
     ```
 
@@ -176,6 +193,56 @@ from [geometry preprocessing](#geometry-preprocessing).
       BIND(geof:geometryType("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?geometryType)
     }
     ```
+
+`geof:getSRID(?geom)`<a id="geof-getsrid"></a>: Returns the spatial reference system IRI of the given geometry if supported by QLever (see [CRS](#coordinate-reference-systems)).
+The geometry must be given as literal with datatype `geo:wktLiteral`. The
+return value is a literal with datatype `xsd:anyURI`, where the value is one of
+the CRS type IRIs:
+`http://www.opengis.net/def/crs/OGC/1.3/CRS84`,
+`http://www.opengis.net/def/crs/EPSG/0/4326`,
+`http://www.opengis.net/def/crs/EPSG/0/3857`. This function benefits
+from [geometry preprocessing](#geometry-preprocessing).
+
+??? note "Example query for `geof:getSRID`"
+
+    The results should be the default (CRS84) `"http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI` and WGS84 `"http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI`.
+
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    SELECT * {
+      BIND(geof:getSRID("LINESTRING(2 4, 8 6)"^^geo:wktLiteral) AS ?crs84)
+      BIND(geof:getSRID("<http://www.opengis.net/def/crs/EPSG/0/4326> LINESTRING(4 2, 6 8)"^^geo:wktLiteral) AS ?wgs84)
+    }
+    ```
+
+`geof:transform(?geom, ?srsIri)`<a id="geof-transform"></a>:
+Returns the geometry projected into the coordinate reference system specified by `?srsIri`.
+The first argument must be a literal
+with datatype `geo:wktLiteral`, representing a geometry in WKT format. The
+second argument specifies the IRI of the desired CRS, which must be supported by QLever (see [CRS](#coordinate-reference-systems)). Alternatively, the CRS IRI can
+be given as an `xsd:anyURI` literal. The function only works for transformations that are mathematically possible. The result will be a literal with datatype `geo:wktLiteral`.  
+
+??? note "Example query for `geof:transform`"
+    ```sparql {data-demo-engine="osm-planet"}
+    PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+    PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+    PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+    SELECT * WHERE {
+      BIND ("POINT(7 47)"^^geo:wktLiteral AS ?a) # Point in CRS84
+      BIND ("<http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47 7)"^^geo:wktLiteral AS ?b) # Point in WGS84
+
+      # Using xsd:anyURI for CRS IRIs
+      # These should return POINT(7 47) (a).
+      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS a_crs84)
+      BIND (geof:transform(?b, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS ?b_crs84)
+
+      # These should return <http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47 7) (b).
+      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS a_wgs84)
+      BIND (geof:transform(?b, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS ?b_wgs84)
+    }
+    ```
+TODO: check examples work
 
 `geof:minX(?geom)`, `geof:minY(?geom)`, `geof:maxX(?geom)`, `geof:maxY(?geom)`<a id="geof-minmaxXY"></a>:
 Return the minimum and maximum X (longitude) and Y (latitude) coordinates of the
@@ -287,7 +354,7 @@ literals with datatype `xsd:decimal`.
     LIMIT 100
     ```
 
-`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`.
+`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`. The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal.
 
 ??? note "Example query for `geof:geometryN`"
 
@@ -298,6 +365,11 @@ literals with datatype `xsd:decimal`.
       BIND (geof:geometryN("MULTIPOINT(1 2,3 4,5 6,7 8)"^^geo:wktLiteral, 4) AS ?wkt1) # POINT(7 8)
       BIND (geof:geometryN("MULTILINESTRING((1 2,3 4),(5 6,7 8,9 0))"^^geo:wktLiteral, 2) AS ?wkt2) # LINESTRING(5 6,7 8,9 0)
       BIND (geof:geometryN("POINT(3 4)"^^geo:wktLiteral, 1) AS ?wkt3) # POINT(3 4)
+      BIND (geof:geometryN("<http://www.opengis.net/def/crs/OGC/1.3/CRS84> POINT(3 4)"^^geo:wktLiteral, 1) AS ?wkt4) # POINT(3 4)
+      BIND (geof:geometryN("<http://www.opengis.net/def/crs/EPSG/0/3857> POINT(333958.47237 445640.10965)"^^geo:wktLiteral, 1) AS ?wkt5) 
+      # <http://www.opengis.net/def/crs/EPSG/0/3857> POINT(333958.47237 445640.10965)
+      BIND (geof:geometryN("<http://www.opengis.net/def/crs/EPSG/0/4326> MULTIPOINT(2 1,4 3,6 5,8 7)"^^geo:wktLiteral, 4) AS ?wkt6)
+      # <http://www.opengis.net/def/crs/EPSG/0/4326> POINT(8 7)
     }
     ```
 
