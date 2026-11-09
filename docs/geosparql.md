@@ -134,7 +134,7 @@ This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:centroid`"
 
-    The centroid should be 3,3 for all three. `centroidWGS84` should have the `WGS84` IRI. All inputs describe the same polygon.
+    The centroid should be 3,3 for all three. `?centroidWGS84` should have the `WGS84` IRI. All inputs describe the same polygon.
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
