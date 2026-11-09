@@ -45,7 +45,7 @@ SELECT * {
 
 ## Coordinate Reference Systems
 
-As described in the GeoSPARQL standard, WKT literals can be specified in different coordinate reference systems (CRS). The CRS is given as an IRI at the beginning of the WKT literal. If the WKT literal contains no CRS IRI, CRS84 (`<http://www.opengis.net/def/crs/OGC/1.3/CRS84>`) will be assumed. QLever also uses CRS84 internally. `geo:wktLiteral` results in CRS84 are returned without a CRS IRI. `geo:wktLiteral` results in any other supported CRS are returned with their CRS IRI. The following coordinate reference systems are currently supported in QLever: 
+As described in the GeoSPARQL standard, WKT literals can be specified in different coordinate reference systems (CRS). The CRS is given as an IRI at the beginning of the WKT literal. If the WKT literal contains no CRS IRI, CRS84 (`<http://www.opengis.net/def/crs/OGC/1.3/CRS84>`) is assumed. QLever also uses CRS84 internally. `geo:wktLiteral` results in CRS84 are returned without a CRS IRI. `geo:wktLiteral` results in any other supported CRS are returned with their CRS IRI. The following coordinate reference systems are currently supported in QLever: 
 
 | CRS name | CRS IRI | Description |
 |--|--|--|
