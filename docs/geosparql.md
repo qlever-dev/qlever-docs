@@ -45,7 +45,7 @@ SELECT * {
 
 ## Coordinate Reference Systems
 
-As described in the GeoSPARQL standard, WKT literals can be specified in different coordinate reference systems (CRS). The CRS is given as an IRI at the beginning of the WKT literal. If the WKT literal contains no CRS IRI, CRS84 (`<http://www.opengis.net/def/crs/OGC/1.3/CRS84>`) will be assumed. QLever also uses CRS84 internally. `geo:wktLiteral` results in CRS84 are returned without a CRS IRI. `geo:wktLiteral` results in any other supported CRS are returned with their CRS IRI. The following coordinate reference systems are currently supported in QLever: 
+As described in the GeoSPARQL standard, WKT literals can be specified in different coordinate reference systems (CRS). The CRS is given as an IRI at the beginning of the WKT literal. If the WKT literal contains no CRS IRI, CRS84 (`<http://www.opengis.net/def/crs/OGC/1.3/CRS84>`) is assumed. QLever also uses CRS84 internally. `geo:wktLiteral` results in CRS84 are returned without a CRS IRI. `geo:wktLiteral` results in any other supported CRS are returned with their CRS IRI. The following coordinate reference systems are currently supported in QLever: 
 
 | CRS name | CRS IRI | Description |
 |--|--|--|
@@ -134,7 +134,7 @@ This function benefits from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:centroid`"
 
-    The centroid should be 3,3 for all three. `centroidWGS84` should have the `WGS84` IRI. All inputs describe the same polygon.
+    The centroid should be 3,3 for all three. `?centroidWGS84` should have the `WGS84` IRI. All inputs describe the same polygon.
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -149,7 +149,7 @@ This function benefits from [geometry preprocessing](#geometry-preprocessing).
 `geof:envelope(?geom)`<a id="geof-envelope"></a>: Returns the bounding box of a geometry. The geometry
 must be given as a literal with datatype `geo:wktLiteral`. The return value is
 a literal with datatype `geo:wktLiteral`, representing a `POLYGON` with exactly
-five points (the first and last point are identical). The result literal will be in the same [CRS](#coordinate-reference-systems) as the input literal. This function benefits
+five points (the first and last point are identical). The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal. This function benefits
 from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:envelope`"
@@ -354,7 +354,7 @@ literals with datatype `xsd:decimal`.
     LIMIT 100
     ```
 
-`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`. The result literal will be in the same [CRS](#coordinate-reference-systems) as the input literal.
+`geof:geometryN(?geom, ?n)`<a id="geof-geometryn"></a>: This function returns the n-th child geometry contained in a geometry of a collection type (`MULTIPOINT`, `MULTILINESTRING`, `MULTIPOLYGON` or `GEOMETRYCOLLECTION`) given as `geo:wktLiteral`. The child geometries are indexed starting with `1`. For single geometries (`POINT`, `LINESTRING`, `POLYGON`) the geometry itself is returned at index `1`. For valid geometries and indices the result is a literal with `geo:wktLiteral` datatype, for invalid indices it is `UNDEF`. The result literal is in the same [CRS](#coordinate-reference-systems) as the input literal.
 
 ??? note "Example query for `geof:geometryN`"
 
