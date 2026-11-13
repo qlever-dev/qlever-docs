@@ -16,6 +16,7 @@ nav:
     - Qleverfile settings: qleverfile.md
     - GeoSPARQL support: geosparql.md
     - Date and Time: datetime.md
+    - Math functions: math.md
     - Update: update.md
     - Materialized Views: materialized-views.md
     - Named subqueries: named-subqueries.md
