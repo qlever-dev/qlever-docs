@@ -326,6 +326,7 @@ FILTER(geof:distance(?geom1, ?geom2, "some-supported-unit-iri"^^xsd:anyURI) <= c
 ```
 
 You may also replace one of either `?geom1` or `?geom2` with an inline literal `"..."^^geo:wktLiteral`.
+Instead of `<=`, you may also use `<`.
 
 In the *Analysis* view of the QLever UI you can see *Spatial Join* instead of *Cartesian Product Join*, when the optimization is in effect. The GeoSPARQL maximum distance search is a standard syntax method for using the [QLever Spatial Search](#custom-spatial-search). The custom feature provides more options, for example nearest neighbor search.
 
