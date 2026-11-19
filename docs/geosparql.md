@@ -158,9 +158,9 @@ from [geometry preprocessing](#geometry-preprocessing).
 
 ??? note "Example query for `geof:envelope`"
 
-    The envelope of first two given `LINESTRING` should be the rectangle with corners (2,4),
+    The envelope of the first two given `LINESTRING` should be the rectangle with corners (2,4),
     (8,4), (8,6), (2,6), (2,4). The third one should have the WGS84 IRI and the corners (4,2),
-    (4,8), (6,8), (6,2), (4,2). All inputs describe the same line. TODO: check for correctness
+    (4,8), (6,8), (6,2), (4,2). All inputs describe the same line.
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
