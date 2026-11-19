@@ -110,12 +110,13 @@ Like `geof:distance`, but always returns the distance in meters as `xsd:decimal`
 
 `geof:latitude(?geom)`, `geof:longitude(?geom)`<a id="geof-lat-lon"></a>:
 Returns latitude and longitude coordinates from a `POINT` geometry, given as a
-literal with datatype `geo:wktLiteral`. The return value is a literal with
+literal with datatype `geo:wktLiteral`. The latitude and longitude are taken from the `CRS84` representation of the point (see [CRS](#coordinate-reference-systems)). The return value is a literal with
 datatype `xsd:decimal`.
 
 ??? note "Example query for `geof:latitude` and `geof:longitude`"
 
-    Coordinates of Freiburg Central Railway Station:
+    Coordinates of Freiburg Central Railway Station in `CRS84` and `WGS84`:
+    TODO: check for correctness
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -124,6 +125,9 @@ datatype `xsd:decimal`.
       BIND ("POINT(7.8412948 47.9977308)"^^geo:wktLiteral AS ?a)
       BIND (geof:latitude(?a) AS ?lat)
       BIND (geof:longitude(?a) AS ?lng)
+      BIND ("<http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47.9977308 7.8412948)"^^geo:wktLiteral AS ?b)
+      BIND (geof:latitude(?b) AS ?lat2)
+      BIND (geof:longitude(?b) AS ?lng2)
     }
     ```
 
@@ -234,25 +238,24 @@ be given as an `xsd:anyURI` literal. The function only works for transformations
 
       # Using xsd:anyURI for CRS IRIs
       # These should return POINT(7 47) (a).
-      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS a_crs84)
+      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS ?a_crs84)
       BIND (geof:transform(?b, "http://www.opengis.net/def/crs/OGC/1.3/CRS84"^^xsd:anyURI) AS ?b_crs84)
 
       # These should return <http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47 7) (b).
-      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS a_wgs84)
+      BIND (geof:transform(?a, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS ?a_wgs84)
       BIND (geof:transform(?b, "http://www.opengis.net/def/crs/EPSG/0/4326"^^xsd:anyURI) AS ?b_wgs84)
     }
     ```
-TODO: check examples work
 
 `geof:minX(?geom)`, `geof:minY(?geom)`, `geof:maxX(?geom)`, `geof:maxY(?geom)`<a id="geof-minmaxXY"></a>:
-Return the minimum and maximum X (longitude) and Y (latitude) coordinates of the
+Return the minimum and maximum X and Y coordinates of the
 given geometry. The geometry must be given as a literal with datatype
-`geo:wktLiteral`. This function benefits from 
+`geo:wktLiteral`. The result is computed in the same [CRS](#coordinate-reference-systems) as the input literal (for `CRS84`, X is the longitude and Y is the latitude). This function benefits from 
 [geometry preprocessing](#geometry-preprocessing). The return values are 
 literals with datatype `xsd:decimal`.
 
 ??? note "Example query for `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY`"
-
+    TODO: check examples work
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -262,6 +265,11 @@ literals with datatype `xsd:decimal`.
       BIND (geof:minY(?geometry) AS ?minY) # Result: 3
       BIND (geof:maxX(?geometry) AS ?maxX) # Result: 6
       BIND (geof:maxY(?geometry) AS ?maxY) # Result: 8
+      BIND("LINESTRING(4 2, 3 3, 8 6)"^^geo:wktLiteral AS ?geometryWGS84)
+      BIND (geof:minX(?geometryWGS84) AS ?minX) # Result: 3
+      BIND (geof:minY(?geometryWGS84) AS ?minY) # Result: 2
+      BIND (geof:maxX(?geometryWGS84) AS ?maxX) # Result: 8
+      BIND (geof:maxY(?geometryWGS84) AS ?maxY) # Result: 6
     }
     ```
 
