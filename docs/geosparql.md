@@ -255,7 +255,6 @@ given geometry. The geometry must be given as a literal with datatype
 literals with datatype `xsd:decimal`.
 
 ??? note "Example query for `geof:minX`, `geof:minY`, `geof:maxX` and `geof:maxY`"
-    TODO: check examples work
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
     PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
@@ -265,11 +264,11 @@ literals with datatype `xsd:decimal`.
       BIND (geof:minY(?geometry) AS ?minY) # Result: 3
       BIND (geof:maxX(?geometry) AS ?maxX) # Result: 6
       BIND (geof:maxY(?geometry) AS ?maxY) # Result: 8
-      BIND("LINESTRING(4 2, 3 3, 8 6)"^^geo:wktLiteral AS ?geometryWGS84)
-      BIND (geof:minX(?geometryWGS84) AS ?minX) # Result: 3
-      BIND (geof:minY(?geometryWGS84) AS ?minY) # Result: 2
-      BIND (geof:maxX(?geometryWGS84) AS ?maxX) # Result: 8
-      BIND (geof:maxY(?geometryWGS84) AS ?maxY) # Result: 6
+      BIND("<http://www.opengis.net/def/crs/EPSG/0/4326> LINESTRING(4 2, 3 3, 8 6)"^^geo:wktLiteral AS ?geometryWGS84)
+      BIND (geof:minX(?geometryWGS84) AS ?minXWGS84) # Result: 3
+      BIND (geof:minY(?geometryWGS84) AS ?minYWGS84) # Result: 2
+      BIND (geof:maxX(?geometryWGS84) AS ?maxXWGS84) # Result: 8
+      BIND (geof:maxY(?geometryWGS84) AS ?maxYWGS84) # Result: 6
     }
     ```
 
