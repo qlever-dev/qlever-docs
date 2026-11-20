@@ -116,7 +116,6 @@ datatype `xsd:decimal`.
 ??? note "Example query for `geof:latitude` and `geof:longitude`"
 
     Coordinates of Freiburg Central Railway Station in `CRS84` and `WGS84`:
-    TODO: check for correctness
 
     ```sparql {data-demo-engine="osm-planet"}
     PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -128,6 +127,9 @@ datatype `xsd:decimal`.
       BIND ("<http://www.opengis.net/def/crs/EPSG/0/4326> POINT(47.9977308 7.8412948)"^^geo:wktLiteral AS ?b)
       BIND (geof:latitude(?b) AS ?lat2)
       BIND (geof:longitude(?b) AS ?lng2)
+      BIND ("<http://www.opengis.net/def/crs/EPSG/0/3857> POINT(872888.944295944 6106477.329162287)"^^geo:wktLiteral AS ?c)
+      BIND (geof:latitude(?c) AS ?lat3)
+      BIND (geof:longitude(?c) AS ?lng3)
     }
     ```
 
