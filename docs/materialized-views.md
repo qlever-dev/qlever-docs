@@ -379,5 +379,3 @@ releases of QLever.
    not modify materialized views. If you need to update a materialized view,
    you must currently recreate it from scratch (you can simply overwrite an
    existing view, or [delete](#deleting-a-materialized-view) it first).
-4. Reading from a materialized view always reads the first three columns even
-   if they are not requested; the unused ones are discarded immediately.
