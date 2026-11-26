@@ -696,6 +696,9 @@ prefiltering with [geometry preprocessing](#geometry-preprocessing)), and
     }
     ```
 
+## Three-dimensional coordinates
+The GeoSPARQL standard allows geometries to have a third coordinate Z. This coordinate can be used to specify the height (or depth) of the geometry. In QLever, three-dimensional geometries are accepted (as defined in the GeoSPARQL standard), but the Z coordinate is ignored. All computations use only the X and Y coordinates (on Z = 0 level).
+
 ## Invalid WKT literals
 
 WKT literals are parsed strictly, as required by GeoSPARQL 1.1. A malformed
